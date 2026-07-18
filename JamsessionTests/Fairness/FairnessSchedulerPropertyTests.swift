@@ -99,6 +99,126 @@ struct FairnessSchedulerPropertyTests {
         #expect(title == "A1")
     }
 
+    @Test func generatedMixedTransitionsPreserveOrderFairnessAndDeterminism() throws {
+        for seed in 0..<48 {
+            let participants = (0..<4).map { ParticipantID("P\($0)") }
+            var first = RotationState(
+                participants: participants,
+                config: FairnessConfig(maxPendingPerParticipant: 8)
+            )
+            var second = first
+            var generator = Generator(state: UInt64(seed + 900))
+            var eventNumber = 0
+
+            for round in 0..<5 {
+                for participant in participants {
+                    let track = FairnessTestSupport.track("S\(seed)-P\(participant.rawValue)-R\(round)", by: participant)
+                    let event = FairnessTestSupport.event(eventNumber, .submit(track))
+                    first = try scheduler.applying(event, to: first)
+                    second = try scheduler.applying(event, to: second)
+                    eventNumber += 1
+                }
+            }
+
+            let reconnecting = participants[generator.nextIndex(upperBound: participants.count)]
+            try applyToBoth(
+                FairnessTestSupport.event(eventNumber, .setStatus(participantID: reconnecting, status: .reconnecting)),
+                first: &first,
+                second: &second
+            )
+            eventNumber += 1
+
+            if let next = scheduler.nextUp(in: first) {
+                try applyToBoth(
+                    FairnessTestSupport.event(eventNumber, .skipOwnTurn(participantID: next.submitterID)),
+                    first: &first,
+                    second: &second
+                )
+                eventNumber += 1
+            }
+
+            try applyToBoth(
+                FairnessTestSupport.event(eventNumber, .advancePlayback),
+                first: &first,
+                second: &second
+            )
+            eventNumber += 1
+
+            let removableOwners = participants.filter { !first.pending(for: $0).isEmpty }
+            if !removableOwners.isEmpty {
+                let owner = removableOwners[generator.nextIndex(upperBound: removableOwners.count)]
+                if let submission = first.pending(for: owner).last {
+                    try applyToBoth(
+                        FairnessTestSupport.event(
+                            eventNumber,
+                            .removeOwn(submissionID: submission.id, participantID: owner)
+                        ),
+                        first: &first,
+                        second: &second
+                    )
+                    eventNumber += 1
+                }
+            }
+
+            try applyToBoth(
+                FairnessTestSupport.event(
+                    eventNumber,
+                    .setStatus(participantID: reconnecting, status: .connected)
+                ),
+                first: &first,
+                second: &second
+            )
+            eventNumber += 1
+
+            let late = ParticipantID("Late-\(seed)")
+            try applyToBoth(
+                FairnessTestSupport.event(eventNumber, .addParticipant(late)),
+                first: &first,
+                second: &second
+            )
+            eventNumber += 1
+            try applyToBoth(
+                FairnessTestSupport.event(
+                    eventNumber,
+                    .submit(FairnessTestSupport.track("Late-track-\(seed)", by: late))
+                ),
+                first: &first,
+                second: &second
+            )
+            eventNumber += 1
+
+            let gone = participants.first { $0 != first.currentlyPlaying?.submitterID } ?? participants[0]
+            try applyToBoth(
+                FairnessTestSupport.event(eventNumber, .markGone(gone)),
+                first: &first,
+                second: &second
+            )
+
+            #expect(first == second)
+            #expect(first.lockedOrder == participants + [late])
+            #expect(first.pending(for: gone).isEmpty)
+            expectFairDerivedQueue(scheduler.upcomingQueue(in: first))
+        }
+    }
+
+    private func applyToBoth(
+        _ event: FairnessEvent,
+        first: inout RotationState,
+        second: inout RotationState
+    ) throws {
+        first = try scheduler.applying(event, to: first)
+        second = try scheduler.applying(event, to: second)
+        #expect(first == second)
+        expectFairDerivedQueue(scheduler.upcomingQueue(in: first))
+    }
+
+    private func expectFairDerivedQueue(_ queue: [QueuedTrack]) {
+        for index in queue.indices.dropFirst() where queue[index].submitterID == queue[index - 1].submitterID {
+            let repeatedParticipant = queue[index].submitterID
+            #expect(!queue[index...].contains { $0.submitterID != repeatedParticipant })
+        }
+    }
+
     private struct Generator {
         var state: UInt64
 
