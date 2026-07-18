@@ -261,6 +261,9 @@ The physical-device matrix includes:
 - Pending-cap and duplicate rejection.
 - Turn skip, playing-track skip, gone/return, removal/block, late join, and end.
 
+The authoritative execution status and evidence for this matrix live in
+[`VERIFICATION_LOG.md`](VERIFICATION_LOG.md).
+
 ## Explicitly deferred
 
 - Host migration.
