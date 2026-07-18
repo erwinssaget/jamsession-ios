@@ -17,7 +17,7 @@ product-decision update before architecture or scope changes.
 
 | Gate | State | Required checks still open | Work allowed while blocked |
 |------|-------|----------------------------|----------------------------|
-| Slice 0 | **CLOSED — hardware/account verification incomplete** | V0-1 through V0-7 as applicable; V0-2, V0-4, V0-5, V0-6B, and V0-7B need additional hardware or account conditions | Remaining Slice 0 work and the pure Slice 1 fairness engine under the provisional-work rule in `BUILD_PLAN.md`. No dependent transport, playback, permission, or lifecycle integration may treat Slice 0 assumptions as proven. |
+| Slice 0 | **CLOSED — hardware/account verification incomplete** | V0-2, V0-4, V0-5, V0-6B, and V0-7B need additional hardware or account conditions | Remaining Slice 0 work and the pure Slice 1 fairness engine under the provisional-work rule in `BUILD_PLAN.md`. No dependent transport, playback, permission, or lifecycle integration may treat Slice 0 assumptions as proven. |
 | Closed TestFlight | **CLOSED — implementation and release matrix incomplete** | VM-1 through VM-13 | Work authorized by the current completed gate or the explicit provisional-work rule only. |
 
 The summary is informational. A gate opens only when every check required by its
@@ -73,16 +73,21 @@ A bare status change is not sufficient evidence for an exit gate.
 
 ## Slice 0 — Feasibility gates
 
+Repository foundation verified on 2026-07-18: Xcode 26.6 (build 17F113), Apple
+Swift 6.3.3, iOS deployment target 26.0. A generic iOS device build with signing
+disabled completed successfully after the local-network denial recovery change.
+This build verifies compilation only and does not satisfy a physical-device row.
+
 | ID | Verification | Needs | Blocks | Status | Date | Build / result / evidence |
 |----|--------------|-------|--------|--------|------|---------------------------|
-| V0-1 | Subscriber host authorizes, searches, queues, plays, pauses, and skips with `ApplicationMusicPlayer` | 1 physical iPhone; subscribed account | Slice 0 | TODO | | |
+| V0-1 | Subscriber host authorizes, searches, queues, plays, pauses, and skips with `ApplicationMusicPlayer` | 1 physical iPhone; subscribed account | Slice 0 | PASS | 2026-07-18 | Tester: Erwin Saget. App commit `428e6b9` plus the current uncommitted Slice 0 denial-recovery changes. iPhone 14 Pro, iOS 26.5.2 (23F84), subscribed account, Wi-Fi, built-in speaker. One run: authorization and catalog search succeeded with 10 results; queue-and-play produced audible catalog playback; Pause stopped playback; queue-and-play followed by Skip reported “Skip completed.” Track ID, search term, and listening content intentionally omitted. |
 | V0-2 | Non-subscriber authorizes MusicKit and searches the catalog | 1 physical iPhone; non-subscriber account | Slice 0 and guest product promise | BLOCKED | | Need a non-subscriber account/device condition. If it fails, revise `PRODUCT_DECISIONS.md` before changing the guest model. |
-| V0-3 | Guest denied Music access can still reach the mock joined-queue screen | 1 physical iPhone; Music access denied | Slice 0 | TODO | | |
+| V0-3 | Guest denied Music access can still reach the mock joined-queue screen | 1 physical iPhone; Music access denied | Slice 0 | PASS | 2026-07-18 | Tester: Erwin Saget. App commit `428e6b9` plus the current uncommitted Slice 0 denial-recovery changes. iPhone 14 Pro, iOS 26.5.2 (23F84). One run with Music access denied: the app displayed “Music access was denied. The mock queue remains available,” and the empty Joined Session screen remained reachable. |
 | V0-4 | Two devices discover through Bonjour, connect host-and-spoke, exchange one framed `Codable` message in each direction, and terminate cleanly | 2 physical iPhones | Slice 0 | BLOCKED | | Need second device. Verify actual iOS 26 concurrency-native Network API availability before treating the spike as complete. |
 | V0-5 | Peer link behavior across guest and host foreground/background transitions is observed; reconnection terminates cleanly | 2 physical iPhones | Slice 0 | BLOCKED | | Need second device. Record each transition tested and whether the connection persisted, disconnected, or reconnected. |
-| V0-6A | Local-network denial produces the intended denial UI and recovery guidance | 1 physical iPhone; local-network access denied | Slice 0 | TODO | | UI/state handling only; this does not prove discovery behavior. |
+| V0-6A | Local-network denial produces the intended denial UI and recovery guidance | 1 physical iPhone; local-network access denied | Slice 0 | PASS | 2026-07-18 | Tester: Erwin Saget. App commit `428e6b9` plus the current uncommitted Slice 0 denial-recovery changes. iPhone 14 Pro, iOS 26.5.2 (23F84), Wi-Fi. One run: with Local Network disabled, discovery reported that local-network access was denied and presented Open Local Network Settings. After enabling access in Settings and retrying, the app reported that local-network access was available with no nearby host selected. UI/state handling only; this does not prove discovery behavior. |
 | V0-6B | Local-network denial is behaviorally distinguishable from an allowed device with no nearby room | 2 physical iPhones; one discoverable host | Slice 0 | BLOCKED | | Need second device for the contrast case. |
-| V0-7A | Host audio continues as designed under device lock; playback controls remain deterministic | 1 physical iPhone; subscribed account | Slice 0/open verification | TODO | | Record whether background-audio capability is required before retaining it. |
+| V0-7A | Host audio continues as designed under device lock; playback controls remain deterministic | 1 physical iPhone; subscribed account | Slice 0/open verification | PASS | 2026-07-18 | Tester: Erwin Saget. App commit `428e6b9` plus the current uncommitted Slice 0 denial-recovery changes. iPhone 14 Pro, iOS 26.5.2 (23F84), subscribed account, Wi-Fi, built-in speaker. One run: playback continued uninterrupted for at least 30 seconds while locked; Lock Screen pause and resume worked; Lock Screen skip exhausted the spike's single-entry queue and stopped playback; after unlock, Jamsession remained responsive and queue-and-play restarted playback. The project had no background-audio capability, so this check does not justify adding it. |
 | V0-7B | Session-management and peer behavior under host/guest lock and backgrounding matches the foreground-oriented design | 2 physical iPhones | Slice 0/open verification and Slice 4C | BLOCKED | | Need second device. |
 
 ## Closed-TestFlight release matrix

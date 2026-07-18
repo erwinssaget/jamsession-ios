@@ -60,6 +60,14 @@ struct ContentView: View {
                         networkSpike.stop()
                     }
                     .disabled(!networkSpike.isRunning)
+                    if networkSpike.needsSettings {
+                        Button("feasibility.networkSettings", systemImage: "gear") {
+                            guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else {
+                                return
+                            }
+                            openURL(settingsURL)
+                        }
+                    }
 
                     Text(networkSpike.status)
                         .foregroundStyle(.secondary)

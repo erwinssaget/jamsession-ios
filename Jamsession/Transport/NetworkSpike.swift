@@ -9,11 +9,13 @@ final class NetworkSpike {
 
     private(set) var status = "Choose Host or Discover. Local-network access is requested only then."
     private(set) var isRunning = false
+    private(set) var needsSettings = false
 
     private var task: Task<Void, Never>?
     private var runGeneration = 0
 
     func startHosting() {
+        needsSettings = false
         replaceTask { generation in
             do {
                 let provider = BonjourListenerProvider(name: "Jamsession Slice 0", type: Self.serviceType)
@@ -42,6 +44,7 @@ final class NetworkSpike {
     }
 
     func startBrowsing() {
+        needsSettings = false
         replaceTask { generation in
             let parameters = NWParameters.tcp
             parameters.includePeerToPeer = true
@@ -76,6 +79,7 @@ final class NetworkSpike {
         task = nil
         runGeneration += 1
         isRunning = false
+        needsSettings = false
         status = "Network spike stopped. Start it again to test reconnection."
     }
 
@@ -138,9 +142,10 @@ final class NetworkSpike {
 
         switch state {
         case .ready:
+            needsSettings = false
             status = "Host is advertising and ready for a nearby device."
         case .waiting(let error):
-            status = "Host is waiting: \(error.localizedDescription)"
+            updateWaitingState(error, role: "Host")
         case .failed(let error):
             status = "Host failed: \(error.localizedDescription)"
         case .cancelled:
@@ -159,9 +164,10 @@ final class NetworkSpike {
 
         switch state {
         case .ready:
+            needsSettings = false
             status = "Local-network access is available; no nearby host has been selected yet."
         case .waiting(let error):
-            status = "Discovery is waiting: \(error.localizedDescription)"
+            updateWaitingState(error, role: "Discovery")
         case .failed(let error):
             status = "Discovery failed (permission or network error): \(error.localizedDescription)"
         case .cancelled:
@@ -178,6 +184,24 @@ final class NetworkSpike {
             return
         }
         status = newStatus
+    }
+
+    private func updateWaitingState(_ error: NWError, role: String) {
+        if Self.isLocalNetworkDenied(error) {
+            needsSettings = true
+            status = "Local-network access is denied. Open Settings and allow Local Network access for Jamsession."
+        } else {
+            needsSettings = false
+            status = "\(role) is waiting: \(error.localizedDescription)"
+        }
+    }
+
+    /// Bonjour reports local-network privacy denial as kDNSServiceErr_PolicyDenied.
+    private nonisolated static func isLocalNetworkDenied(_ error: NWError) -> Bool {
+        guard case .dns(let code) = error else {
+            return false
+        }
+        return Int(code) == -65_570
     }
 
     private func finishRun(_ generation: Int) {

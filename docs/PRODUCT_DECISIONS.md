@@ -32,8 +32,8 @@ decision history at the end of this file.
 
 ## Platform and transport
 
-- Deployment target: iOS 26.0 or later. The project currently says 26.5; Slice 0
-  must lower it to 26.0 unless an API requirement proves 26.5 necessary.
+- Deployment target: iOS 26.0 or later. The project targets 26.0, verified with
+  Xcode 26.6 and the Apple Swift 6.3.3 compiler during Slice 0.
 - Use the iOS 26 concurrency-native Network framework APIs:
   `NetworkListener`, `NetworkBrowser`, and `NetworkConnection`.
 - Do not use deprecated MultipeerConnectivity or mix in callback-oriented
@@ -48,6 +48,11 @@ decision history at the end of this file.
 - Networking is foreground-oriented in the MVP. Host background audio may
   continue, but session management requires the host to remain foregrounded.
   Guests reconnect when returning to the foreground.
+- Slice 0 physical-device testing found that `ApplicationMusicPlayer` playback
+  continued under device lock without enabling the background-audio capability;
+  Lock Screen pause and resume worked, and skipping the spike's only queued entry
+  stopped playback as expected. Do not add background audio unless later host
+  integration demonstrates a concrete requirement.
 
 ## MusicKit and permissions
 

@@ -81,6 +81,17 @@
         }
       }
     },
+    "feasibility.networkSettings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Local Network Settings"
+          }
+        }
+      }
+    },
     "feasibility.pause" : {
       "extractionState" : "manual",
       "localizations" : {
