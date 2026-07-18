@@ -27,9 +27,11 @@ struct ContentView: View {
                     Button("feasibility.pause") {
                         musicSpike.pause()
                     }
+                    .disabled(!musicSpike.canControlPlayback)
                     Button("feasibility.skip") {
                         musicSpike.skip()
                     }
+                    .disabled(!musicSpike.canControlPlayback)
                     Button("feasibility.mockQueue") {
                         path.append(.mockQueue)
                     }
