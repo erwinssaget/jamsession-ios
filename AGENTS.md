@@ -16,6 +16,12 @@ You are a **Senior iOS Engineer**, specializing in SwiftUI, MusicKit, Swift conc
 
 ## Product context (read before writing feature code)
 
+The canonical product specification is [`docs/PRODUCT_DECISIONS.md`](docs/PRODUCT_DECISIONS.md),
+and the canonical implementation sequence is [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md).
+Read both before planning or implementing feature work. If either conflicts with
+this guide or the implementation, stop and resolve the discrepancy rather than
+silently choosing one interpretation.
+
 - A **session** is live and ephemeral: it exists only while participants are connected, and is torn down when it ends. No session content survives the session.
 - One device is the **host**. The host owns the authoritative queue and is the device that actually plays audio through Apple Music (the "aux"). Only the host needs an active Apple Music subscription.
 - Other participants are **remote controls**: they search the catalog and submit songs; they do not play audio themselves.
@@ -29,7 +35,7 @@ You are a **Senior iOS Engineer**, specializing in SwiftUI, MusicKit, Swift conc
 - Prefer **Main Actor default actor isolation** for the app target. Keep the fairness scheduler a `Sendable` value type so it can run and be tested off the main actor.
 - Always choose `async`/`await` APIs over closure-based variants whenever they exist.
 - SwiftUI backed by `@Observable` classes for shared, observable state.
-- Do not introduce third-party frameworks without asking first. Prefer Apple frameworks: MusicKit, MultipeerConnectivity (see sync decision below), Swift Testing.
+- Do not introduce third-party frameworks without asking first. Prefer Apple frameworks: MusicKit, Network, Swift Testing.
 - Avoid UIKit unless requested.
 
 ---
@@ -86,14 +92,18 @@ You are a **Senior iOS Engineer**, specializing in SwiftUI, MusicKit, Swift conc
 
 ---
 
-## Architecture — real-time sync ⚠️ DECISION REQUIRED
+## Architecture — real-time sync
 
-The transport that carries submissions between devices is the one architectural choice not yet fixed. **Confirm this before generating sync-dependent code.** In all cases the model is **host-authoritative**: peers submit songs, the host runs the fairness scheduler, and the host broadcasts the resulting queue.
+The transport decision is fixed for the MVP: use the iOS 26 concurrency-native
+Network framework APIs with Bonjour/local peer-to-peer discovery in a host-and-spoke
+topology. Keep transport behind `SessionTransport`. Do not use deprecated
+MultipeerConnectivity or callback-oriented `NW*` APIs unless a verified capability
+gap is documented and the product decision is explicitly revised.
 
-- **Default recommendation — MultipeerConnectivity.** Best fit for co-located friends passing the aux: truly ephemeral, no backend, no extra accounts beyond the host's Apple Music subscription. Define a small `Codable` message protocol: `join` / `leave`, `submitTrack(MusicItemID, submittedBy)`, `queueState(ordered tracks + rotation)`, `nowPlaying`. Host validates every submission against fairness rules before accepting.
-- **Alternative — remote sessions.** If friends need to join from anywhere, swap the transport to a lightweight server (WebSocket) or CloudKit. Keep the host-authoritative model and the same message protocol; only the transport changes.
-
-Until confirmed, isolate all transport code behind a `SessionTransport` protocol so the scheduler, models, and UI never depend on the concrete transport.
+The host is authoritative: guests send idempotent commands, the host validates and
+applies them, and guests receive revisioned canonical snapshots. Guests never send
+replacement queue state. See `docs/PRODUCT_DECISIONS.md` for admission, framing,
+identity, reconnection, and security requirements.
 
 ---
 
@@ -103,7 +113,7 @@ Until confirmed, isolate all transport code behind a `SessionTransport` protocol
 - Check `MusicSubscription.current` before playback. **Only a subscriber can drive playback**, so gate the host role on an active subscription; offer non-subscribers the submit/browse role and surface Apple Music's subscription offer where appropriate.
 - Use `ApplicationMusicPlayer.shared` for the host (app-controlled queue), **not** `SystemMusicPlayer` (which hijacks the user's system Music state).
 - Search with `MusicCatalogSearchRequest`; work with `Song` and `MusicItemID`. Debounce search input and cancel in-flight requests on new keystrokes.
-- Add `NSAppleMusicUsageDescription` to Info.plist. Never commit the MusicKit developer token / private key to the repo (see Security).
+- Add `NSAppleMusicUsageDescription` through the project's generated Info.plist settings. Use MusicKit's automatic developer-token management. Never copy, inject, bundle, or commit an `AuthKey_*.p8` private key.
 - **Queue reconciliation:** the fairness-ordered queue is the single source of truth. After each mutation, diff it against `ApplicationMusicPlayer.shared.queue` and apply the minimal change (prefer inserting/moving entries over rebuilding the whole queue mid-playback, to avoid interrupting the current song).
 - Advance the rotation by observing playback state / queue transitions, not by wall-clock timers.
 
@@ -152,7 +162,7 @@ Every guard rejection returns a typed reason the UI can explain ("You've got 3 s
 
 ## Security & privacy
 
-- The MusicKit developer token / `AuthKey_*.p8` private key must never be committed. Keep it out of the repo via `.gitignore` and inject at build/run time.
+- Use MusicKit's automatic developer-token management. A custom developer token provider requires an explicit, documented need. The `AuthKey_*.p8` private key must never enter the repository, application bundle, or client-side build/run injection path.
 - No analytics on listening content without explicit consent; ephemeral sessions imply an expectation of no tracking.
 - Validate every inbound peer/server message before mutating state — a participant must not be able to bypass fairness guards by crafting messages.
 
