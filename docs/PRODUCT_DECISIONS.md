@@ -279,6 +279,18 @@ The physical-device matrix includes:
 3. Confirm host background audio and foreground-only session-management behavior
    under device lock and common interruptions.
 
+## Slice 0 feasibility evidence
+
+- 2026-07-18: Subscriber-host MusicKit passed on a physical iPhone 14 Pro running
+  iOS 26.5.2 with an active Apple Music subscription. The host authorized MusicKit,
+  searched the Apple Music catalog, queued and played a catalog song, paused it,
+  and completed a skip using `ApplicationMusicPlayer.shared`.
+- Automatic developer-token generation required an explicit MusicKit-enabled App
+  ID whose capitalization exactly matched the app bundle identifier:
+  `com.jamsession.jamsession`. No custom developer token or private key was used.
+- Non-subscriber guest search, two-device Network discovery/messaging, and
+  lifecycle observations remain unverified, so the Slice 0 exit gate remains open.
+
 ## Decision history
 
 - 2026-07-18: Initial product direction selected MultipeerConnectivity.
@@ -289,3 +301,6 @@ The physical-device matrix includes:
 - 2026-07-18: Clarified turn skip versus playing-track skip versus track failure;
   retained tombstones in locked order; separated fairness and Music validation;
   adopted automatic MusicKit token management and just-in-time permissions.
+- 2026-07-18: Physically verified subscriber-host authorization, catalog search,
+  queueing, playback, pause, and skip on iPhone 14 Pro with iOS 26.5.2; confirmed
+  automatic MusicKit token generation with the exact MusicKit-enabled bundle ID.
