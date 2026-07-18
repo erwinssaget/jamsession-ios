@@ -42,9 +42,8 @@ exception where their design depends on an unresolved Slice 0 result.
 - Existing source roots are `Jamsession/`, `JamsessionTests/`, and
   `JamsessionUITests/`; do not create parallel `Sources/` or `Tests/` roots.
 - The app target already uses Main Actor default isolation.
-- The project currently records deployment target 26.5 and Swift language version
-  6.0. Slice 0 must verify the installed compiler, then lower the deployment target
-  to 26.0 unless a documented API requires otherwise.
+- The project records deployment target 26.0 and Swift language mode 6. It was
+  verified with Xcode 26.6 and the Apple Swift 6.3.3 compiler during Slice 0.
 - Info.plist is generated. Add usage descriptions and Bonjour declarations through
   target build settings, or deliberately migrate to a checked-in plist.
 - SwiftLint is not currently configured. Add it only with user approval; if later
@@ -104,8 +103,9 @@ Invalidate the riskiest assumptions cheaply before production architecture grows
 
 - Verify the installed Xcode/Swift compiler and set the true minimum deployment
   target to iOS 26.0 if supported.
-- Enable MusicKit and required signing capabilities. Use automatic developer-token
-  management; do not implement custom `.p8` injection.
+- Enable the MusicKit App Service for the app's explicit App ID in Certificates,
+  Identifiers & Profiles. MusicKit has no code-signing entitlement. Use automatic
+  developer-token management; do not implement custom `.p8` injection.
 - Configure generated Info.plist values for Apple Music, local-network access, and
   declared Bonjour services.
 - Add background audio capability only after verifying it is required for the host

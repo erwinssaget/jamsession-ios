@@ -32,8 +32,8 @@ decision history at the end of this file.
 
 ## Platform and transport
 
-- Deployment target: iOS 26.0 or later. The project currently says 26.5; Slice 0
-  must lower it to 26.0 unless an API requirement proves 26.5 necessary.
+- Deployment target: iOS 26.0 or later. The project targets 26.0, verified with
+  Xcode 26.6 and the Apple Swift 6.3.3 compiler during Slice 0.
 - Use the iOS 26 concurrency-native Network framework APIs:
   `NetworkListener`, `NetworkBrowser`, and `NetworkConnection`.
 - Do not use deprecated MultipeerConnectivity or mix in callback-oriented
@@ -48,6 +48,11 @@ decision history at the end of this file.
 - Networking is foreground-oriented in the MVP. Host background audio may
   continue, but session management requires the host to remain foregrounded.
   Guests reconnect when returning to the foreground.
+- Slice 0 physical-device testing found that `ApplicationMusicPlayer` playback
+  continued under device lock without enabling the background-audio capability;
+  Lock Screen pause and resume worked, and skipping the spike's only queued entry
+  stopped playback as expected. Do not add background audio unless later host
+  integration demonstrates a concrete requirement.
 
 ## MusicKit and permissions
 
@@ -282,6 +287,18 @@ The authoritative execution status and evidence for this matrix live in
 3. Confirm host background audio and foreground-only session-management behavior
    under device lock and common interruptions.
 
+## Slice 0 feasibility evidence
+
+- 2026-07-18: Subscriber-host MusicKit passed on a physical iPhone 14 Pro running
+  iOS 26.5.2 with an active Apple Music subscription. The host authorized MusicKit,
+  searched the Apple Music catalog, queued and played a catalog song, paused it,
+  and completed a skip using `ApplicationMusicPlayer.shared`.
+- Automatic developer-token generation required an explicit MusicKit-enabled App
+  ID whose capitalization exactly matched the app bundle identifier:
+  `com.jamsession.jamsession`. No custom developer token or private key was used.
+- Non-subscriber guest search, two-device Network discovery/messaging, and
+  lifecycle observations remain unverified, so the Slice 0 exit gate remains open.
+
 ## Decision history
 
 - 2026-07-18: Initial product direction selected MultipeerConnectivity.
@@ -292,3 +309,6 @@ The authoritative execution status and evidence for this matrix live in
 - 2026-07-18: Clarified turn skip versus playing-track skip versus track failure;
   retained tombstones in locked order; separated fairness and Music validation;
   adopted automatic MusicKit token management and just-in-time permissions.
+- 2026-07-18: Physically verified subscriber-host authorization, catalog search,
+  queueing, playback, pause, and skip on iPhone 14 Pro with iOS 26.5.2; confirmed
+  automatic MusicKit token generation with the exact MusicKit-enabled bundle ID.
