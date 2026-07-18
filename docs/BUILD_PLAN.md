@@ -1,6 +1,6 @@
 # Build Plan — Ephemeral Shared-Queue Music Sessions
 
-Revision: 3  
+Revision: 4
 Last updated: 2026-07-18
 
 ## Authority and usage
@@ -12,6 +12,30 @@ This is the canonical implementation sequence. Read
 Implement one slice at a time. Do not begin the next slice until the current
 slice's exit gate has been demonstrated. If a feasibility gate fails, update the
 product decision record before changing architecture or scope.
+
+Physical-device results and unresolved hardware gates are tracked in
+[`VERIFICATION_LOG.md`](VERIFICATION_LOG.md). A hardware or account dependency
+does not make an exit gate pass.
+
+### Provisional work while a feasibility gate is blocked
+
+When a Slice 0 check cannot run solely because required physical hardware or an
+account state is unavailable, low-coupling work from a later slice may proceed
+provisionally only when all of the following are true:
+
+- The blocked check and exact dependency are recorded in `VERIFICATION_LOG.md`.
+- The work is independently useful and does not assume an unverified MusicKit,
+  Network framework, permission, or lifecycle behavior.
+- The work has a mockable or pure boundary and can be revised without preserving
+  compatibility with an unverified spike.
+- No dependent integration slice starts, and no later slice is declared complete,
+  until Slice 0 passes or the product decision and this plan are deliberately
+  revised.
+
+The pure Slice 1 fairness engine is authorized under this exception because it has
+no MusicKit, Network, clock, I/O, or physical-device dependency. Transport,
+playback, permission-flow, and lifecycle architecture are not authorized by this
+exception where their design depends on an unresolved Slice 0 result.
 
 ## Repository baseline
 
@@ -318,7 +342,8 @@ Make the core loop survive realistic party conditions and meet the MVP quality b
 ### Exit gate
 
 - All automated tests pass with no concurrency warnings.
-- Every physical-device matrix scenario in `PRODUCT_DECISIONS.md` passes.
+- Every required Slice 4C and release-gate scenario in `VERIFICATION_LOG.md`
+  passes on a current build.
 - Ten successful three-person sessions occur across at least three device/network
   setups, recorded manually.
 - No unresolved P0, P1, or P2 review findings remain.
@@ -359,4 +384,5 @@ editing, clean-only mode, cooldowns, full localization, and analytics infrastruc
 - Introduced UI is accessible and handles empty, loading, error, cancellation, and
   repeated-operation states.
 - SwiftLint passes only if it has been explicitly approved and configured.
-- Verification actually run is recorded; unverified behavior is named.
+- Verification actually run is recorded in `VERIFICATION_LOG.md`; unverified or
+  stale behavior is named and cannot satisfy an exit gate.
