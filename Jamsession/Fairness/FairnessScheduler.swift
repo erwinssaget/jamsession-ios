@@ -127,7 +127,10 @@ nonisolated struct FairnessScheduler: Sendable {
         let selection = candidate(in: state)
         state.pendingTracks[owner]?.removeAll { $0.id == submissionID }
         if selection?.track.id == submissionID, let selection {
-            moveCursor(after: selection.index, crossedBoundary: selection.crossedBoundary, in: &state)
+            let ownerStillHasPendingTracks = !(state.pendingTracks[owner]?.isEmpty ?? true)
+            if state.currentlyPlaying == nil || !ownerStillHasPendingTracks {
+                moveCursor(after: selection.index, crossedBoundary: selection.crossedBoundary, in: &state)
+            }
         }
     }
 

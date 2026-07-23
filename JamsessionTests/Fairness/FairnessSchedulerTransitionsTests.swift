@@ -121,6 +121,25 @@ struct FairnessSchedulerTransitionsTests {
         #expect(state.currentlyPlaying?.title == "B1")
     }
 
+    @Test func removingNextUpDuringPlaybackKeepsTheOwnersFollowingTrackAhead() throws {
+        var state = try makeState(participants: [a, b], tracks: [
+            track("A1", by: a), track("A2", by: a),
+            track("B1", by: b), track("B2", by: b),
+        ])
+        state = try scheduler.applyingAccepted(event(10, .advancePlayback), to: state)
+        #expect(state.currentlyPlaying?.title == "A1")
+        #expect(scheduler.nextUp(in: state)?.title == "B1")
+
+        state = try scheduler.applyingAccepted(
+            event(11, .removeOwn(submissionID: SubmissionID("B1"), participantID: b)),
+            to: state
+        )
+
+        #expect(scheduler.upcomingQueue(in: state).map(\.title) == ["B2", "A2"])
+        state = try scheduler.applyingAccepted(event(12, .advancePlayback), to: state)
+        #expect(state.currentlyPlaying?.title == "B2")
+    }
+
     @Test func reconnectAfterOriginalPositionPassedWaitsForNextRound() throws {
         var state = try makeState(participants: [a, b, c], tracks: [
             track("A1", by: a), track("A2", by: a), track("B1", by: b), track("C1", by: c),
