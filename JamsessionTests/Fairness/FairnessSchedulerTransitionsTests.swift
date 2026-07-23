@@ -43,6 +43,22 @@ struct FairnessSchedulerTransitionsTests {
         #expect(state.pending(for: c).map(\.title) == ["C1"])
     }
 
+    @Test func failedNextUpDuringPlaybackKeepsTheOwnersFollowingTrackAhead() throws {
+        var state = try makeState(participants: [a, b], tracks: [
+            track("A1", by: a), track("A2", by: a),
+            track("B1", by: b), track("B2", by: b),
+        ])
+        state = try scheduler.applyingAccepted(event(10, .advancePlayback), to: state)
+        #expect(state.currentlyPlaying?.title == "A1")
+        #expect(scheduler.nextUp(in: state)?.title == "B1")
+
+        state = try scheduler.applyingAccepted(event(11, .failTrack(SubmissionID("B1"))), to: state)
+
+        #expect(scheduler.upcomingQueue(in: state).map(\.title) == ["B2", "A2"])
+        state = try scheduler.applyingAccepted(event(12, .advancePlayback), to: state)
+        #expect(state.currentlyPlaying?.title == "B2")
+    }
+
     @Test func currentlyPlayingDoesNotCountTowardCapOrBlockTrackDuplicate() throws {
         var state = try makeState(participants: [a], tracks: [
             track("A1", by: a, trackID: "shared"), track("A2", by: a), track("A3", by: a),

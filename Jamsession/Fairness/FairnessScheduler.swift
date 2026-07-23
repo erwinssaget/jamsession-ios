@@ -172,7 +172,10 @@ nonisolated struct FairnessScheduler: Sendable {
             throw FairnessRejection.notNextUp
         }
         state.pendingTracks[selection.participantID]?.removeFirst()
-        moveCursor(after: selection.index, crossedBoundary: selection.crossedBoundary, in: &state)
+        let ownerStillHasPendingTracks = !(state.pendingTracks[selection.participantID]?.isEmpty ?? true)
+        if state.currentlyPlaying == nil || !ownerStillHasPendingTracks {
+            moveCursor(after: selection.index, crossedBoundary: selection.crossedBoundary, in: &state)
+        }
     }
 
     private func setStatus(
