@@ -43,15 +43,29 @@ struct FairnessSchedulerTransitionsTests {
         #expect(state.pending(for: c).map(\.title) == ["C1"])
     }
 
-    @Test func failedNextUpDuringPlaybackKeepsTheOwnersFollowingTrackAhead() throws {
-        var state = try makeState(participants: [a, b], tracks: [
+    @Test func failedNextUpAdvancesOnceToTheFollowingParticipant() throws {
+        var state = try makeState(participants: [a, b, c], tracks: [
             track("A1", by: a), track("A2", by: a),
             track("B1", by: b), track("B2", by: b),
+            track("C1", by: c),
         ])
         state = try scheduler.applyingAccepted(event(10, .advancePlayback), to: state)
         #expect(state.currentlyPlaying?.title == "A1")
         #expect(scheduler.nextUp(in: state)?.title == "B1")
 
+        state = try scheduler.applyingAccepted(event(11, .failTrack(SubmissionID("B1"))), to: state)
+
+        #expect(scheduler.upcomingQueue(in: state).map(\.title) == ["C1", "A2", "B2"])
+        state = try scheduler.applyingAccepted(event(12, .advancePlayback), to: state)
+        #expect(state.currentlyPlaying?.title == "C1")
+    }
+
+    @Test func failedNextUpDoesNotAllowConsecutivePlaybackAfterWrapping() throws {
+        var state = try makeState(participants: [a, b], tracks: [
+            track("A1", by: a), track("A2", by: a),
+            track("B1", by: b), track("B2", by: b),
+        ])
+        state = try scheduler.applyingAccepted(event(10, .advancePlayback), to: state)
         state = try scheduler.applyingAccepted(event(11, .failTrack(SubmissionID("B1"))), to: state)
 
         #expect(scheduler.upcomingQueue(in: state).map(\.title) == ["B2", "A2"])

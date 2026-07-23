@@ -32,12 +32,12 @@ nonisolated struct FairnessScheduler: Sendable {
 
     func upcomingQueue(in state: RotationState) -> [QueuedTrack] {
         var simulation = state
-        simulation.currentlyPlaying = nil
         var result: [QueuedTrack] = []
 
         while let selection = candidate(in: simulation) {
             result.append(selection.track)
             simulation.pendingTracks[selection.participantID]?.removeFirst()
+            simulation.currentlyPlaying = selection.track
             moveCursor(after: selection.index, crossedBoundary: selection.crossedBoundary, in: &simulation)
         }
 
@@ -158,8 +158,8 @@ nonisolated struct FairnessScheduler: Sendable {
     }
 
     private func advancePlayback(in state: inout RotationState) throws {
-        state.currentlyPlaying = nil
         guard let selection = candidate(in: state) else {
+            state.currentlyPlaying = nil
             return
         }
         state.pendingTracks[selection.participantID]?.removeFirst()
@@ -172,10 +172,7 @@ nonisolated struct FairnessScheduler: Sendable {
             throw FairnessRejection.notNextUp
         }
         state.pendingTracks[selection.participantID]?.removeFirst()
-        let ownerStillHasPendingTracks = !(state.pendingTracks[selection.participantID]?.isEmpty ?? true)
-        if state.currentlyPlaying == nil || !ownerStillHasPendingTracks {
-            moveCursor(after: selection.index, crossedBoundary: selection.crossedBoundary, in: &state)
-        }
+        moveCursor(after: selection.index, crossedBoundary: selection.crossedBoundary, in: &state)
     }
 
     private func setStatus(
@@ -256,6 +253,25 @@ nonisolated struct FairnessScheduler: Sendable {
     private func candidate(in state: RotationState) -> Candidate? {
         guard !state.lockedOrder.isEmpty else { return nil }
         let start = min(state.cursor, state.lockedOrder.count)
+        let currentlyPlayingParticipant = state.currentlyPlaying?.submitterID
+
+        if let candidate = firstCandidate(
+            in: start..<state.lockedOrder.count,
+            state: state,
+            crossedBoundary: false,
+            excluding: currentlyPlayingParticipant
+        ) {
+            return candidate
+        }
+
+        if let candidate = firstCandidate(
+            in: 0..<start,
+            state: state,
+            crossedBoundary: true,
+            excluding: currentlyPlayingParticipant
+        ) {
+            return candidate
+        }
 
         if let candidate = firstCandidate(in: start..<state.lockedOrder.count, state: state, crossedBoundary: false) {
             return candidate
@@ -267,10 +283,12 @@ nonisolated struct FairnessScheduler: Sendable {
     private func firstCandidate(
         in indices: Range<Int>,
         state: RotationState,
-        crossedBoundary: Bool
+        crossedBoundary: Bool,
+        excluding excludedParticipantID: ParticipantID? = nil
     ) -> Candidate? {
         for index in indices {
             let participantID = state.lockedOrder[index]
+            guard participantID != excludedParticipantID else { continue }
             guard state.statuses[participantID] == .connected else { continue }
             if !crossedBoundary && state.currentRoundSkips.contains(participantID) {
                 continue
