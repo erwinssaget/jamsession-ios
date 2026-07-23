@@ -105,6 +105,22 @@ struct FairnessSchedulerTransitionsTests {
         #expect(scheduler.upcomingQueue(in: state).map(\.title) == ["B1", "D1", "A2"])
     }
 
+    @Test func lateJoinAfterOnlyParticipantStartsPlayingGetsTheNextTurn() throws {
+        var state = try makeState(participants: [a], tracks: [
+            track("A1", by: a), track("A2", by: a),
+        ])
+        state = try scheduler.applyingAccepted(event(10, .advancePlayback), to: state)
+        #expect(state.cursor == 1)
+
+        state = try scheduler.applyingAccepted(event(11, .addParticipant(b)), to: state)
+        state = try scheduler.applyingAccepted(event(12, .submit(track("B1", by: b))), to: state)
+
+        #expect(scheduler.upcomingQueue(in: state).map(\.title) == ["B1", "A2"])
+
+        state = try scheduler.applyingAccepted(event(13, .advancePlayback), to: state)
+        #expect(state.currentlyPlaying?.title == "B1")
+    }
+
     @Test func reconnectAfterOriginalPositionPassedWaitsForNextRound() throws {
         var state = try makeState(participants: [a, b, c], tracks: [
             track("A1", by: a), track("A2", by: a), track("B1", by: b), track("C1", by: c),

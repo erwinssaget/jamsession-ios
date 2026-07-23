@@ -283,7 +283,9 @@ nonisolated struct FairnessScheduler: Sendable {
     private func moveCursor(after index: Int, crossedBoundary: Bool, in state: inout RotationState) {
         let nextIndex = index + 1
         if crossedBoundary || nextIndex >= state.lockedOrder.count {
-            state.cursor = nextIndex >= state.lockedOrder.count ? 0 : nextIndex
+            // Preserve a one-past-the-tail cursor so a participant appended before the next
+            // selection remains eligible in the current round instead of being skipped by a wrap.
+            state.cursor = nextIndex
             state.currentRoundSkips.removeAll()
         } else {
             state.cursor = nextIndex
