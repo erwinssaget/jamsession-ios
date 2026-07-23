@@ -30,7 +30,7 @@ enum FairnessTestSupport {
         let scheduler = FairnessScheduler()
         var state = RotationState(participants: participants)
         for (index, track) in tracks.enumerated() {
-            state = try scheduler.applying(event(index, .submit(track)), to: state)
+            state = try scheduler.applyingAccepted(event(index, .submit(track)), to: state)
         }
         return state
     }

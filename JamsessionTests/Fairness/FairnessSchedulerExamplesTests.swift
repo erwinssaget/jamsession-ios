@@ -28,9 +28,9 @@ struct FairnessSchedulerExamplesTests {
         ])
 
         #expect(throws: FairnessRejection.pendingLimitReached(limit: 3)) {
-            try scheduler.applying(event(20, .submit(track("A4", by: a))), to: state)
+            try scheduler.applyingAccepted(event(20, .submit(track("A4", by: a))), to: state)
         }
-        state = try scheduler.applying(event(21, .advancePlayback), to: state)
+        state = try scheduler.applyingAccepted(event(21, .advancePlayback), to: state)
         #expect(state.currentlyPlaying?.title == "A1")
         #expect(scheduler.nextUp(in: state)?.title == "B1")
     }
@@ -40,9 +40,9 @@ struct FairnessSchedulerExamplesTests {
         var state = try makeState(participants: [a, b, c, d], tracks: [
             track("B1", by: b), track("C1", by: c), track("D1", by: d),
         ])
-        state = try scheduler.applying(event(10, .setStatus(participantID: b, status: .reconnecting)), to: state)
-        state = try scheduler.applying(event(11, .markGone(c)), to: state)
-        state = try scheduler.applying(event(12, .block(d)), to: state)
+        state = try scheduler.applyingAccepted(event(10, .setStatus(participantID: b, status: .reconnecting)), to: state)
+        state = try scheduler.applyingAccepted(event(11, .markGone(c)), to: state)
+        state = try scheduler.applyingAccepted(event(12, .block(d)), to: state)
 
         #expect(scheduler.nextUp(in: state) == nil)
         #expect(state.lockedOrder == [a, b, c, d])
@@ -52,25 +52,25 @@ struct FairnessSchedulerExamplesTests {
         var state = try makeState(participants: [a, b], tracks: [
             track("A1", by: a, trackID: "same"), track("A2", by: a), track("A3", by: a), track("B1", by: b),
         ])
-        state = try scheduler.applying(event(10, .skipOwnTurn(participantID: a)), to: state)
+        state = try scheduler.applyingAccepted(event(10, .skipOwnTurn(participantID: a)), to: state)
 
         #expect(scheduler.nextUp(in: state)?.title == "B1")
         #expect(state.pending(for: a).first?.title == "A1")
         #expect(throws: FairnessRejection.pendingLimitReached(limit: 3)) {
-            try scheduler.applying(event(11, .submit(track("A4", by: a))), to: state)
+            try scheduler.applyingAccepted(event(11, .submit(track("A4", by: a))), to: state)
         }
         #expect(throws: FairnessRejection.duplicate) {
-            try scheduler.applying(event(12, .submit(track("B2", by: b, trackID: "same"))), to: state)
+            try scheduler.applyingAccepted(event(12, .submit(track("B2", by: b, trackID: "same"))), to: state)
         }
-        state = try scheduler.applying(event(13, .advancePlayback), to: state)
+        state = try scheduler.applyingAccepted(event(13, .advancePlayback), to: state)
         #expect(state.currentlyPlaying?.title == "B1")
         #expect(scheduler.nextUp(in: state)?.title == "A1")
     }
 
     @Test func twoSkipsClearAtRoundBoundary() throws {
         var state = try makeState(participants: [a, b], tracks: [track("A1", by: a), track("B1", by: b)])
-        state = try scheduler.applying(event(10, .skipOwnTurn(participantID: a)), to: state)
-        state = try scheduler.applying(event(11, .skipOwnTurn(participantID: b)), to: state)
+        state = try scheduler.applyingAccepted(event(10, .skipOwnTurn(participantID: a)), to: state)
+        state = try scheduler.applyingAccepted(event(11, .skipOwnTurn(participantID: b)), to: state)
 
         #expect(state.currentRoundSkips.isEmpty)
         #expect(scheduler.nextUp(in: state)?.title == "A1")
@@ -78,7 +78,7 @@ struct FairnessSchedulerExamplesTests {
 
     @Test func loneParticipantSkipDoesNotCreateSilence() throws {
         var state = try makeState(participants: [a], tracks: [track("A1", by: a)])
-        state = try scheduler.applying(event(10, .skipOwnTurn(participantID: a)), to: state)
+        state = try scheduler.applyingAccepted(event(10, .skipOwnTurn(participantID: a)), to: state)
 
         #expect(scheduler.nextUp(in: state)?.title == "A1")
         #expect(state.currentRoundSkips.isEmpty)
@@ -88,7 +88,7 @@ struct FairnessSchedulerExamplesTests {
         var state = try makeState(participants: [a, b], tracks: [
             track("A1", by: a), track("A2", by: a), track("B1", by: b),
         ])
-        state = try scheduler.applying(event(10, .removeOwn(submissionID: SubmissionID("A1"), participantID: a)), to: state)
+        state = try scheduler.applyingAccepted(event(10, .removeOwn(submissionID: SubmissionID("A1"), participantID: a)), to: state)
 
         #expect(scheduler.nextUp(in: state)?.title == "B1")
         #expect(scheduler.upcomingQueue(in: state).map(\.title) == ["B1", "A2"])

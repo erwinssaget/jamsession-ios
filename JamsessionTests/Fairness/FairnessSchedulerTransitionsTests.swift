@@ -8,14 +8,14 @@ struct FairnessSchedulerTransitionsTests {
         var state = try makeState(tracks: [track("A1", by: a), track("A2", by: a), track("B1", by: b)])
         let firstAdvance = event(10, .advancePlayback)
 
-        state = try scheduler.applying(firstAdvance, to: state)
+        state = try scheduler.applyingAccepted(firstAdvance, to: state)
         #expect(state.currentlyPlaying?.title == "A1")
         #expect(scheduler.nextUp(in: state)?.title == "B1")
 
-        let replayed = try scheduler.applying(firstAdvance, to: state)
+        let replayed = try scheduler.applyingAccepted(firstAdvance, to: state)
         #expect(replayed == state)
 
-        state = try scheduler.applying(event(11, .advancePlayback), to: state)
+        state = try scheduler.applyingAccepted(event(11, .advancePlayback), to: state)
         #expect(state.currentlyPlaying?.title == "B1")
         #expect(scheduler.nextUp(in: state)?.title == "A2")
     }
@@ -24,10 +24,10 @@ struct FairnessSchedulerTransitionsTests {
         var state = try makeState(tracks: [track("A1", by: a), track("B1", by: b)])
 
         #expect(throws: FairnessRejection.nothingPlaying) {
-            try scheduler.applying(event(10, .hostSkipPlayingTrack), to: state)
+            try scheduler.applyingAccepted(event(10, .hostSkipPlayingTrack), to: state)
         }
-        state = try scheduler.applying(event(11, .advancePlayback), to: state)
-        state = try scheduler.applying(event(12, .hostSkipPlayingTrack), to: state)
+        state = try scheduler.applyingAccepted(event(11, .advancePlayback), to: state)
+        state = try scheduler.applyingAccepted(event(12, .hostSkipPlayingTrack), to: state)
 
         #expect(state.currentlyPlaying?.title == "B1")
         #expect(state.pending(for: a).isEmpty)
@@ -35,11 +35,11 @@ struct FairnessSchedulerTransitionsTests {
 
     @Test func failedTrackIsRemovedWithoutStartingPlaybackAndStopsBlockingDuplicates() throws {
         var state = try makeState(tracks: [track("A1", by: a, trackID: "shared"), track("B1", by: b)])
-        state = try scheduler.applying(event(10, .failTrack(SubmissionID("A1"))), to: state)
+        state = try scheduler.applyingAccepted(event(10, .failTrack(SubmissionID("A1"))), to: state)
 
         #expect(state.currentlyPlaying == nil)
         #expect(scheduler.nextUp(in: state)?.title == "B1")
-        state = try scheduler.applying(event(11, .submit(track("C1", by: c, trackID: "shared"))), to: state)
+        state = try scheduler.applyingAccepted(event(11, .submit(track("C1", by: c, trackID: "shared"))), to: state)
         #expect(state.pending(for: c).map(\.title) == ["C1"])
     }
 
@@ -47,8 +47,8 @@ struct FairnessSchedulerTransitionsTests {
         var state = try makeState(participants: [a], tracks: [
             track("A1", by: a, trackID: "shared"), track("A2", by: a), track("A3", by: a),
         ])
-        state = try scheduler.applying(event(10, .advancePlayback), to: state)
-        state = try scheduler.applying(event(11, .submit(track("A4", by: a, trackID: "shared"))), to: state)
+        state = try scheduler.applyingAccepted(event(10, .advancePlayback), to: state)
+        state = try scheduler.applyingAccepted(event(11, .submit(track("A4", by: a, trackID: "shared"))), to: state)
 
         #expect(state.currentlyPlaying?.title == "A1")
         #expect(state.pending(for: a).count == 3)
@@ -56,13 +56,13 @@ struct FairnessSchedulerTransitionsTests {
 
     @Test func goneParticipantIsATombstoneAndCanReturnWithoutDeletedTracks() throws {
         var state = try makeState(tracks: [track("A1", by: a), track("B1", by: b)])
-        state = try scheduler.applying(event(10, .markGone(a)), to: state)
+        state = try scheduler.applyingAccepted(event(10, .markGone(a)), to: state)
 
         #expect(state.lockedOrder == [a, b, c])
         #expect(state.pending(for: a).isEmpty)
         #expect(scheduler.nextUp(in: state)?.title == "B1")
 
-        state = try scheduler.applying(event(11, .unmarkGone(a)), to: state)
+        state = try scheduler.applyingAccepted(event(11, .unmarkGone(a)), to: state)
         #expect(state.status(for: a) == .connected)
         #expect(state.lockedOrder == [a, b, c])
         #expect(state.pending(for: a).isEmpty)
@@ -70,22 +70,22 @@ struct FairnessSchedulerTransitionsTests {
 
     @Test func removedParticipantIsTerminal() throws {
         var state = try makeState(tracks: [track("A1", by: a), track("B1", by: b)])
-        state = try scheduler.applying(event(10, .block(a)), to: state)
+        state = try scheduler.applyingAccepted(event(10, .block(a)), to: state)
 
         #expect(state.status(for: a) == .removed)
         #expect(state.lockedOrder == [a, b, c])
         #expect(throws: FairnessRejection.participantRemoved) {
-            try scheduler.applying(event(11, .unmarkGone(a)), to: state)
+            try scheduler.applyingAccepted(event(11, .unmarkGone(a)), to: state)
         }
         #expect(throws: FairnessRejection.participantRemoved) {
-            try scheduler.applying(event(12, .submit(track("A2", by: a))), to: state)
+            try scheduler.applyingAccepted(event(12, .submit(track("A2", by: a))), to: state)
         }
     }
 
     @Test func markGoneDoesNotStopCurrentlyPlayingTrack() throws {
         var state = try makeState(tracks: [track("A1", by: a), track("A2", by: a), track("B1", by: b)])
-        state = try scheduler.applying(event(10, .advancePlayback), to: state)
-        state = try scheduler.applying(event(11, .markGone(a)), to: state)
+        state = try scheduler.applyingAccepted(event(10, .advancePlayback), to: state)
+        state = try scheduler.applyingAccepted(event(11, .markGone(a)), to: state)
 
         #expect(state.currentlyPlaying?.title == "A1")
         #expect(state.pending(for: a).isEmpty)
@@ -97,9 +97,9 @@ struct FairnessSchedulerTransitionsTests {
         var state = try makeState(participants: [a, b], tracks: [
             track("A1", by: a), track("A2", by: a), track("B1", by: b),
         ])
-        state = try scheduler.applying(event(10, .advancePlayback), to: state)
-        state = try scheduler.applying(event(11, .addParticipant(d)), to: state)
-        state = try scheduler.applying(event(12, .submit(track("D1", by: d))), to: state)
+        state = try scheduler.applyingAccepted(event(10, .advancePlayback), to: state)
+        state = try scheduler.applyingAccepted(event(11, .addParticipant(d)), to: state)
+        state = try scheduler.applyingAccepted(event(12, .submit(track("D1", by: d))), to: state)
 
         #expect(state.lockedOrder == [a, b, d])
         #expect(scheduler.upcomingQueue(in: state).map(\.title) == ["B1", "D1", "A2"])
@@ -109,12 +109,12 @@ struct FairnessSchedulerTransitionsTests {
         var state = try makeState(participants: [a, b, c], tracks: [
             track("A1", by: a), track("A2", by: a), track("B1", by: b), track("C1", by: c),
         ])
-        state = try scheduler.applying(event(10, .advancePlayback), to: state)
-        state = try scheduler.applying(event(11, .setStatus(participantID: b, status: .reconnecting)), to: state)
-        state = try scheduler.applying(event(12, .advancePlayback), to: state)
+        state = try scheduler.applyingAccepted(event(10, .advancePlayback), to: state)
+        state = try scheduler.applyingAccepted(event(11, .setStatus(participantID: b, status: .reconnecting)), to: state)
+        state = try scheduler.applyingAccepted(event(12, .advancePlayback), to: state)
         #expect(state.currentlyPlaying?.title == "C1")
 
-        state = try scheduler.applying(event(13, .setStatus(participantID: b, status: .connected)), to: state)
+        state = try scheduler.applyingAccepted(event(13, .setStatus(participantID: b, status: .connected)), to: state)
         #expect(scheduler.upcomingQueue(in: state).map(\.title) == ["A2", "B1"])
     }
 
@@ -122,13 +122,13 @@ struct FairnessSchedulerTransitionsTests {
         let state = try makeState(tracks: [track("A1", by: a), track("B1", by: b)])
 
         #expect(throws: FairnessRejection.unauthorizedAction) {
-            try scheduler.applying(
+            try scheduler.applyingAccepted(
                 event(10, .removeOwn(submissionID: SubmissionID("A1"), participantID: b)),
                 to: state
             )
         }
         #expect(throws: FairnessRejection.unauthorizedAction) {
-            try scheduler.applying(event(11, .skipOwnTurn(participantID: b)), to: state)
+            try scheduler.applyingAccepted(event(11, .skipOwnTurn(participantID: b)), to: state)
         }
     }
 

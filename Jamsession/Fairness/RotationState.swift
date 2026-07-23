@@ -6,7 +6,7 @@ nonisolated struct RotationState: Sendable, Equatable {
     var cursor: Int
     var currentRoundSkips: Set<ParticipantID>
     var currentlyPlaying: QueuedTrack?
-    var appliedEventIDs: Set<FairnessEventID>
+    var eventOutcomes: [FairnessEventID: FairnessEventOutcome]
 
     init(participants: [ParticipantID] = [], config: FairnessConfig = FairnessConfig()) {
         precondition(Set(participants).count == participants.count)
@@ -17,7 +17,7 @@ nonisolated struct RotationState: Sendable, Equatable {
         cursor = 0
         currentRoundSkips = []
         currentlyPlaying = nil
-        appliedEventIDs = []
+        eventOutcomes = [:]
     }
 
     func status(for participantID: ParticipantID) -> ParticipantStatus? {

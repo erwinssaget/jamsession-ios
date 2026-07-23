@@ -1,12 +1,28 @@
 nonisolated struct FairnessScheduler: Sendable {
-    func applying(_ event: FairnessEvent, to state: RotationState) throws -> RotationState {
-        if state.appliedEventIDs.contains(event.id) {
-            return state
+    func apply(_ event: FairnessEvent, to state: inout RotationState) throws {
+        if let outcome = state.eventOutcomes[event.id] {
+            if case .rejected(let rejection) = outcome {
+                throw rejection
+            }
+            return
         }
 
         var next = state
-        try apply(event.action, to: &next)
-        next.appliedEventIDs.insert(event.id)
+        do {
+            try apply(event.action, to: &next)
+            next.eventOutcomes[event.id] = .accepted
+            state = next
+        } catch let rejection as FairnessRejection {
+            state.eventOutcomes[event.id] = .rejected(rejection)
+            throw rejection
+        }
+    }
+
+    /// Convenience for constructing known-valid fixture state. Rejections cannot return the
+    /// updated outcome cache through this value-returning API; command handling must use `apply(_:to:)`.
+    func applyingAccepted(_ event: FairnessEvent, to state: RotationState) throws -> RotationState {
+        var next = state
+        try apply(event, to: &next)
         return next
     }
 

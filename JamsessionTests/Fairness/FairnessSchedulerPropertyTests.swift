@@ -17,7 +17,7 @@ struct FairnessSchedulerPropertyTests {
                 for round in 0..<supply {
                     for participant in participants.reversed() {
                         let name = "\(participant.rawValue)-\(round)"
-                        state = try scheduler.applying(
+                        state = try scheduler.applyingAccepted(
                             FairnessTestSupport.event(eventNumber, .submit(FairnessTestSupport.track(name, by: participant))),
                             to: state
                         )
@@ -52,7 +52,7 @@ struct FairnessSchedulerPropertyTests {
                 let participant = participants[generator.nextIndex(upperBound: participants.count)]
                 if state.pending(for: participant).count < state.config.maxPendingPerParticipant {
                     let name = "S\(seed)-E\(eventNumber)"
-                    state = try scheduler.applying(
+                    state = try scheduler.applyingAccepted(
                         FairnessTestSupport.event(eventNumber, .submit(FairnessTestSupport.track(name, by: participant))),
                         to: state
                     )
@@ -76,8 +76,8 @@ struct FairnessSchedulerPropertyTests {
 
         for (index, participant) in late.enumerated() {
             let event = FairnessTestSupport.event(index, .addParticipant(participant))
-            first = try scheduler.applying(event, to: first)
-            second = try scheduler.applying(event, to: second)
+            first = try scheduler.applyingAccepted(event, to: first)
+            second = try scheduler.applyingAccepted(event, to: second)
             #expect(first.lockedOrder == original + Array(late.prefix(index + 1)))
             #expect(first == second)
         }
@@ -92,7 +92,7 @@ struct FairnessSchedulerPropertyTests {
 
         let title = try await Task.detached {
             let scheduler = FairnessScheduler()
-            let updated = try scheduler.applying(event, to: state)
+            let updated = try scheduler.applyingAccepted(event, to: state)
             return scheduler.nextUp(in: updated)?.title
         }.value
 
@@ -114,8 +114,8 @@ struct FairnessSchedulerPropertyTests {
                 for participant in participants {
                     let track = FairnessTestSupport.track("S\(seed)-P\(participant.rawValue)-R\(round)", by: participant)
                     let event = FairnessTestSupport.event(eventNumber, .submit(track))
-                    first = try scheduler.applying(event, to: first)
-                    second = try scheduler.applying(event, to: second)
+                    first = try scheduler.applyingAccepted(event, to: first)
+                    second = try scheduler.applyingAccepted(event, to: second)
                     eventNumber += 1
                 }
             }
@@ -206,8 +206,8 @@ struct FairnessSchedulerPropertyTests {
         first: inout RotationState,
         second: inout RotationState
     ) throws {
-        first = try scheduler.applying(event, to: first)
-        second = try scheduler.applying(event, to: second)
+        first = try scheduler.applyingAccepted(event, to: first)
+        second = try scheduler.applyingAccepted(event, to: second)
         #expect(first == second)
         expectFairDerivedQueue(scheduler.upcomingQueue(in: first))
     }

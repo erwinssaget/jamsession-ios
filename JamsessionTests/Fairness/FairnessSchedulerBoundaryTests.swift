@@ -8,12 +8,12 @@ struct FairnessSchedulerBoundaryTests {
         let state = RotationState()
         let event = FairnessTestSupport.event(1, .advancePlayback)
 
-        let advanced = try scheduler.applying(event, to: state)
+        let advanced = try scheduler.applyingAccepted(event, to: state)
 
         #expect(scheduler.nextUp(in: advanced) == nil)
         #expect(scheduler.upcomingQueue(in: advanced).isEmpty)
         #expect(advanced.currentlyPlaying == nil)
-        #expect(try scheduler.applying(event, to: advanced) == advanced)
+        #expect(try scheduler.applyingAccepted(event, to: advanced) == advanced)
     }
 
     @Test func hostCanSkipNextUpWithoutRemovingIt() throws {
@@ -25,7 +25,7 @@ struct FairnessSchedulerBoundaryTests {
             ]
         )
 
-        state = try scheduler.applying(FairnessTestSupport.event(10, .hostSkipTurn), to: state)
+        state = try scheduler.applyingAccepted(FairnessTestSupport.event(10, .hostSkipTurn), to: state)
 
         #expect(scheduler.nextUp(in: state)?.title == "B1")
         #expect(state.pending(for: FairnessTestSupport.a).map(\.title) == ["A1"])
@@ -41,20 +41,20 @@ struct FairnessSchedulerBoundaryTests {
             ]
         )
 
-        state = try scheduler.applying(
+        state = try scheduler.applyingAccepted(
             FairnessTestSupport.event(10, .hostRemove(SubmissionID("A2"))),
             to: state
         )
         #expect(scheduler.upcomingQueue(in: state).map(\.title) == ["A1", "B1"])
 
-        state = try scheduler.applying(
+        state = try scheduler.applyingAccepted(
             FairnessTestSupport.event(11, .hostRemove(SubmissionID("A1"))),
             to: state
         )
         #expect(scheduler.nextUp(in: state)?.title == "B1")
     }
 
-    @Test func rejectionDoesNotMutateStateOrConsumeEventIdentity() throws {
+    @Test func rejectedEventReplaysItsOriginalOutcomeAfterStateChanges() throws {
         let rejectedEvent = FairnessTestSupport.event(
             10,
             .submit(FairnessTestSupport.track("A4", by: FairnessTestSupport.a))
@@ -67,16 +67,19 @@ struct FairnessSchedulerBoundaryTests {
                 FairnessTestSupport.track("A3", by: FairnessTestSupport.a),
             ]
         )
-        let beforeRejection = state
+        let pendingBeforeRejection = state.pendingTracks
 
         #expect(throws: FairnessRejection.pendingLimitReached(limit: 3)) {
-            try scheduler.applying(rejectedEvent, to: state)
+            try scheduler.apply(rejectedEvent, to: &state)
         }
-        #expect(state == beforeRejection)
+        #expect(state.pendingTracks == pendingBeforeRejection)
+        #expect(state.eventOutcomes[rejectedEvent.id] == .rejected(.pendingLimitReached(limit: 3)))
 
-        state = try scheduler.applying(FairnessTestSupport.event(11, .advancePlayback), to: state)
-        state = try scheduler.applying(rejectedEvent, to: state)
-        #expect(state.pending(for: FairnessTestSupport.a).map(\.title) == ["A2", "A3", "A4"])
+        try scheduler.apply(FairnessTestSupport.event(11, .advancePlayback), to: &state)
+        #expect(throws: FairnessRejection.pendingLimitReached(limit: 3)) {
+            try scheduler.apply(rejectedEvent, to: &state)
+        }
+        #expect(state.pending(for: FairnessTestSupport.a).map(\.title) == ["A2", "A3"])
     }
 
     @Test func invalidReferencesReturnTypedRejections() throws {
@@ -84,22 +87,22 @@ struct FairnessSchedulerBoundaryTests {
         let state = RotationState(participants: [FairnessTestSupport.a])
 
         #expect(throws: FairnessRejection.participantNotFound) {
-            try scheduler.applying(
+            try scheduler.applyingAccepted(
                 FairnessTestSupport.event(1, .submit(FairnessTestSupport.track("X1", by: unknown))),
                 to: state
             )
         }
         #expect(throws: FairnessRejection.submissionNotFound) {
-            try scheduler.applying(
+            try scheduler.applyingAccepted(
                 FairnessTestSupport.event(2, .hostRemove(SubmissionID("missing"))),
                 to: state
             )
         }
         #expect(throws: FairnessRejection.notNextUp) {
-            try scheduler.applying(FairnessTestSupport.event(3, .hostSkipTurn), to: state)
+            try scheduler.applyingAccepted(FairnessTestSupport.event(3, .hostSkipTurn), to: state)
         }
         #expect(throws: FairnessRejection.nothingPlaying) {
-            try scheduler.applying(FairnessTestSupport.event(4, .hostSkipPlayingTrack), to: state)
+            try scheduler.applyingAccepted(FairnessTestSupport.event(4, .hostSkipPlayingTrack), to: state)
         }
     }
 
@@ -129,17 +132,17 @@ struct FairnessSchedulerBoundaryTests {
         try expectReplay(.markGone(b), from: base)
         try expectReplay(.block(b), from: base)
 
-        let playing = try scheduler.applying(FairnessTestSupport.event(50, .advancePlayback), to: base)
+        let playing = try scheduler.applyingAccepted(FairnessTestSupport.event(50, .advancePlayback), to: base)
         try expectReplay(.hostSkipPlayingTrack, from: playing)
 
-        let gone = try scheduler.applying(FairnessTestSupport.event(51, .markGone(b)), to: base)
+        let gone = try scheduler.applyingAccepted(FairnessTestSupport.event(51, .markGone(b)), to: base)
         try expectReplay(.unmarkGone(b), from: gone)
     }
 
     private func expectReplay(_ action: FairnessEvent.Action, from state: RotationState) throws {
         let event = FairnessEvent(id: FairnessEventID("replay-\(String(describing: action))"), action: action)
-        let appliedOnce = try scheduler.applying(event, to: state)
-        let appliedTwice = try scheduler.applying(event, to: appliedOnce)
+        let appliedOnce = try scheduler.applyingAccepted(event, to: state)
+        let appliedTwice = try scheduler.applyingAccepted(event, to: appliedOnce)
 
         #expect(appliedTwice == appliedOnce)
     }
