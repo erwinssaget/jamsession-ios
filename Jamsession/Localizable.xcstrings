@@ -1,7 +1,16 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "00:24" : {
+
+    },
+    "Afterglow" : {
+
+    },
     "Apple Music test status: %@" : {
+
+    },
+    "BEAT" : {
 
     },
     "feasibility.guest" : {
@@ -48,6 +57,50 @@
         }
       }
     },
+    "feasibility.mockEntry" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Mock First Run"
+          }
+        }
+      }
+    },
+    "feasibility.mockFullFlow" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Mock Full Flow"
+          }
+        }
+      }
+    },
+    "feasibility.mockLifecycle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Mock Lifecycle Gallery"
+          }
+        }
+      }
+    },
+    "feasibility.mockLobby" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Mock Lobby Gallery"
+          }
+        }
+      }
+    },
     "feasibility.mockQueue" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -55,6 +108,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open Mock Joined Queue"
+          }
+        }
+      }
+    },
+    "feasibility.mockSearch" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Mock Search Gallery"
           }
         }
       }
@@ -172,6 +236,1421 @@
     "Local network test status: %@" : {
 
     },
+    "Maya’s Jam" : {
+
+    },
+    "mockEntry.cancel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "mockEntry.continue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        }
+      }
+    },
+    "mockEntry.ephemeral" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessions are live and ephemeral. Queue and listening data disappear when the session ends."
+          }
+        }
+      }
+    },
+    "mockEntry.hero.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Build a fair queue together. Everyone gets a turn."
+          }
+        }
+      }
+    },
+    "mockEntry.hero.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pass the music, not the aux."
+          }
+        }
+      }
+    },
+    "mockEntry.host.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play music from this iPhone and manage the room."
+          }
+        }
+      }
+    },
+    "mockEntry.host.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host a Session"
+          }
+        }
+      }
+    },
+    "mockEntry.join.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find a nearby room and add songs from your phone."
+          }
+        }
+      }
+    },
+    "mockEntry.join.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join a Session"
+          }
+        }
+      }
+    },
+    "mockEntry.permission.host.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hosting needs Apple Music access to search the catalog and play the shared queue. An active subscription is required only for the host."
+          }
+        }
+      }
+    },
+    "mockEntry.permission.host.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect Apple Music"
+          }
+        }
+      }
+    },
+    "mockEntry.permission.inert" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prototype only — no permission will be requested."
+          }
+        }
+      }
+    },
+    "mockEntry.permission.join.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jamsession uses your local network to find nearby rooms. It does not send your queue to a server."
+          }
+        }
+      }
+    },
+    "mockEntry.permission.join.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find Friends Nearby"
+          }
+        }
+      }
+    },
+    "mockEntry.permission.preview" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finish Preview"
+          }
+        }
+      }
+    },
+    "mockEntry.profile.color.option" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ profile color"
+          }
+        }
+      }
+    },
+    "mockEntry.profile.color.section" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profile Color"
+          }
+        }
+      }
+    },
+    "mockEntry.profile.duplicateNames" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Friends can use the same name. Your emoji and color help everyone tell you apart."
+          }
+        }
+      }
+    },
+    "mockEntry.profile.emoji.option" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avatar %@"
+          }
+        }
+      }
+    },
+    "mockEntry.profile.emoji.picker" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose an avatar"
+          }
+        }
+      }
+    },
+    "mockEntry.profile.emoji.section" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avatar"
+          }
+        }
+      }
+    },
+    "mockEntry.profile.host.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set Up Your Host Profile"
+          }
+        }
+      }
+    },
+    "mockEntry.profile.join.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set Up Your Profile"
+          }
+        }
+      }
+    },
+    "mockEntry.profile.name.help" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use up to 30 characters."
+          }
+        }
+      }
+    },
+    "mockEntry.profile.name.placeholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display name"
+          }
+        }
+      }
+    },
+    "mockEntry.profile.name.section" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What should friends call you?"
+          }
+        }
+      }
+    },
+    "mockEntry.profile.preview" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your name"
+          }
+        }
+      }
+    },
+    "mockEntry.profile.validation.blank" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a name with at least one visible character."
+          }
+        }
+      }
+    },
+    "mockEntry.profile.validation.emoji" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Choose an avatar." } } }
+    },
+    "mockEntry.profile.validation.long" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep your display name to 30 characters or fewer."
+          }
+        }
+      }
+    },
+    "mockEntry.prototypeNotice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mock first-run prototype"
+          }
+        }
+      }
+    },
+    "mockEntry.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to Jamsession"
+          }
+        }
+      }
+    },
+    "mockFlow.awaiting.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join Request"
+          }
+        }
+      }
+    },
+    "mockFlow.discovery.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find a Session"
+          }
+        }
+      }
+    },
+    "mockFlow.fixtureTransition" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prototype control — this stands in for an approval received from the host."
+          }
+        }
+      }
+    },
+    "mockFlow.hostLobby.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Lobby"
+          }
+        }
+      }
+    },
+    "mockFlow.restart" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restart"
+          }
+        }
+      }
+    },
+    "mockFlow.simulateApproval" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulate Host Approval"
+          }
+        }
+      }
+    },
+    "mockLifecycle.ended.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The live queue and participant state have been discarded from this device."
+          }
+        }
+      }
+    },
+    "mockLifecycle.ended.returnHome" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Return Home"
+          }
+        }
+      }
+    },
+    "mockLifecycle.ended.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session Ended"
+          }
+        }
+      }
+    },
+    "mockLifecycle.ending.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifying everyone, stopping playback, and clearing this live session."
+          }
+        }
+      }
+    },
+    "mockLifecycle.ending.fixtureNotice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Static presentation fixture — no teardown is running."
+          }
+        }
+      }
+    },
+    "mockLifecycle.ending.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ending Session…"
+          }
+        }
+      }
+    },
+    "mockLifecycle.gone.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jordan disconnected. Their turns are skipped while the reconnect grace period remains open."
+          }
+        }
+      }
+    },
+    "mockLifecycle.gone.participantStatus" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disconnected · Original position reserved"
+          }
+        }
+      }
+    },
+    "mockLifecycle.gone.queueExplanation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fixture only: queued songs are shown as retained, but this screen does not run reconnection or rotation logic."
+          }
+        }
+      }
+    },
+    "mockLifecycle.gone.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Friend Reconnecting"
+          }
+        }
+      }
+    },
+    "mockLifecycle.hostLoss.countdownAccessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "24 seconds remaining"
+          }
+        }
+      }
+    },
+    "mockLifecycle.hostLoss.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trying to reconnect before the session closes and this device clears its mirrored state."
+          }
+        }
+      }
+    },
+    "mockLifecycle.hostLoss.fixtureNotice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Static countdown fixture — no timer or connection is active."
+          }
+        }
+      }
+    },
+    "mockLifecycle.hostLoss.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host Connection Lost"
+          }
+        }
+      }
+    },
+    "mockLifecycle.localization.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This fixture uses deliberately expanded English copy to expose layouts that assume short labels."
+          }
+        }
+      }
+    },
+    "mockLifecycle.localization.expandedPrimaryAction" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invite Additional Friends to Participate in This Session"
+          }
+        }
+      }
+    },
+    "mockLifecycle.localization.expandedSupportingCopy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Participants who arrive after the session begins are appended to the end of the established fair rotation order."
+          }
+        }
+      }
+    },
+    "mockLifecycle.localization.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Localization Expansion Check"
+          }
+        }
+      }
+    },
+    "mockLifecycle.previewState" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preview State"
+          }
+        }
+      }
+    },
+    "mockLifecycle.prototypeNotice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mock lifecycle and accessibility prototype"
+          }
+        }
+      }
+    },
+    "mockLifecycle.reduceMotion.behavior" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Production transitions should use immediate state changes or gentle opacity changes when Reduce Motion is enabled."
+          }
+        }
+      }
+    },
+    "mockLifecycle.reduceMotion.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lifecycle meaning remains available through text and symbols without relying on movement."
+          }
+        }
+      }
+    },
+    "mockLifecycle.reduceMotion.enabled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce Motion is enabled"
+          }
+        }
+      }
+    },
+    "mockLifecycle.reduceMotion.preview" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preview with Reduce Motion enabled to verify adaptation"
+          }
+        }
+      }
+    },
+    "mockLifecycle.reduceMotion.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Motion-Independent Status"
+          }
+        }
+      }
+    },
+    "mockLifecycle.removed.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host removed this participant. Their pending songs are gone, and this identity cannot rejoin the live session."
+          }
+        }
+      }
+    },
+    "mockLifecycle.removed.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Removed from Session"
+          }
+        }
+      }
+    },
+    "mockLifecycle.scenario.ended" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session Ended"
+          }
+        }
+      }
+    },
+    "mockLifecycle.scenario.ending" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ending Session"
+          }
+        }
+      }
+    },
+    "mockLifecycle.scenario.gone" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Participant Gone"
+          }
+        }
+      }
+    },
+    "mockLifecycle.scenario.hostLoss" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host Loss"
+          }
+        }
+      }
+    },
+    "mockLifecycle.scenario.localizationExpansion" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Localization Expansion"
+          }
+        }
+      }
+    },
+    "mockLifecycle.scenario.reduceMotion" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce Motion"
+          }
+        }
+      }
+    },
+    "mockLifecycle.scenario.removed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Participant Removed"
+          }
+        }
+      }
+    },
+    "mockLifecycle.scenario.trackFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Track Failed"
+          }
+        }
+      }
+    },
+    "mockLifecycle.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lifecycle Gallery"
+          }
+        }
+      }
+    },
+    "mockLifecycle.trackFailed.badge" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t Play"
+          }
+        }
+      }
+    },
+    "mockLifecycle.trackFailed.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host couldn’t play this song. It was removed without counting as played, and the fair rotation moved forward."
+          }
+        }
+      }
+    },
+    "mockLifecycle.trackFailed.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Song Couldn’t Play"
+          }
+        }
+      }
+    },
+    "mockLobby.approval.approve" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Approve"
+          }
+        }
+      }
+    },
+    "mockLobby.approval.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ wants to join this session."
+          }
+        }
+      }
+    },
+    "mockLobby.approval.fixtureNotice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This approval request is a deterministic preview."
+          }
+        }
+      }
+    },
+    "mockLobby.approval.reject" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reject"
+          }
+        }
+      }
+    },
+    "mockLobby.approval.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let this person join?"
+          }
+        }
+      }
+    },
+    "mockLobby.awaiting.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host has your request. You’ll enter when they approve it."
+          }
+        }
+      }
+    },
+    "mockLobby.awaiting.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for the Host"
+          }
+        }
+      }
+    },
+    "mockLobby.discovery.nearby" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nearby Sessions"
+          }
+        }
+      }
+    },
+    "mockLobby.discovery.privacy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only sessions on your local network appear here."
+          }
+        }
+      }
+    },
+    "mockLobby.discovery.roomDetail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 people · Room BEAT"
+          }
+        }
+      }
+    },
+    "mockLobby.discovery.searching" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Looking nearby — fixture only"
+          }
+        }
+      }
+    },
+    "mockLobby.done" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "mockLobby.fixtureNotice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starting the session is disabled in this presentation fixture."
+          }
+        }
+      }
+    },
+    "mockLobby.host.orderExplanation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This order locks when the session starts. New arrivals join the end."
+          }
+        }
+      }
+    },
+    "mockLobby.host.roomCode" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Room BEAT"
+          }
+        }
+      }
+    },
+    "mockLobby.host.start" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Session"
+          }
+        }
+      }
+    },
+    "mockLobby.host.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maya’s Jam"
+          }
+        }
+      }
+    },
+    "mockLobby.invite.button" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show Invite"
+          }
+        }
+      }
+    },
+    "mockLobby.invite.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Friends nearby can scan the invite or use the room code."
+          }
+        }
+      }
+    },
+    "mockLobby.invite.fixtureNotice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decorative prototype — contains no join secret."
+          }
+        }
+      }
+    },
+    "mockLobby.invite.navigationTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invite Friends"
+          }
+        }
+      }
+    },
+    "mockLobby.invite.qrAccessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decorative QR code placeholder"
+          }
+        }
+      }
+    },
+    "mockLobby.invite.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join Maya’s Jam"
+          }
+        }
+      }
+    },
+    "mockLobby.noNearby.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask the host to keep Jamsession open and make sure you’re on the same local network."
+          }
+        }
+      }
+    },
+    "mockLobby.noNearby.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Sessions Nearby"
+          }
+        }
+      }
+    },
+    "mockLobby.participant.host" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host · Ready"
+          }
+        }
+      }
+    },
+    "mockLobby.participant.position" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Position %lld, %@"
+          }
+        }
+      }
+    },
+    "mockLobby.participant.ready" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready"
+          }
+        }
+      }
+    },
+    "mockLobby.participant.requesting" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Requesting access"
+          }
+        }
+      }
+    },
+    "mockLobby.participant.you" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You · Ready"
+          }
+        }
+      }
+    },
+    "mockLobby.participants.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Participant Order"
+          }
+        }
+      }
+    },
+    "mockLobby.previewState" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preview State"
+          }
+        }
+      }
+    },
+    "mockLobby.prototypeNotice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mock lobby and admission prototype"
+          }
+        }
+      }
+    },
+    "mockLobby.rejected.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host didn’t approve this request. Ask them before trying again."
+          }
+        }
+      }
+    },
+    "mockLobby.rejected.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request Not Approved"
+          }
+        }
+      }
+    },
+    "mockLobby.roomFull.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This session already has eight devices, including the host."
+          }
+        }
+      }
+    },
+    "mockLobby.roomFull.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session Full"
+          }
+        }
+      }
+    },
+    "mockLobby.scenario.approvalRequest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Approval Request"
+          }
+        }
+      }
+    },
+    "mockLobby.scenario.awaitingApproval" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Awaiting Approval"
+          }
+        }
+      }
+    },
+    "mockLobby.scenario.discovery" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discovery"
+          }
+        }
+      }
+    },
+    "mockLobby.scenario.hostLobby" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host Lobby"
+          }
+        }
+      }
+    },
+    "mockLobby.scenario.noNearby" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Nearby Sessions"
+          }
+        }
+      }
+    },
+    "mockLobby.scenario.rejected" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rejected"
+          }
+        }
+      }
+    },
+    "mockLobby.scenario.roomFull" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Room Full"
+          }
+        }
+      }
+    },
+    "mockLobby.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lobby Gallery"
+          }
+        }
+      }
+    },
+    "mockLobby.tryAgain" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try Again"
+          }
+        }
+      }
+    },
+    "mockQueue.addedBy" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added by %@"
+          }
+        }
+      }
+    },
+    "mockQueue.addMusic" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Music"
+          }
+        }
+      }
+    },
+    "mockQueue.addMusic.placeholder.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search and submission will arrive in provisional slice P5."
+          }
+        }
+      }
+    },
+    "mockQueue.addMusic.placeholder.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search is still a mock"
+          }
+        }
+      }
+    },
+    "mockQueue.artwork.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artwork for %@"
+          }
+        }
+      }
+    },
+    "mockQueue.done" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
     "mockQueue.empty" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -179,6 +1658,186 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The mock queue is empty. Music permission is not required to view it."
+          }
+        }
+      }
+    },
+    "mockQueue.empty.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a song to start the fair rotation. The session stays open while the queue is empty."
+          }
+        }
+      }
+    },
+    "mockQueue.empty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The queue is wide open"
+          }
+        }
+      }
+    },
+    "mockQueue.explicit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "E"
+          }
+        }
+      }
+    },
+    "mockQueue.explicit.full" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explicit"
+          }
+        }
+      }
+    },
+    "mockQueue.fairnessExplanation" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One turn each. Everyone stays in the mix."
+          }
+        }
+      }
+    },
+    "mockQueue.lifecycle" : {
+      "extractionState" : "manual",
+      "localizations" : { "en" : { "stringUnit" : { "state" : "translated", "value" : "Lifecycle States" } } }
+    },
+    "mockQueue.nowPlaying" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now Playing"
+          }
+        }
+      }
+    },
+    "mockQueue.participant.you" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You"
+          }
+        }
+      }
+    },
+    "mockQueue.participantCount" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld people"
+          }
+        }
+      }
+    },
+    "mockQueue.previewState" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preview State"
+          }
+        }
+      }
+    },
+    "mockQueue.prototypeNotice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UI prototype — no live session data"
+          }
+        }
+      }
+    },
+    "mockQueue.reconnecting" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconnecting… Your songs are still in the queue."
+          }
+        }
+      }
+    },
+    "mockQueue.roomCode" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Room %@"
+          }
+        }
+      }
+    },
+    "mockQueue.row.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up next %lld, %@ by %@, added by %@"
+          }
+        }
+      }
+    },
+    "mockQueue.scenario.empty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empty Queue"
+          }
+        }
+      }
+    },
+    "mockQueue.scenario.populated" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Populated Queue"
+          }
+        }
+      }
+    },
+    "mockQueue.scenario.reconnecting" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconnecting"
           }
         }
       }
@@ -193,6 +1852,460 @@
           }
         }
       }
+    },
+    "mockQueue.upNext" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up Next"
+          }
+        }
+      }
+    },
+    "mockSearch.add" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add"
+          }
+        }
+      }
+    },
+    "mockSearch.add.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add %@ by %@"
+          }
+        }
+      }
+    },
+    "mockSearch.denied.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Apple Music access to search for songs. You can still view the shared queue."
+          }
+        }
+      }
+    },
+    "mockSearch.denied.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Music Access Needed"
+          }
+        }
+      }
+    },
+    "mockSearch.failed.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The catalog search couldn’t be completed. Try again in a moment."
+          }
+        }
+      }
+    },
+    "mockSearch.failed.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Failed"
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.accepted.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host accepted your song and placed it into the fair queue."
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.accepted.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Song Queued"
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.dismiss" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss feedback"
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.duplicate.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That song is already pending. It can be added again after the queued copy plays or is removed."
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.duplicate.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Already in the Queue"
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.inactive.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You’re no longer active in this session, so the host didn’t add the song."
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.inactive.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can’t Add Song"
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.pending.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for the host to validate this song."
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.pending.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sending Request"
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.pendingLimit.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You’ve got 3 songs queued. Wait for one to play or remove one before adding another."
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.pendingLimit.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Queue Is Full"
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.timeout.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host didn’t finish validating this song. Try submitting it again."
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.timeout.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request Timed Out"
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.unplayable.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This song isn’t playable from the host’s Apple Music storefront."
+          }
+        }
+      }
+    },
+    "mockSearch.feedback.unplayable.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Song Unavailable"
+          }
+        }
+      }
+    },
+    "mockSearch.idle.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search the Apple Music catalog, then ask the host to add a song."
+          }
+        }
+      }
+    },
+    "mockSearch.idle.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find Music"
+          }
+        }
+      }
+    },
+    "mockSearch.loading" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching the catalog…"
+          }
+        }
+      }
+    },
+    "mockSearch.offline.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect to the internet to search Apple Music. Your local session may still be active."
+          }
+        }
+      }
+    },
+    "mockSearch.offline.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You’re Offline"
+          }
+        }
+      }
+    },
+    "mockSearch.previewFeedback" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Submission Feedback"
+          }
+        }
+      }
+    },
+    "mockSearch.previewState" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preview State"
+          }
+        }
+      }
+    },
+    "mockSearch.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Songs or artists"
+          }
+        }
+      }
+    },
+    "mockSearch.prototypeNotice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mock search and submission prototype"
+          }
+        }
+      }
+    },
+    "mockSearch.results.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Songs"
+          }
+        }
+      }
+    },
+    "mockSearch.scenario.denied" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Music Access Denied"
+          }
+        }
+      }
+    },
+    "mockSearch.scenario.empty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Results"
+          }
+        }
+      }
+    },
+    "mockSearch.scenario.failed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Failure"
+          }
+        }
+      }
+    },
+    "mockSearch.scenario.idle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idle"
+          }
+        }
+      }
+    },
+    "mockSearch.scenario.loading" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading"
+          }
+        }
+      }
+    },
+    "mockSearch.scenario.offline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline"
+          }
+        }
+      }
+    },
+    "mockSearch.scenario.results" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Results"
+          }
+        }
+      }
+    },
+    "mockSearch.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Music"
+          }
+        }
+      }
+    },
+    "mockSearch.tryAgain" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try Again"
+          }
+        }
+      }
+    },
+    "Northbound" : {
+
     }
   },
   "version" : "1.0"
