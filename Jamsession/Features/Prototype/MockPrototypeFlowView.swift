@@ -61,7 +61,9 @@ struct MockPrototypeFlowView: View {
                     step = .lifecycle
                 }
             case .lifecycle:
-                MockLifecycleGalleryView()
+                MockLifecycleGalleryView {
+                    restart()
+                }
             }
         }
         .toolbar {

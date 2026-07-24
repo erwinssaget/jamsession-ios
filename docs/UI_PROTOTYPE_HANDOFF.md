@@ -80,7 +80,8 @@ The provisional track is intentionally isolated from production session logic.
   debug-only.
 - **Connected smoke coverage complete:** debug-only UI tests exercise both Host
   and Join fixture paths through profile, inert permission explanation, queue,
-  Add Music presentation, dismissal, and restart.
+  Add Music presentation, dismissal, and restart. The Host path also exercises
+  Session Ended → Return Home through the lifecycle gallery.
 
 “Complete” above means complete only for provisional design exploration. It does
 not satisfy or open a canonical Slice 4 gate.
@@ -314,7 +315,7 @@ Safe continuation work includes:
 
 ## Verification baseline
 
-Through 2026-07-23:
+Through 2026-07-24:
 
 - The Xcode project built successfully with no build errors.
 - Xcode Issue Navigator reported no warnings.
@@ -372,6 +373,15 @@ Through 2026-07-23:
 - Both `MockConnectedFlowUITests` passed on the iPhone 14 Pro iOS 26.5 simulator:
   Host and Join each reached the queue, opened and dismissed Add Music, and
   restarted to role selection. The Join path also exercised simulated approval.
+- A review-follow-up build succeeded with no Issue Navigator warnings. Two
+  focused lobby-row accessibility tests passed, proving positioned and
+  unpositioned rows announce localized role or admission status. The focused
+  connected Host lifecycle test passed through Session Ended → Return Home, and
+  the separate toolbar Restart regression test also passed.
+- Xcode discovers 58 enabled tests after the review follow-up: 52 unit tests and
+  six UI tests. Only the four focused new or affected tests were rerun on
+  2026-07-24; the prior complete 50-unit-test result remains the full-suite
+  baseline.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.

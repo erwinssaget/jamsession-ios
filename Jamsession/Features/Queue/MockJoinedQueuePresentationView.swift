@@ -49,6 +49,7 @@ struct MockJoinedQueuePresentationView: View {
                         systemImage: "waveform.path.ecg",
                         action: openLifecycle
                     )
+                    .accessibilityIdentifier("mock.flow.queue.lifecycle")
                 }
             }
         }

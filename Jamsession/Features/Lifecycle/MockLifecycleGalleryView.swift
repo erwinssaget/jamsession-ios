@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct MockLifecycleGalleryView: View {
+    var returnHome: () -> Void = {}
+
     @State private var scenario = MockLifecycleScenario.participantGone
 
     var body: some View {
@@ -12,6 +14,7 @@ struct MockLifecycleGalleryView: View {
 
                 MockLifecycleContentView(scenario: scenario) {
                     scenario = .participantGone
+                    returnHome()
                 }
             }
             .padding()
@@ -25,10 +28,14 @@ struct MockLifecycleGalleryView: View {
                     Picker("mockLifecycle.previewState", selection: $scenario) {
                         ForEach(MockLifecycleScenario.allCases) { option in
                             Text(LocalizedStringKey(option.titleKey))
+                                .accessibilityIdentifier(
+                                    "mock.flow.lifecycle.scenario.\(option.rawValue)"
+                                )
                                 .tag(option)
                         }
                     }
                 }
+                .accessibilityIdentifier("mock.flow.lifecycle.previewState")
             }
         }
     }

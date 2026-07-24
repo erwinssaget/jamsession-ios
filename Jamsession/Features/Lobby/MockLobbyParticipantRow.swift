@@ -31,13 +31,22 @@ struct MockLobbyParticipantRow: View {
             Spacer()
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(
-            position.map {
-                String(
-                    localized: "mockLobby.participant.position",
-                    defaultValue: "Position \($0), \(participant.name)"
-                )
-            } ?? participant.name
+        .accessibilityLabel(accessibilityDescription)
+    }
+
+    var accessibilityDescription: String {
+        let detail = String(localized: String.LocalizationValue(participant.detailKey))
+
+        if let position {
+            return String(
+                localized: "mockLobby.participant.position",
+                defaultValue: "Position \(position), \(participant.name), \(detail)"
+            )
+        }
+
+        return String(
+            localized: "mockLobby.participant.accessibility",
+            defaultValue: "\(participant.name), \(detail)"
         )
     }
 }

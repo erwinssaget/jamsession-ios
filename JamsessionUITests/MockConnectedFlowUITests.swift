@@ -18,6 +18,24 @@ final class MockConnectedFlowUITests: XCTestCase {
 
         tapButton("mock.flow.host.start", in: app)
         openAndCloseSearch(in: app)
+        returnHomeFromEndedLifecycle(in: app)
+        XCTAssertTrue(
+            app.buttons["mock.flow.role.host"].waitForExistence(timeout: 3),
+            "Return Home should return the connected mock flow to role selection."
+        )
+    }
+
+    @MainActor
+    func testHostFlowRestartsFromQueue() {
+        let app = launchApplication()
+        openConnectedFlow(in: app)
+        completeProfile(
+            in: app,
+            roleIdentifier: "mock.flow.role.host",
+            name: "Host Tester"
+        )
+
+        tapButton("mock.flow.host.start", in: app)
         restartAtWelcome(in: app)
     }
 
@@ -78,6 +96,22 @@ final class MockConnectedFlowUITests: XCTestCase {
     private func openAndCloseSearch(in app: XCUIApplication) {
         tapButton("mock.flow.queue.addMusic", in: app)
         tapButton("mock.flow.search.done", in: app)
+    }
+
+    @MainActor
+    private func returnHomeFromEndedLifecycle(in app: XCUIApplication) {
+        tapButton("mock.flow.queue.lifecycle", in: app)
+
+        let previewMenu = app.buttons["mock.flow.lifecycle.previewState"]
+        XCTAssertTrue(previewMenu.waitForExistence(timeout: 3))
+        previewMenu.tap()
+
+        tapButton("mock.flow.lifecycle.scenario.ended", in: app)
+        tapButton(
+            "mock.flow.lifecycle.returnHome",
+            in: app,
+            scrollingIfNeeded: true
+        )
     }
 
     @MainActor

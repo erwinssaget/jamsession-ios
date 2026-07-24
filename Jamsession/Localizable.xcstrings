@@ -1365,13 +1365,24 @@
         }
       }
     },
+    "mockLobby.participant.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, %@"
+          }
+        }
+      }
+    },
     "mockLobby.participant.position" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Position %lld, %@"
+            "value" : "Position %lld, %@, %@"
           }
         }
       }

@@ -29,6 +29,7 @@ struct MockLifecycleContentView: View {
                 )
                 Button("mockLifecycle.ended.returnHome", systemImage: "house", action: restart)
                     .buttonStyle(.borderedProminent)
+                    .accessibilityIdentifier("mock.flow.lifecycle.returnHome")
             }
         case .reduceMotion:
             MockReduceMotionView(reduceMotionOverride: nil)
