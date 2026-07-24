@@ -5,7 +5,7 @@ struct ContentView: View {
     @Environment(\.openURL) private var openURL
     @State private var musicSpike = MusicKitSpike()
     @State private var networkSpike = NetworkSpike()
-    @State private var path: [FeasibilityDestination] = []
+    @State private var path = NavigationPath()
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -32,9 +32,27 @@ struct ContentView: View {
                         musicSpike.skip()
                     }
                     .disabled(!musicSpike.canControlPlayback)
+                    #if DEBUG
                     Button("feasibility.mockQueue") {
-                        path.append(.mockQueue)
+                        path.append(FeasibilityDestination.mockQueue)
                     }
+                    Button("feasibility.mockEntry") {
+                        path.append(FeasibilityDestination.mockEntry)
+                    }
+                    Button("feasibility.mockFullFlow") {
+                        path.append(FeasibilityDestination.mockFullFlow)
+                    }
+                    .accessibilityIdentifier("mock.flow.open")
+                    Button("feasibility.mockLobby") {
+                        path.append(FeasibilityDestination.mockLobby)
+                    }
+                    Button("feasibility.mockSearch") {
+                        path.append(FeasibilityDestination.mockSearch)
+                    }
+                    Button("feasibility.mockLifecycle") {
+                        path.append(FeasibilityDestination.mockLifecycle)
+                    }
+                    #endif
                     if musicSpike.needsSettings {
                         Button("feasibility.settings", systemImage: "gear") {
                             guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else {
@@ -75,12 +93,24 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("feasibility.title")
+            #if DEBUG
             .navigationDestination(for: FeasibilityDestination.self) { destination in
                 switch destination {
+                case .mockEntry:
+                    MockEntryView()
+                case .mockFullFlow:
+                    MockPrototypeFlowView()
+                case .mockLifecycle:
+                    MockLifecycleGalleryView()
+                case .mockLobby:
+                    MockLobbyGalleryView()
                 case .mockQueue:
                     MockJoinedQueueView()
+                case .mockSearch:
+                    MockMusicSearchView(showsDoneButton: false)
                 }
             }
+            #endif
         }
         .onDisappear {
             musicSpike.cancel()

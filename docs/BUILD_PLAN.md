@@ -37,6 +37,53 @@ no MusicKit, Network, clock, I/O, or physical-device dependency. Transport,
 playback, permission-flow, and lifecycle architecture are not authorized by this
 exception where their design depends on an unresolved Slice 0 result.
 
+### Provisional mock-driven UI track
+
+While Slice 0 is blocked only by the additional-device and account conditions
+recorded in `VERIFICATION_LOG.md`, a mock-driven UI track may proceed alongside
+Slice 1. This track is exploratory work, not the start or completion of Slice 4.
+It must satisfy all of these boundaries:
+
+- Enter through previews or an explicit mock route from the feasibility harness.
+- Depend only on deterministic presentation fixtures and in-memory UI state.
+- Do not import MusicKit or Network, request permissions, control playback, start
+  discovery, or assume unverified device behavior.
+- Do not duplicate the fairness scheduler, transport protocol, host session model,
+  or guest snapshot model in mock types.
+- Treat queue order as supplied canonical presentation state. Mock UI must not
+  introduce arbitrary reorder or cross-participant mutation affordances.
+- Keep view inputs presentation-specific so later host and guest session models can
+  map canonical state into the UI without preserving the mock store.
+- Preserve the Slice 0 feasibility harness and its physical-device test paths.
+- Do not use mock or simulator results to satisfy any Slice 0 or Slice 4 exit gate.
+
+The provisional track is divided into independently reviewable slices:
+
+1. **P0 — authorization and gallery shell:** record these boundaries and provide a
+   deterministic mock-only entry point.
+2. **P1 — visual foundation:** participant identity, artwork placeholders, buttons,
+   status treatments, queue rows, localization, and accessibility variants.
+3. **P2 — entry and identity shell:** Host/Join choice and mock profile setup.
+4. **P3 — lobby and admission:** host lobby, discovery, approval, invite, room-full,
+   and rejection fixtures.
+5. **P4 — joined-session shell:** session identity, participants, now playing, fair
+   upcoming queue, empty queue, and Add Music entry.
+6. **P5 — search and submission feedback:** mock search states, acknowledgement,
+   and typed rejection presentation.
+7. **P6 — lifecycle state gallery:** reconnecting, gone, removed, playback failure,
+   host loss, ending, accessibility, and localization-expansion fixtures.
+
+Each provisional slice must build without new warnings and remain replaceable by
+production state. No provisional slice opens a canonical implementation gate.
+Current implementation status and fresh-context continuation guidance live in
+[`UI_PROTOTYPE_HANDOFF.md`](UI_PROTOTYPE_HANDOFF.md).
+
+Every provisional UI change must update that handoff when it changes slice status,
+routes, fixtures, presentation inputs, intended production seams, verification
+evidence, or the next continuation task. The handoff must maintain a concrete
+mock-to-production connection map and retirement checklist so the gallery cannot
+quietly become a parallel application architecture.
+
 ## Repository baseline
 
 - Existing source roots are `Jamsession/`, `JamsessionTests/`, and
