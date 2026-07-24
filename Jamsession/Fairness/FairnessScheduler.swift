@@ -1,5 +1,5 @@
 nonisolated struct FairnessScheduler: Sendable {
-    func apply(_ event: FairnessEvent, to state: inout RotationState) throws {
+    func apply(_ event: FairnessEvent, to state: inout RotationState) throws(FairnessRejection) {
         if let outcome = state.eventOutcomes[event.id] {
             if case .rejected(let rejection) = outcome {
                 throw rejection
@@ -12,7 +12,7 @@ nonisolated struct FairnessScheduler: Sendable {
             try apply(event.action, to: &next)
             next.eventOutcomes[event.id] = .accepted
             state = next
-        } catch let rejection as FairnessRejection {
+        } catch let rejection {
             state.eventOutcomes[event.id] = .rejected(rejection)
             throw rejection
         }
@@ -20,7 +20,10 @@ nonisolated struct FairnessScheduler: Sendable {
 
     /// Convenience for constructing known-valid fixture state. Rejections cannot return the
     /// updated outcome cache through this value-returning API; command handling must use `apply(_:to:)`.
-    func applyingAccepted(_ event: FairnessEvent, to state: RotationState) throws -> RotationState {
+    func applyingAccepted(
+        _ event: FairnessEvent,
+        to state: RotationState
+    ) throws(FairnessRejection) -> RotationState {
         var next = state
         try apply(event, to: &next)
         return next
@@ -44,7 +47,10 @@ nonisolated struct FairnessScheduler: Sendable {
         return result
     }
 
-    private func apply(_ action: FairnessEvent.Action, to state: inout RotationState) throws {
+    private func apply(
+        _ action: FairnessEvent.Action,
+        to state: inout RotationState
+    ) throws(FairnessRejection) {
         switch action {
         case .addParticipant(let participantID):
             try addParticipant(participantID, to: &state)
@@ -78,7 +84,10 @@ nonisolated struct FairnessScheduler: Sendable {
         }
     }
 
-    private func addParticipant(_ participantID: ParticipantID, to state: inout RotationState) throws {
+    private func addParticipant(
+        _ participantID: ParticipantID,
+        to state: inout RotationState
+    ) throws(FairnessRejection) {
         guard state.statuses[participantID] == nil else {
             throw FairnessRejection.participantAlreadyExists
         }
@@ -87,7 +96,10 @@ nonisolated struct FairnessScheduler: Sendable {
         state.pendingTracks[participantID] = []
     }
 
-    private func submit(_ track: QueuedTrack, to state: inout RotationState) throws {
+    private func submit(
+        _ track: QueuedTrack,
+        to state: inout RotationState
+    ) throws(FairnessRejection) {
         guard let status = state.statuses[track.submitterID] else {
             throw FairnessRejection.participantNotFound
         }
@@ -117,7 +129,7 @@ nonisolated struct FairnessScheduler: Sendable {
         requestedBy participantID: ParticipantID?,
         hostOverride: Bool,
         from state: inout RotationState
-    ) throws {
+    ) throws(FairnessRejection) {
         guard let owner = owner(of: submissionID, in: state) else {
             throw FairnessRejection.submissionNotFound
         }
@@ -138,7 +150,7 @@ nonisolated struct FairnessScheduler: Sendable {
         requestedBy participantID: ParticipantID?,
         hostOverride: Bool,
         in state: inout RotationState
-    ) throws {
+    ) throws(FairnessRejection) {
         guard let selection = candidate(in: state) else {
             throw FairnessRejection.notNextUp
         }
@@ -157,7 +169,7 @@ nonisolated struct FairnessScheduler: Sendable {
         }
     }
 
-    private func advancePlayback(in state: inout RotationState) throws {
+    private func advancePlayback(in state: inout RotationState) throws(FairnessRejection) {
         guard let selection = candidate(in: state) else {
             state.currentlyPlaying = nil
             return
@@ -167,7 +179,10 @@ nonisolated struct FairnessScheduler: Sendable {
         moveCursor(after: selection.index, crossedBoundary: selection.crossedBoundary, in: &state)
     }
 
-    private func failTrack(_ submissionID: SubmissionID, in state: inout RotationState) throws {
+    private func failTrack(
+        _ submissionID: SubmissionID,
+        in state: inout RotationState
+    ) throws(FairnessRejection) {
         guard let selection = candidate(in: state), selection.track.id == submissionID else {
             throw FairnessRejection.notNextUp
         }
@@ -179,7 +194,7 @@ nonisolated struct FairnessScheduler: Sendable {
         _ status: ParticipantStatus,
         for participantID: ParticipantID,
         in state: inout RotationState
-    ) throws {
+    ) throws(FairnessRejection) {
         guard let currentStatus = state.statuses[participantID] else {
             throw FairnessRejection.participantNotFound
         }
@@ -195,7 +210,10 @@ nonisolated struct FairnessScheduler: Sendable {
         state.statuses[participantID] = status
     }
 
-    private func markGone(_ participantID: ParticipantID, in state: inout RotationState) throws {
+    private func markGone(
+        _ participantID: ParticipantID,
+        in state: inout RotationState
+    ) throws(FairnessRejection) {
         guard let status = state.statuses[participantID] else {
             throw FairnessRejection.participantNotFound
         }
@@ -211,7 +229,10 @@ nonisolated struct FairnessScheduler: Sendable {
         }
     }
 
-    private func unmarkGone(_ participantID: ParticipantID, in state: inout RotationState) throws {
+    private func unmarkGone(
+        _ participantID: ParticipantID,
+        in state: inout RotationState
+    ) throws(FairnessRejection) {
         guard let status = state.statuses[participantID] else {
             throw FairnessRejection.participantNotFound
         }
@@ -224,7 +245,10 @@ nonisolated struct FairnessScheduler: Sendable {
         state.statuses[participantID] = .connected
     }
 
-    private func block(_ participantID: ParticipantID, in state: inout RotationState) throws {
+    private func block(
+        _ participantID: ParticipantID,
+        in state: inout RotationState
+    ) throws(FairnessRejection) {
         guard state.statuses[participantID] != nil else {
             throw FairnessRejection.participantNotFound
         }

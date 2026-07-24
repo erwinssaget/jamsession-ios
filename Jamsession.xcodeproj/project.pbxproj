@@ -24,10 +24,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		C00FD17E301423BD006F26FC /* SessionParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionParticipant.swift; sourceTree = "<group>"; };
-		C00FD17F301423C7006F26FC /* CatalogTrackSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogTrackSelection.swift; sourceTree = "<group>"; };
-		C00FD180301423CC006F26FC /* QueueCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueCommand.swift; sourceTree = "<group>"; };
-		C00FD181301423D1006F26FC /* QueueCommandOutcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueCommandOutcome.swift; sourceTree = "<group>"; };
 		C0B076B3300B593E004AD13F /* Jamsession.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jamsession.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0B076C0300B5940004AD13F /* JamsessionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JamsessionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0B076CA300B5940004AD13F /* JamsessionUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JamsessionUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,17 +85,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		C00FD17D301423BD006F26FC /* Session */ = {
-			isa = PBXGroup;
-			children = (
-				C00FD17E301423BD006F26FC /* SessionParticipant.swift */,
-				C00FD17F301423C7006F26FC /* CatalogTrackSelection.swift */,
-				C00FD180301423CC006F26FC /* QueueCommand.swift */,
-				C00FD181301423D1006F26FC /* QueueCommandOutcome.swift */,
-			);
-			path = Session;
-			sourceTree = "<group>";
-		};
 		C0B076AA300B593E004AD13F = {
 			isa = PBXGroup;
 			children = (
@@ -107,7 +92,6 @@
 				C0B076C3300B5940004AD13F /* JamsessionTests */,
 				C0B076CD300B5940004AD13F /* JamsessionUITests */,
 				C0B076B4300B593E004AD13F /* Products */,
-				C00FD17D301423BD006F26FC /* Session */,
 			);
 			sourceTree = "<group>";
 		};

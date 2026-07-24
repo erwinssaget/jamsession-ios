@@ -4,11 +4,11 @@ import Testing
 struct MockSessionHeaderPresentationTests {
     @Test @MainActor
     func participantCountUsesSingularAndPluralForms() {
-        let solo = MockSessionHeaderView(
+        let solo = QueueSessionHeaderView(
             presentation: MockSessionFixtures.solo,
             addMusic: {}
         )
-        let full = MockSessionHeaderView(
+        let full = QueueSessionHeaderView(
             presentation: MockSessionFixtures.fullSession,
             addMusic: {}
         )

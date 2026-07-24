@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MockJoinedQueuePresentationView: View {
-    let presentation: MockSessionPresentation
+    let presentation: QueueSessionPresentation
     let addMusic: () -> Void
     var openLifecycle: (() -> Void)?
 
@@ -14,27 +14,10 @@ struct MockJoinedQueuePresentationView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityAddTraits(.isHeader)
 
-                MockSessionHeaderView(
+                QueueSessionContentView(
                     presentation: presentation,
                     addMusic: addMusic
                 )
-
-                if presentation.connectionStatus == .reconnecting {
-                    Label("mockQueue.reconnecting", systemImage: "wifi.exclamationmark")
-                        .font(.subheadline)
-                        .foregroundStyle(.orange)
-                        .padding()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(.orange.opacity(0.12))
-                        .clipShape(.rect(cornerRadius: 12))
-                        .accessibilityAddTraits(.updatesFrequently)
-                }
-
-                if let nowPlaying = presentation.nowPlaying {
-                    MockNowPlayingView(track: nowPlaying)
-                }
-
-                MockQueueContentView(upcoming: presentation.upcoming)
             }
             .padding()
         }

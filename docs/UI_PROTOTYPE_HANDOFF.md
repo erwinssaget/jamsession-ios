@@ -1,6 +1,6 @@
 # Provisional UI Prototype — Continuation Handoff
 
-Last updated: 2026-07-23
+Last updated: 2026-07-24
 
 ## Purpose
 
@@ -47,7 +47,9 @@ Do not convert mock observations into canonical gate evidence.
 
 ## Current status
 
-The provisional track is intentionally isolated from production session logic.
+The provisional galleries remain isolated from production authority. Slice 2A
+now adds a separate domain-backed functional queue path that reuses the queue
+presentation components without promoting fixture state.
 
 - **P0 complete:** the canonical plan authorizes the mock-only track and the
   feasibility harness exposes an explicit mock queue route.
@@ -85,9 +87,14 @@ The provisional track is intentionally isolated from production session logic.
   Return Home through the lifecycle gallery. The Join path also covers denied
   Music-access Settings recovery plus lower-result submission feedback and its
   separate accessibility dismissal control.
+- **Slice 2A complete:** a real Main Actor `HostSessionModel`, idempotent
+  `QueueCommand`, canonical fairness state, immutable `QueueSessionPresentation`,
+  and localized typed feedback now drive a Debug-only functional queue harness.
+  The reusable queue components no longer depend on mock presentation types.
 
 “Complete” above means complete only for provisional design exploration. It does
-not satisfy or open a canonical Slice 4 gate.
+not satisfy or open a canonical Slice 4 gate. Slice 2A is separately complete
+under its pure/domain implementation exit gate and does not alter 0M, 0G, or 0N.
 
 ## Implementation map
 
@@ -102,11 +109,14 @@ not satisfy or open a canonical Slice 4 gate.
 | Joined-session gallery | `Jamsession/MockJoinedQueueView.swift` | Owns fixture scenario selection and Add Music sheet presentation |
 | Joined-session leaf | `Jamsession/Features/Queue/MockJoinedQueuePresentationView.swift` | Renders immutable queue presentation and emits Add Music/Lifecycle intents |
 | Presentation fixtures | `Jamsession/Features/MockSupport/`, `Jamsession/Features/Queue/Mock/`, and feature fixture files | Stable deterministic mock session, participant, track, and scenario values |
-| Queue components | `Jamsession/Features/Queue/` | Participant badge, artwork, session header, now playing, and immutable queue rows |
+| Canonical queue owner and commands | `Jamsession/Session/` | Owns participant metadata and canonical `RotationState` on the Main Actor; validates idempotent queue commands through `FairnessScheduler` |
+| Queue presentation boundary | `Jamsession/Features/Queue/QueueSessionPresentation.swift` and `QueueSessionPresentationMapper.swift` | Maps canonical state into immutable, production-neutral values with viewer-specific action availability |
+| Queue components | `Jamsession/Features/Queue/` | Participant badge, artwork, session header, now playing, immutable queue rows, action controls, and typed feedback shared by mock and functional callers |
+| Functional queue harness | `Jamsession/Features/Queue/Debug/` | Owns deterministic participants and catalog choices in Debug only while exercising the real session owner, commands, scheduler, and presentation mapper |
 | Intent inventory | `docs/UI_INTENT_INVENTORY.md` | Records eventual owners, payloads, validation/results, repetition, cancellation, and mock-only controls |
-| Presentation tests | `JamsessionTests/MockUI/` | Protects stable fixture identity, feedback presentation mapping, and scenario-copy completeness |
-| Connected UI smoke tests | `JamsessionUITests/MockConnectedFlowUITests.swift` | Exercises debug-only Host and Join fixture navigation without invoking services |
-| User-facing copy | `Jamsession/Localizable.xcstrings` | Manual English localization keys for provisional UI |
+| Presentation and session tests | `JamsessionTests/MockUI/`, `JamsessionTests/Queue/`, and `JamsessionTests/Session/` | Protect fixture behavior plus canonical command, fairness-integration, authorization, replay, mapper, and feedback behavior |
+| Connected UI smoke tests | `JamsessionUITests/MockConnectedFlowUITests.swift` and `DomainQueueHarnessUITests.swift` | Exercises debug-only fixture navigation and one canonical fairness-backed queue flow without invoking services |
+| User-facing copy | `Jamsession/Localizable.xcstrings` | Manual English localization keys for provisional and functional queue UI |
 
 The Xcode project uses synchronized groups, so new files under `Jamsession/` should
 be discovered automatically. Verify target membership instead of reflexively
@@ -119,6 +129,11 @@ harness:
 
 ```text
 ContentView
+├── Open Functional Queue
+│   └── DomainQueueHarnessView
+│       ├── real HostSessionModel → FairnessScheduler → QueueSessionPresentation
+│       ├── Add Music → deterministic Debug catalog → typed submit command
+│       └── remove / skip turn / advance playback → typed commands
 ├── Open Mock Full Flow
 │   └── MockPrototypeFlowView
 │       ├── Welcome → Profile → inert permission explanation
@@ -162,9 +177,10 @@ full-flow entry connects their presentation happy paths using
 `MockPrototypeStep`; its transitions are fixture navigation, not session,
 transport, MusicKit, admission, or fairness behavior.
 
-The route buttons and `FeasibilityDestination` are excluded when `DEBUG` is not
-active. Mock views remain compiled for deterministic previews and tests but cannot
-be reached from Release navigation.
+The mock and functional-harness route buttons and `FeasibilityDestination` are
+excluded when `DEBUG` is not active. Mock views and deterministic functional
+fixtures remain compiled for previews and tests but cannot be reached from
+Release navigation.
 
 ## Production connection map
 
@@ -180,7 +196,7 @@ preserve useful views and replace fixture ownership at explicit seams:
 | Host lobby | `MockLobbyFixtures.participants` | Authoritative host session presentation mapped from host-owned actor state | Supply locked participant order as immutable presentation input. Host commands perform start, approve, reject, remove, and block after validation. |
 | Guest discovery/admission | `MockLobbyScenario` transitions | `SessionTransport` discovery plus revisioned admission state | Replace scenario mutation with read-only presentation state and typed coordinator commands. Do not encode or simulate transport behavior in views. |
 | Invite | Decorative SF Symbol QR and `"BEAT"` | Session ID plus high-entropy join secret encoded by the production invite service; short room code remains only a local discovery filter | Replace the placeholder image with a generated invite artifact. Never log, persist, or expose the reusable secret through accessibility text or screenshots. |
-| Joined queue | `MockJoinedQueueView` owns scenario/sheet state; `MockJoinedQueuePresentationView` receives `MockSessionPresentation` | Host authoritative state or guest canonical snapshot mapped into a shared queue presentation model | Replace the gallery owner with a production coordinator while retaining the leaf’s immutable input and Add Music/Lifecycle intent seams. Queue ordering remains immutable and views never run fairness logic. |
+| Joined queue | `MockJoinedQueueView` owns scenario/sheet state; `MockJoinedQueuePresentationView` and the functional harness both receive `QueueSessionPresentation` | `HostSessionModel` already maps authoritative local state; a future guest mirror maps revisioned canonical snapshots into the same presentation model | Preserve the shared immutable presentation and visual components. Replace only gallery/harness ownership with Slice 2B host coordination or a later guest mirror; views never run fairness logic. |
 | Add Music and search | `MockSearchScenario`, `MockSearchFixtures`, and `MockSubmissionOutcome` | Cancellable MusicKit catalog search plus typed guest command acknowledgement or host-local validation result | Map external search state and typed submission outcomes into production-neutral presentation values. Inject search, retry, submit, and dismiss intents; never import MusicKit, transport, or fairness logic into queue/search views. |
 | Lifecycle banners | Mock scenarios such as reconnecting | Revisioned session lifecycle presentation | Map transport/playback outcomes into explicit display states. Views do not own timers, reconnection, teardown, or playback transitions. |
 | Lifecycle gallery | `MockLifecycleScenario` plus static countdown/progress fixtures | Host/guest lifecycle state mapped from transport, playback, grace-period clock, and teardown coordinators | Preserve the status views and replace scenario selection with canonical state. Production owns timers and cancellation; disappearance of the screen must not cancel or duplicate authoritative teardown. |
@@ -211,12 +227,13 @@ of participants, queue order, admission, playback, or connection lifecycle.
 Do not connect the mock flow end to end merely because its screens exist. Wire it
 incrementally as the canonical build plan opens the necessary production slices:
 
-1. Keep the completed P0–P6 galleries isolated and use the intent inventory when
-   changing actions or production seams.
-2. Define additional shared, production-neutral presentation values only when a production
-   caller exists; do not prematurely rename mock fixtures into domain models.
-3. Connect first-run navigation to real role coordinators while preserving the
-   Slice 0 feasibility harness until its gate is complete.
+1. Preserve the completed Slice 2A owner, command, presentation, and test
+   boundaries while keeping P0–P6 galleries isolated.
+2. Continue with Slice 2B under 0M: connect first-run Host navigation, permission
+   and subscription state, a single-device lobby, catalog search, and playback
+   around the existing canonical queue owner.
+3. Keep production-neutral presentation values beside real callers; do not
+   promote mock coordinators, scenarios, or deterministic harness fixtures.
 4. Connect lobby and admission views to the authoritative host actor or guest
    mirror through mapped presentation state and typed commands.
 5. Connect the joined queue to canonical snapshots; keep the fairness scheduler
@@ -455,6 +472,14 @@ Through 2026-07-24:
   passed on the iPhone 14 Pro iOS 26.5 simulator. The project built, the AX5 dark
   feedback preview rendered without visual regression, Xcode reported no
   warnings, the string catalog parsed, and `git diff --check` passed.
+- Slice 2A added nine unit tests and one focused UI test. All 66 unit tests and
+  `DomainQueueHarnessUITests.testQueueActionsUseCanonicalFairnessState` passed on
+  the iPhone 14 Pro iOS 26.5 simulator. Debug and generic Release simulator
+  builds succeeded; standard light and AX5 dark functional-queue previews
+  rendered; Issue Navigator reported no warnings; the string catalog parsed; and
+  `git diff --check` passed. These checks prove only the domain-backed local
+  queue path and do not claim MusicKit, playback, Network, or physical-device
+  behavior.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.
@@ -463,15 +488,17 @@ preview variants and any fixture-only behavior.
 
 Use this prompt in a new context:
 
-> Continue the provisional mock-driven UI track. The P0–P6 presentation track,
-> R1–R6 hardening backlog, and connected-flow UI smoke coverage are complete.
+> Continue with Slice 2B, the single-device Host experience. The P0–P6
+> presentation track, R1–R6 hardening backlog, connected mock-flow smoke
+> coverage, and Slice 2A domain-backed functional queue are complete.
 > Read `AGENTS.md`,
 > `docs/PRODUCT_DECISIONS.md`, `docs/BUILD_PLAN.md`,
 > `docs/VERIFICATION_LOG.md`, `docs/UI_PRODUCTION_READINESS.md`, and this handoff
-> before acting. Run a connected accessibility pass at AX5 Dynamic Type in dark
-> appearance through the Host and Join mock paths, checking control hitability,
-> keyboard avoidance, expanded copy, Add Music presentation, sheet dismissal, and
-> restart. Do not integrate MusicKit, Network, playback, persistence, or session
-> lifecycle while Slice 0 remains closed. Record only checks actually run, and
-> keep the readiness review, intent inventory, verification log, and handoff
+> before acting. Preserve `HostSessionModel` as the Main Actor authority,
+> `FairnessScheduler` as a pure value type, and `QueueSessionPresentation` as the
+> SwiftUI boundary. Under gate 0M, connect the Host profile/permission path and a
+> single-device lobby before adding cancellable catalog search and
+> `ApplicationMusicPlayer` integration. Do not begin guest catalog or nearby
+> transport work while 0G and 0N remain closed. Record only checks actually run
+> and keep the readiness review, intent inventory, verification log, and handoff
 > current.

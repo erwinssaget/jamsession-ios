@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct MockSessionHeaderView: View {
-    let presentation: MockSessionPresentation
+struct QueueSessionHeaderView: View {
+    let presentation: QueueSessionPresentation
     let addMusic: () -> Void
 
     var body: some View {
@@ -14,7 +14,7 @@ struct MockSessionHeaderView: View {
                             .bold()
                         Text(
                             String(
-                                localized: "mockQueue.roomCode",
+                                localized: "queue.roomCode",
                                 defaultValue: "Room \(presentation.roomCode)"
                             )
                         )
@@ -24,7 +24,7 @@ struct MockSessionHeaderView: View {
 
                     Spacer()
 
-                    Button("mockQueue.addMusic", systemImage: "plus", action: addMusic)
+                    Button("queue.addMusic", systemImage: "plus", action: addMusic)
                     .accessibilityIdentifier("mock.flow.queue.addMusic")
                     .buttonStyle(.borderedProminent)
                 }
@@ -35,14 +35,14 @@ struct MockSessionHeaderView: View {
                         .bold()
                     Text(
                         String(
-                            localized: "mockQueue.roomCode",
+                            localized: "queue.roomCode",
                             defaultValue: "Room \(presentation.roomCode)"
                         )
                     )
                     .font(.subheadline.monospaced())
                     .foregroundStyle(.secondary)
 
-                    Button("mockQueue.addMusic", systemImage: "plus", action: addMusic)
+                    Button("queue.addMusic", systemImage: "plus", action: addMusic)
                     .accessibilityIdentifier("mock.flow.queue.addMusic")
                     .buttonStyle(.borderedProminent)
                     .frame(maxWidth: .infinity)
@@ -71,14 +71,14 @@ struct MockSessionHeaderView: View {
 
     var participantCountDescription: String {
         String(
-            localized: "mockQueue.participantCount",
+            localized: "queue.participantCount",
             defaultValue: "\(presentation.participants.count) people"
         )
     }
 }
 
 #Preview("Full Session") {
-    MockSessionHeaderView(
+    QueueSessionHeaderView(
         presentation: MockSessionFixtures.fullSession,
         addMusic: {}
     )

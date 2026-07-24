@@ -33,6 +33,10 @@ struct ContentView: View {
                     }
                     .disabled(!musicSpike.canControlPlayback)
                     #if DEBUG
+                    Button("feasibility.domainQueue") {
+                        path.append(FeasibilityDestination.domainQueue)
+                    }
+                    .accessibilityIdentifier("queue.harness.open")
                     Button("feasibility.mockQueue") {
                         path.append(FeasibilityDestination.mockQueue)
                     }
@@ -96,6 +100,8 @@ struct ContentView: View {
             #if DEBUG
             .navigationDestination(for: FeasibilityDestination.self) { destination in
                 switch destination {
+                case .domainQueue:
+                    DomainQueueHarnessView()
                 case .mockEntry:
                     MockEntryView()
                 case .mockFullFlow:

@@ -7,6 +7,8 @@ nonisolated struct QueueCommand: Sendable, Equatable {
     }
 
     let id: FairnessEventID
+    /// The authenticated actor supplied by the trusted command boundary.
+    /// A peer-provided participant claim must be validated before constructing this value.
     let participantID: ParticipantID
     let action: Action
 

@@ -16,7 +16,7 @@ nonisolated enum MockQueueScenario: String, CaseIterable, Identifiable {
         }
     }
 
-    var presentation: MockSessionPresentation {
+    var presentation: QueueSessionPresentation {
         switch self {
         case .populated:
             .init(

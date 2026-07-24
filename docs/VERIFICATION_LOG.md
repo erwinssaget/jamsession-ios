@@ -20,7 +20,7 @@ product-decision update before architecture or scope changes.
 | 0M — Host MusicKit | **OPEN for Slice 2B implementation** | Retest the production integration at the Slice 2B exit gate | Host-only MusicKit integration may proceed from V0-1 and V0-7A evidence. Production behavior still requires current physical-device verification. |
 | 0G — Guest catalog | **CLOSED — account verification incomplete** | V0-2 | Guest catalog integration and Slice 4 remain blocked. |
 | 0N — Nearby networking | **CLOSED — hardware verification incomplete** | V0-4, V0-5, V0-6B, and V0-7B | Transport, discovery, admission, reconnection, and Slice 3 remain blocked. |
-| Slice 2A | **OPEN — pure/domain dependency only** | Implementation exit gate | Domain-backed queue UI may proceed without MusicKit or Network. |
+| Slice 2A | **COMPLETE — automated exit gate passed** | None for Slice 2A | Slice 2B may proceed under gate 0M; this result does not open 0G or 0N. |
 | Closed TestFlight | **CLOSED — implementation and release matrix incomplete** | VM-1 through VM-13 | Work authorized by the current completed gate or the explicit provisional-work rule only. |
 
 The summary is informational. A gate opens only when every check required by its
@@ -132,6 +132,16 @@ Track availability, not personal identifiers:
 
 Do not record device UDIDs, Apple IDs, join secrets, reconnect credentials, or
 other personal or reusable identifiers in this file.
+
+## Domain-backed functional UI verification
+
+This section records canonical implementation checks that do not require physical
+devices. These results may satisfy a named implementation slice, but they never
+substitute for MusicKit, account-condition, Network, or multi-device gate rows.
+
+| Date | Slice | Verification | Result |
+|------|-------|--------------|--------|
+| 2026-07-24 | Slice 2A — domain-backed functional queue UI | Active Debug build; generic Release iOS Simulator build; complete `JamsessionTests` target; focused `DomainQueueHarnessUITests.testQueueActionsUseCanonicalFairnessState` on the iPhone 14 Pro iOS 26.5 simulator; functional-queue previews at standard Dynamic Type in light appearance and AX5 in dark appearance; Issue Navigator; string-catalog JSON, whitespace, and dependency-boundary checks | PASS. The Main Actor `HostSessionModel` applies idempotent typed commands to canonical `RotationState`, and immutable `QueueSessionPresentation` values drive shared queue components. All 66 unit tests passed, including focused coverage for fair ordering, duplicate and pending-cap rejections, replay, authorization, turn skip, action visibility, and every rejection-feedback mapping. The focused UI flow passed after advancing playback and submitting a duplicate through the Debug-only deterministic catalog. Debug and Release simulator builds succeeded, both previews rendered with reachable controls and complete queue content, Issue Navigator reported no warnings, the string catalog parsed, and `git diff --check` passed. Production session and presentation files contain no MusicKit or Network dependency; the deterministic participant/catalog harness remains Debug-only. Slice 2A's automated exit gate is complete. No physical-device, MusicKit, guest-account, playback, transport, or multi-device result is claimed. |
 
 ## Provisional mock-UI verification
 

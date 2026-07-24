@@ -1,16 +1,18 @@
 # UI Intent Inventory
 
-Last reviewed: 2026-07-23
+Last reviewed: 2026-07-24
 
 ## Purpose
 
-This inventory defines the user intents exposed by the completed mock UI without
-implementing production coordinators, transport messages, MusicKit requests,
-playback commands, or session lifecycle.
+This inventory defines the user intents exposed by the UI and records which
+queue intents gained a canonical local owner in Slice 2A. Transport messages,
+MusicKit requests, real playback coordination, and session lifecycle remain
+unimplemented.
 
-Names are conceptual until a canonical production caller exists. When production
-types are introduced, preserve the ownership, validation, repetition, and
-cancellation expectations recorded here rather than copying the mock coordinator.
+Names remain conceptual until a canonical production caller exists. Slice 2A's
+implemented names are called out below. Later production types must preserve the
+ownership, validation, repetition, and cancellation expectations recorded here
+rather than copying a mock coordinator.
 
 ## Intent rules
 
@@ -47,16 +49,24 @@ cancellation expectations recorded here rather than copying the mock coordinator
 
 ## Joined queue
 
+Slice 2A implements `removeOwnPendingTrack`, `skipOwnNextTurn`, and host
+`advancePlayback` through idempotent `QueueCommand` values owned by the Main Actor
+`HostSessionModel`. The participant identity on a command is trusted local
+context; a future transport boundary must authenticate and validate a peer before
+constructing that command. `openAddMusic` remains presentation navigation.
+
 | Conceptual intent | Payload | Production owner | Validation and result | Repeat/cancel behavior |
 |-------------------|---------|------------------|-----------------------|------------------------|
 | `openAddMusic` | None | App/queue coordinator | Presentation-only navigation. Guest may open search even before Music authorization is known. | Repeated presentation is coalesced. Dismissal cancels owned search work. |
 | `removeOwnPendingTrack` | Submission ID and current revision | Authoritative host actor | Participant owns the pending submission and it has not started. Returns typed fairness rejection when invalid. | Idempotent request ID; replay returns original outcome. |
 | `skipOwnNextTurn` | Participant ID and current revision | Authoritative host actor | Participant owns `nextUp`; track remains pending and skip semantics are applied once. | Idempotent; repeat cannot skip multiple turns. |
+| `advancePlayback` | Host identity and playback-transition request ID | Authoritative host actor | Host authorization is required; the scheduler advances canonical rotation exactly once. Slice 2A exercises this with a Debug control, not a player callback. | Idempotent request ID; repeated transition delivery returns the original outcome and cannot advance twice. |
 | `openLifecycleDetails` | Current lifecycle presentation | App/queue coordinator | Presentation-only navigation; does not start timers or reconnection. | Repeated presentation is coalesced. |
 
-Host-only moderation and playback controls are intentionally absent from the
-current joined-guest mock queue. Add them only in the correct host production
-surface with explicit authorization.
+Host-only moderation and playback controls remain absent from the joined-guest
+mock queue. The Debug functional harness exposes authorized host controls solely
+to exercise the Slice 2A command boundary; Slice 2B must connect those controls
+to the correct production Host surface.
 
 ## Search and submission
 
@@ -67,6 +77,13 @@ surface with explicit authorization.
 | `submitTrack` | Music item ID, participant ID, request ID, host revision | Host-local coordinator or guest command boundary | Host resolves item in its storefront, then applies fairness validation. Maps to pending, accepted, or typed rejection presentation. | Idempotent request ID. Repeated taps do not create duplicate pending commands. |
 | `dismissSubmissionFeedback` | Feedback/request ID | Search coordinator | Presentation-only dismissal; does not cancel an accepted host mutation. | Idempotent. A newer outcome may supersede dismissed feedback. |
 | `cancelSearch` | Active generation and pending local tasks | Search coordinator | Cancels catalog work and closes presentation. Does not retract already-sent submission commands. | Idempotent and lifecycle-owned. |
+
+Slice 2A implements the post-resolution portion of `submitTrack`: a trusted
+`CatalogTrackSelection` plus submission and command identities reaches
+`HostSessionModel`, which applies fairness validation and maps accepted or typed
+rejected outcomes into localized feedback. MusicKit lookup, storefront
+validation, debounce, cancellation, and guest acknowledgement remain Slice 2B/4
+work.
 
 ## Session lifecycle
 
