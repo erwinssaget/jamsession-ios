@@ -81,7 +81,8 @@ The provisional track is intentionally isolated from production session logic.
 - **Connected smoke coverage complete:** debug-only UI tests exercise both Host
   and Join fixture paths through profile, inert permission explanation, queue,
   Add Music presentation, dismissal, and restart. The Host path also exercises
-  Session Ended → Return Home through the lifecycle gallery.
+  the scrollable invite sheet at accessibility text sizes and Session Ended →
+  Return Home through the lifecycle gallery.
 
 “Complete” above means complete only for provisional design exploration. It does
 not satisfy or open a canonical Slice 4 gate.
@@ -416,11 +417,16 @@ Through 2026-07-24:
   description, fixture notice, and action remain reachable at accessibility
   sizes. Its Host path passed a focused UI test at accessibility XXXL, and the
   AX5 dark preview rendered successfully.
+- The invite presentation uses a scrollable sheet body so its decorative QR,
+  expanded title and description, room code, and fixture notice remain reachable
+  at accessibility sizes. Its connected Host path passed a focused UI test at
+  accessibility XXXL, and the AX5 dark preview rendered successfully in portrait
+  and landscape.
 - The localized participant count now uses singular and plural variations. A
   deterministic solo fixture and the full eight-person fixture assert “1 person”
   and “8 people” respectively.
-- Xcode discovers 64 enabled tests: 57 unit tests and seven UI tests. All 57 unit
-  tests and the focused permission-sheet accessibility UI test passed on the
+- Xcode discovers 65 enabled tests: 57 unit tests and eight UI tests. All 57 unit
+  tests and the focused invite-sheet accessibility UI test passed on the
   iPhone 14 Pro iOS 26.5 simulator. The project built successfully, Issue
   Navigator reported no warnings, the string catalog parsed, and
   `git diff --check` passed.

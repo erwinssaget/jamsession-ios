@@ -98,6 +98,48 @@ final class MockConnectedFlowUITests: XCTestCase {
     }
 
     @MainActor
+    func testInviteSheetIsScrollableAtAccessibilityTextSize() {
+        let app = XCUIApplication()
+        app.launchArguments += [
+            "-UIPreferredContentSizeCategoryName",
+            "UICTContentSizeCategoryAccessibilityXXXL"
+        ]
+        app.launch()
+
+        openConnectedFlow(in: app)
+        completeProfile(
+            in: app,
+            roleIdentifier: "mock.flow.role.host",
+            name: "AX Host",
+            scrollingIfNeeded: true
+        )
+        tapButton(
+            "mock.flow.host.invite",
+            in: app,
+            scrollingIfNeeded: true
+        )
+
+        let fixtureNotice = app.staticTexts["mock.flow.invite.fixtureNotice"]
+        for _ in 0..<8 where !fixtureNotice.exists || !fixtureNotice.isHittable {
+            app.swipeUp()
+        }
+        XCTAssertTrue(
+            fixtureNotice.waitForExistence(timeout: 3),
+            "The invite fixture notice should remain reachable at accessibility text sizes."
+        )
+        XCTAssertTrue(
+            fixtureNotice.isHittable,
+            "The invite sheet should scroll until its supporting content is visible."
+        )
+
+        tapButton("mock.flow.invite.done", in: app)
+        XCTAssertTrue(
+            app.buttons["mock.flow.host.start"].waitForExistence(timeout: 3),
+            "Dismissing the invite should return to the host lobby."
+        )
+    }
+
+    @MainActor
     private func launchApplication() -> XCUIApplication {
         let app = XCUIApplication()
         app.launch()
@@ -117,9 +159,14 @@ final class MockConnectedFlowUITests: XCTestCase {
     private func completeProfile(
         in app: XCUIApplication,
         roleIdentifier: String,
-        name: String
+        name: String,
+        scrollingIfNeeded: Bool = false
     ) {
-        tapButton(roleIdentifier, in: app)
+        tapButton(
+            roleIdentifier,
+            in: app,
+            scrollingIfNeeded: scrollingIfNeeded
+        )
 
         let nameField = app.textFields["mock.flow.profile.name"]
         XCTAssertTrue(nameField.waitForExistence(timeout: 3))
@@ -135,7 +182,11 @@ final class MockConnectedFlowUITests: XCTestCase {
             in: app,
             scrollingIfNeeded: true
         )
-        tapButton("mock.flow.permission.finish", in: app)
+        tapButton(
+            "mock.flow.permission.finish",
+            in: app,
+            scrollingIfNeeded: scrollingIfNeeded
+        )
     }
 
     @MainActor

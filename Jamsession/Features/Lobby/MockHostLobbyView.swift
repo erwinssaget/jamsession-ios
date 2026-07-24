@@ -23,6 +23,7 @@ struct MockHostLobbyView: View {
                 showInvite()
             }
             .buttonStyle(.bordered)
+            .accessibilityIdentifier("mock.flow.host.invite")
 
             Text("mockLobby.participants.title")
                 .font(.headline)
