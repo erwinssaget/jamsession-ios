@@ -86,4 +86,57 @@ nonisolated enum MockSessionFixtures {
         upcoming: populated.upcoming,
         connectionStatus: .reconnecting
     )
+
+    static let fullSession = MockSessionPresentation(
+        sessionName: "Maya’s Jam",
+        roomCode: "BEAT",
+        participants: populated.participants + [
+            .init(
+                id: MockFixtureID.samParticipant,
+                name: "Sam",
+                emoji: "🥁",
+                color: .blue,
+                isCurrentUser: false
+            ),
+            .init(
+                id: MockFixtureID.alexParticipant,
+                name: "Alex",
+                emoji: "🎹",
+                color: .purple,
+                isCurrentUser: false
+            ),
+            .init(
+                id: MockFixtureID.rileyParticipant,
+                name: "Riley",
+                emoji: "🎤",
+                color: .green,
+                isCurrentUser: false
+            ),
+            .init(
+                id: MockFixtureID.caseyParticipant,
+                name: "Casey",
+                emoji: "🎷",
+                color: .orange,
+                isCurrentUser: false
+            ),
+            .init(
+                id: MockFixtureID.morganParticipant,
+                name: "Morgan",
+                emoji: "🎻",
+                color: .blue,
+                isCurrentUser: false
+            )
+        ],
+        nowPlaying: populated.nowPlaying,
+        upcoming: populated.upcoming,
+        connectionStatus: .connected
+    )
+
+    static let longTitleTrack = MockSessionPresentation.Track(
+        id: MockFixtureID.longTitleTrack,
+        title: "Dancing Through the Longest Midnight Drive We’ve Ever Known",
+        artist: "The Satellites and the Northern Lights Ensemble",
+        submitter: populated.participants[1],
+        isExplicit: true
+    )
 }

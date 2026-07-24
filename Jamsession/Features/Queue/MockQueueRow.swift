@@ -4,20 +4,29 @@ struct MockQueueRow: View {
     let track: MockSessionPresentation.Track
     let position: Int
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
-        HStack {
-            Text(position, format: .number)
-                .font(.caption.monospacedDigit())
-                .foregroundStyle(.secondary)
-                .frame(minWidth: 20)
-                .accessibilityHidden(true)
+        VStack(alignment: .leading) {
+            if dynamicTypeSize.isAccessibilitySize {
+                HStack(alignment: .top) {
+                    Text(position, format: .number)
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                        .frame(minWidth: 20)
+                        .accessibilityHidden(true)
 
-            MockArtworkView(title: track.title)
+                    MockArtworkView(title: track.title)
 
-            VStack(alignment: .leading) {
-                HStack {
+                    Spacer()
+
+                    ParticipantBadgeView(participant: track.submitter)
+                }
+
+                VStack(alignment: .leading) {
                     Text(track.title)
-                        .lineLimit(1)
+                        .fixedSize(horizontal: false, vertical: true)
+
                     if track.isExplicit {
                         Text("mockQueue.explicit")
                             .font(.caption2)
@@ -25,16 +34,45 @@ struct MockQueueRow: View {
                             .background(.secondary.opacity(0.2))
                             .clipShape(.rect(cornerRadius: 3))
                     }
+
+                    Text(track.artist)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
-                Text(track.artist)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
+            } else {
+                HStack {
+                    Text(position, format: .number)
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                        .frame(minWidth: 20)
+                        .accessibilityHidden(true)
+
+                    MockArtworkView(title: track.title)
+
+                    VStack(alignment: .leading) {
+                        HStack(alignment: .top) {
+                            Text(track.title)
+                                .fixedSize(horizontal: false, vertical: true)
+                            if track.isExplicit {
+                                Text("mockQueue.explicit")
+                                    .font(.caption2)
+                                    .padding(.horizontal, 4)
+                                    .background(.secondary.opacity(0.2))
+                                    .clipShape(.rect(cornerRadius: 3))
+                            }
+                        }
+                        Text(track.artist)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+
+                    Spacer()
+
+                    ParticipantBadgeView(participant: track.submitter)
+                }
             }
-
-            Spacer()
-
-            ParticipantBadgeView(participant: track.submitter)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)
@@ -49,4 +87,9 @@ struct MockQueueRow: View {
             ? "\(base), \(String(localized: "mockQueue.explicit.full"))"
             : base
     }
+}
+
+#Preview("Long Title") {
+    MockQueueRow(track: MockSessionFixtures.longTitleTrack, position: 8)
+        .padding()
 }

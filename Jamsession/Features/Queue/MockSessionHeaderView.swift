@@ -50,9 +50,14 @@ struct MockSessionHeaderView: View {
             }
 
             HStack {
-                ForEach(presentation.participants) { participant in
-                    ParticipantBadgeView(participant: participant)
+                ScrollView(.horizontal) {
+                    HStack {
+                        ForEach(presentation.participants) { participant in
+                            ParticipantBadgeView(participant: participant)
+                        }
+                    }
                 }
+                .scrollIndicators(.hidden)
 
                 Text(
                     String(
@@ -62,7 +67,16 @@ struct MockSessionHeaderView: View {
                 )
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .fixedSize(horizontal: true, vertical: false)
             }
         }
     }
+}
+
+#Preview("Full Session") {
+    MockSessionHeaderView(
+        presentation: MockSessionFixtures.fullSession,
+        addMusic: {}
+    )
+    .padding()
 }

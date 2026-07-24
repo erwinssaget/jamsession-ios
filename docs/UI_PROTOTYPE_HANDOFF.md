@@ -382,6 +382,23 @@ Through 2026-07-24:
   six UI tests. Only the four focused new or affected tests were rerun on
   2026-07-24; the prior complete 50-unit-test result remains the full-suite
   baseline.
+- The maximum-capacity participant header has a deterministic eight-person
+  fixture. Its badge strip scrolls horizontally while the participant count
+  remains pinned and visible. The full-session header rendered successfully at
+  default Dynamic Type in light appearance and AX5 in dark appearance.
+- Xcode discovers 59 enabled tests after adding the capacity fixture assertion.
+  The project built successfully before both previews. The focused test runner
+  was cancelled once and then timed out, so no pass is claimed for the new
+  capacity assertion.
+- Queue rows now use a stacked metadata layout at accessibility Dynamic Type
+  sizes, and track titles are no longer constrained to one line at standard
+  sizes. A deterministic long-title fixture rendered successfully at standard
+  Dynamic Type in light appearance and AX5 in dark appearance with the complete
+  title visible.
+- An isolated Debug simulator build and build-for-testing both succeeded after
+  the queue-row change, compiling the app, unit-test, and UI-test targets. Issue
+  Navigator reported no warnings. The focused fixture test was cancelled by the
+  active Xcode test runner, so no new test-execution pass is claimed.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.

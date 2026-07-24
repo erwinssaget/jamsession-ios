@@ -33,6 +33,7 @@ struct MockFixtureIdentityTests {
             MockFixtureID.afterglowTrack,
             MockFixtureID.electricBlueTrack
         ])
+        #expect(MockSessionFixtures.longTitleTrack.id == MockFixtureID.longTitleTrack)
     }
 
     @Test
@@ -48,5 +49,13 @@ struct MockFixtureIdentityTests {
         #expect(participantIDs.count == 4)
         #expect(trackIDs.count == 5)
         #expect(participantIDs.isDisjoint(with: trackIDs))
+    }
+
+    @Test
+    func fullSessionUsesEightUniqueParticipantIdentities() {
+        let participants = MockSessionFixtures.fullSession.participants
+
+        #expect(participants.count == 8)
+        #expect(Set(participants.map(\.id)).count == 8)
     }
 }

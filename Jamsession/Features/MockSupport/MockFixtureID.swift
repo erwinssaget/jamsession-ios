@@ -13,6 +13,18 @@ nonisolated enum MockFixtureID {
     static let samParticipant = UUID(
         uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4)
     )
+    static let alexParticipant = UUID(
+        uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5)
+    )
+    static let rileyParticipant = UUID(
+        uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6)
+    )
+    static let caseyParticipant = UUID(
+        uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7)
+    )
+    static let morganParticipant = UUID(
+        uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8)
+    )
 
     static let midnightDriveTrack = UUID(
         uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21)
@@ -28,5 +40,8 @@ nonisolated enum MockFixtureID {
     )
     static let electricBlueTrack = UUID(
         uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 25)
+    )
+    static let longTitleTrack = UUID(
+        uuid: (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26)
     )
 }
