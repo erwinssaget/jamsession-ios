@@ -1,7 +1,9 @@
 import SwiftUI
+import UIKit
 
 struct MockMusicSearchView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
 
     var showsDoneButton = true
 
@@ -16,21 +18,24 @@ struct MockMusicSearchView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                if let outcome {
-                    MockSubmissionFeedbackView(outcome: outcome) {
-                        self.outcome = nil
-                    }
-                }
-
                 MockSearchStateView(
                     scenario: scenario,
                     tracks: MockSearchFixtures.tracks,
                     add: { _ in outcome = .pending },
-                    retry: { scenario = .results }
+                    retry: { scenario = .results },
+                    openSettings: openSettings
                 )
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .safeAreaInset(edge: .bottom) {
+            if let outcome {
+                MockSubmissionFeedbackView(outcome: outcome) {
+                    self.outcome = nil
+                }
+                .padding()
+            }
         }
         .navigationTitle("mockSearch.title")
         .navigationBarTitleDisplayMode(.inline)
@@ -45,6 +50,9 @@ struct MockMusicSearchView: View {
                     Picker("mockSearch.previewState", selection: $scenario) {
                         ForEach(MockSearchScenario.allCases) { option in
                             Text(LocalizedStringKey(option.titleKey))
+                                .accessibilityIdentifier(
+                                    "mock.flow.search.scenario.\(option.rawValue)"
+                                )
                                 .tag(option)
                         }
                     }
@@ -57,6 +65,7 @@ struct MockMusicSearchView: View {
                         }
                     }
                 }
+                .accessibilityIdentifier("mock.flow.search.previewState")
 
                 if showsDoneButton {
                     Button("mockQueue.done") {
@@ -66,6 +75,13 @@ struct MockMusicSearchView: View {
                 }
             }
         }
+    }
+
+    private func openSettings() {
+        guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else {
+            return
+        }
+        openURL(settingsURL)
     }
 }
 

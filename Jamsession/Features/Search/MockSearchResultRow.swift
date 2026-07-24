@@ -19,6 +19,7 @@ struct MockSearchResultRow: View {
                             .labelStyle(.iconOnly)
                             .buttonStyle(.bordered)
                             .accessibilityLabel(addAccessibilityLabel)
+                            .accessibilityIdentifier("mock.flow.search.add")
                     }
 
                     Text(track.title)
@@ -54,6 +55,7 @@ struct MockSearchResultRow: View {
                         .labelStyle(.iconOnly)
                         .buttonStyle(.bordered)
                         .accessibilityLabel(addAccessibilityLabel)
+                        .accessibilityIdentifier("mock.flow.search.add")
                 }
             }
         }

@@ -430,6 +430,20 @@ Through 2026-07-24:
   iPhone 14 Pro iOS 26.5 simulator. The project built successfully, Issue
   Navigator reported no warnings, the string catalog parsed, and
   `git diff --check` passed.
+- The Music-access-denied search fixture now emits a dedicated app-Settings
+  recovery intent. It no longer reuses transient catalog retry, and the mock
+  route still does not request authorization or call MusicKit.
+- Submission feedback is presented in a bottom safe-area inset so it remains
+  visible after adding any result, including the final long-title fixture, and
+  accessibility focus moves to the new feedback.
+- The denied-access and submission-feedback previews rendered at AX5 Dynamic
+  Type in dark appearance with complete content. Both focused connected Join UI
+  regressions passed on the iPhone 14 Pro iOS 26.5 simulator, including a
+  submission from the lowest result, and all 57 unit tests passed.
+- Xcode discovers 67 enabled tests: 57 unit tests and ten UI tests. The project
+  built successfully, Issue Navigator reported no warnings, the string catalog
+  parsed, the provisional search boundary remained free of MusicKit, Network,
+  fairness, and session-authority dependencies, and `git diff --check` passed.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.

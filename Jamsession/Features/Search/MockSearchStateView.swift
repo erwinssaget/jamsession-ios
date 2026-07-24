@@ -5,6 +5,7 @@ struct MockSearchStateView: View {
     let tracks: [MockSearchTrack]
     let add: (MockSearchTrack) -> Void
     let retry: () -> Void
+    let openSettings: () -> Void
 
     var body: some View {
         switch scenario {
@@ -39,11 +40,20 @@ struct MockSearchStateView: View {
         case .empty:
             ContentUnavailableView.search(text: "After Midnight")
         case .musicAccessDenied:
-            status(
-                title: "mockSearch.denied.title",
-                systemImage: "music.note.slash",
-                description: "mockSearch.denied.description"
-            )
+            VStack {
+                ContentUnavailableView(
+                    "mockSearch.denied.title",
+                    systemImage: "music.note.slash",
+                    description: Text("mockSearch.denied.description")
+                )
+                Button(
+                    "mockSearch.openSettings",
+                    systemImage: "gear",
+                    action: openSettings
+                )
+                .buttonStyle(.borderedProminent)
+                .accessibilityIdentifier("mock.flow.search.openSettings")
+            }
         case .offline:
             status(
                 title: "mockSearch.offline.title",
@@ -74,4 +84,15 @@ struct MockSearchStateView: View {
                 .buttonStyle(.bordered)
         }
     }
+}
+
+#Preview("Music Access Denied") {
+    MockSearchStateView(
+        scenario: .musicAccessDenied,
+        tracks: MockSearchFixtures.tracks,
+        add: { _ in },
+        retry: {},
+        openSettings: {}
+    )
+    .padding()
 }

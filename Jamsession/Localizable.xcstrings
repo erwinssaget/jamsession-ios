@@ -2184,6 +2184,17 @@
         }
       }
     },
+    "mockSearch.openSettings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        }
+      }
+    },
     "mockSearch.previewFeedback" : {
       "extractionState" : "manual",
       "localizations" : {

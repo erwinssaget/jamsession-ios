@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MockSubmissionFeedbackView: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @AccessibilityFocusState private var isFeedbackFocused: Bool
 
     let outcome: MockSubmissionOutcome
     let dismiss: () -> Void
@@ -55,6 +56,14 @@ struct MockSubmissionFeedbackView: View {
         .background(tint.opacity(0.12))
         .clipShape(.rect(cornerRadius: 14))
         .accessibilityElement(children: .combine)
+        .accessibilityFocused($isFeedbackFocused)
+        .accessibilityIdentifier("mock.flow.search.feedback")
+        .onAppear {
+            isFeedbackFocused = true
+        }
+        .onChange(of: outcome) {
+            isFeedbackFocused = true
+        }
     }
 
     private var presentation: MockSubmissionFeedbackPresentation {

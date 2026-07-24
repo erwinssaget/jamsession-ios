@@ -140,6 +140,72 @@ final class MockConnectedFlowUITests: XCTestCase {
     }
 
     @MainActor
+    func testMusicAccessDeniedOffersSettingsRecovery() {
+        let app = launchApplication()
+        openConnectedFlow(in: app)
+        completeProfile(
+            in: app,
+            roleIdentifier: "mock.flow.role.join",
+            name: "Denied Guest"
+        )
+
+        tapButton("mock.flow.discovery.session", in: app)
+        tapButton("mock.flow.join.approve", in: app)
+        tapButton("mock.flow.queue.addMusic", in: app)
+        tapButton("mock.flow.search.previewState", in: app)
+        tapButton("mock.flow.search.scenario.musicAccessDenied", in: app)
+
+        XCTAssertTrue(
+            app.buttons["mock.flow.search.openSettings"].waitForExistence(timeout: 3),
+            "Denied Music access should offer a Settings recovery action."
+        )
+        XCTAssertFalse(
+            app.buttons["Try Again"].exists,
+            "Denied Music access should not simulate recovery through catalog retry."
+        )
+    }
+
+    @MainActor
+    func testSubmissionFeedbackStaysVisibleForLowerSearchResult() {
+        let app = launchApplication()
+        openConnectedFlow(in: app)
+        completeProfile(
+            in: app,
+            roleIdentifier: "mock.flow.role.join",
+            name: "Feedback Guest"
+        )
+
+        tapButton("mock.flow.discovery.session", in: app)
+        tapButton("mock.flow.join.approve", in: app)
+        tapButton("mock.flow.queue.addMusic", in: app)
+
+        let addButtons = app.buttons.matching(identifier: "mock.flow.search.add")
+        let lowerResultAddButton = addButtons.element(boundBy: 3)
+        for _ in 0..<8 where !lowerResultAddButton.exists || !lowerResultAddButton.isHittable {
+            app.swipeUp()
+        }
+        XCTAssertTrue(
+            lowerResultAddButton.waitForExistence(timeout: 3),
+            "The lower search-result Add action should be reachable."
+        )
+        XCTAssertTrue(
+            lowerResultAddButton.isHittable,
+            "The lower search-result Add action should be visible before submission."
+        )
+        lowerResultAddButton.tap()
+
+        let feedback = app.descendants(matching: .any)["mock.flow.search.feedback"]
+        XCTAssertTrue(
+            feedback.waitForExistence(timeout: 3),
+            "Submission feedback should be presented after adding a lower result."
+        )
+        XCTAssertTrue(
+            feedback.isHittable,
+            "Submission feedback should stay visible in the search viewport."
+        )
+    }
+
+    @MainActor
     private func launchApplication() -> XCUIApplication {
         let app = XCUIApplication()
         app.launch()
