@@ -23,6 +23,7 @@ struct MockSubmissionFeedbackView: View {
 
                         Button("mockSearch.feedback.dismiss", systemImage: "xmark", action: dismiss)
                             .labelStyle(.iconOnly)
+                            .accessibilityIdentifier("mock.flow.search.feedback.dismiss")
                     }
 
                     Text(LocalizedStringKey(presentation.descriptionKey))
@@ -49,13 +50,14 @@ struct MockSubmissionFeedbackView: View {
 
                     Button("mockSearch.feedback.dismiss", systemImage: "xmark", action: dismiss)
                         .labelStyle(.iconOnly)
+                        .accessibilityIdentifier("mock.flow.search.feedback.dismiss")
                 }
             }
         }
         .padding()
         .background(tint.opacity(0.12))
         .clipShape(.rect(cornerRadius: 14))
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: .contain)
         .accessibilityFocused($isFeedbackFocused)
         .accessibilityIdentifier("mock.flow.search.feedback")
         .onAppear {

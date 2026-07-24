@@ -203,6 +203,21 @@ final class MockConnectedFlowUITests: XCTestCase {
             feedback.isHittable,
             "Submission feedback should stay visible in the search viewport."
         )
+
+        let dismissFeedbackButton = app.buttons["mock.flow.search.feedback.dismiss"]
+        XCTAssertTrue(
+            dismissFeedbackButton.waitForExistence(timeout: 3),
+            "Submission feedback should expose a separate dismiss control."
+        )
+        XCTAssertTrue(
+            dismissFeedbackButton.isHittable,
+            "The feedback dismiss control should remain reachable."
+        )
+        dismissFeedbackButton.tap()
+        XCTAssertTrue(
+            feedback.waitForNonExistence(timeout: 3),
+            "Dismissing submission feedback should remove the bottom inset."
+        )
     }
 
     @MainActor

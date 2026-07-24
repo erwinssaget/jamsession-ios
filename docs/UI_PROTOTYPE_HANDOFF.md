@@ -82,7 +82,9 @@ The provisional track is intentionally isolated from production session logic.
   and Join fixture paths through profile, inert permission explanation, queue,
   Add Music presentation, dismissal, and restart. The Host path also exercises
   the scrollable invite sheet at accessibility text sizes and Session Ended →
-  Return Home through the lifecycle gallery.
+  Return Home through the lifecycle gallery. The Join path also covers denied
+  Music-access Settings recovery plus lower-result submission feedback and its
+  separate accessibility dismissal control.
 
 “Complete” above means complete only for provisional design exploration. It does
 not satisfy or open a canonical Slice 4 gate.
@@ -444,6 +446,15 @@ Through 2026-07-24:
   built successfully, Issue Navigator reported no warnings, the string catalog
   parsed, the provisional search boundary remained free of MusicKit, Network,
   fairness, and session-authority dependencies, and `git diff --check` passed.
+- The submission-feedback card is an accessibility container rather than one
+  combined element, keeping its xmark available as a separate dismiss control
+  after focus moves to the feedback. The connected Join regression submitted the
+  final result, dismissed the visible feedback through that control, and verified
+  the bottom inset disappeared.
+- After the dismissal follow-up, the focused UI regression and all 57 unit tests
+  passed on the iPhone 14 Pro iOS 26.5 simulator. The project built, the AX5 dark
+  feedback preview rendered without visual regression, Xcode reported no
+  warnings, the string catalog parsed, and `git diff --check` passed.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.
