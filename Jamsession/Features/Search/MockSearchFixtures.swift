@@ -19,6 +19,14 @@ nonisolated enum MockSearchFixtures {
             title: "Electric Blue",
             artist: "Night Swim",
             isExplicit: false
-        )
+        ),
+        longTitleTrack
     ]
+
+    static let longTitleTrack = MockSearchTrack(
+        id: MockFixtureID.longTitleTrack,
+        title: "Dancing Through the Longest Midnight Drive We’ve Ever Known",
+        artist: "The Satellites and the Northern Lights Ensemble",
+        isExplicit: true
+    )
 }

@@ -28,11 +28,7 @@ struct MockQueueRow: View {
                         .fixedSize(horizontal: false, vertical: true)
 
                     if track.isExplicit {
-                        Text("mockQueue.explicit")
-                            .font(.caption2)
-                            .padding(.horizontal, 4)
-                            .background(.secondary.opacity(0.2))
-                            .clipShape(.rect(cornerRadius: 3))
+                        ExplicitBadgeView()
                     }
 
                     Text(track.artist)
@@ -55,11 +51,7 @@ struct MockQueueRow: View {
                             Text(track.title)
                                 .fixedSize(horizontal: false, vertical: true)
                             if track.isExplicit {
-                                Text("mockQueue.explicit")
-                                    .font(.caption2)
-                                    .padding(.horizontal, 4)
-                                    .background(.secondary.opacity(0.2))
-                                    .clipShape(.rect(cornerRadius: 3))
+                                ExplicitBadgeView()
                             }
                         }
                         Text(track.artist)

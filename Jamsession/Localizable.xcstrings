@@ -722,7 +722,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jordan disconnected. Their turns are skipped while the reconnect grace period remains open."
+            "value" : "Jordan did not reconnect before the grace period ended. Their turns are skipped, and their pending songs were removed."
           }
         }
       }
@@ -733,7 +733,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Disconnected · Original position reserved"
+            "value" : "Gone · Original position reserved"
           }
         }
       }
@@ -744,7 +744,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fixture only: queued songs are shown as retained, but this screen does not run reconnection or rotation logic."
+            "value" : "If Jordan returns, their original rotation position is restored, but removed songs do not return."
           }
         }
       }
@@ -755,7 +755,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Friend Reconnecting"
+            "value" : "Friend Gone"
           }
         }
       }
@@ -1739,6 +1739,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Now Playing"
+          }
+        }
+      }
+    },
+    "mockQueue.nowPlaying.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now playing %@ by %@, added by %@"
           }
         }
       }

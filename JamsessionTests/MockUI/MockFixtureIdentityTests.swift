@@ -31,7 +31,8 @@ struct MockFixtureIdentityTests {
         #expect(MockSearchFixtures.tracks.map(\.id) == [
             MockFixtureID.goldenHourTrack,
             MockFixtureID.afterglowTrack,
-            MockFixtureID.electricBlueTrack
+            MockFixtureID.electricBlueTrack,
+            MockFixtureID.longTitleTrack
         ])
         #expect(MockSessionFixtures.longTitleTrack.id == MockFixtureID.longTitleTrack)
     }

@@ -399,6 +399,19 @@ Through 2026-07-24:
   the queue-row change, compiling the app, unit-test, and UI-test targets. Issue
   Navigator reported no warnings. The focused fixture test was cancelled by the
   active Xcode test runner, so no new test-execution pass is claimed.
+- The lifecycle `participantGone` fixture now represents the post-grace
+  tombstone state: pending songs are removed, the locked rotation position is
+  reserved, and returning does not restore removed songs.
+- Now Playing and Search use accessibility-size stacked layouts for long catalog
+  metadata. A shared explicit badge exposes the full “Explicit” accessibility
+  label in queue, search, and Now Playing presentations.
+- The corrected gone fixture rendered at standard Dynamic Type in light
+  appearance. Long explicit Now Playing and Search fixtures rendered at AX5 in
+  dark appearance with complete titles and artists visible.
+- Xcode discovers 62 enabled tests: 56 unit tests and six UI tests. All 56 unit
+  tests passed on the iPhone 14 Pro iOS 26.5 simulator after the final review
+  fixes, including post-grace lifecycle semantics, explicit Now Playing
+  accessibility, full-session capacity, and shared long-track fixture identity.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.

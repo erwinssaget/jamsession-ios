@@ -27,3 +27,8 @@ struct MockParticipantGoneView: View {
         }
     }
 }
+
+#Preview {
+    MockParticipantGoneView()
+        .padding()
+}
