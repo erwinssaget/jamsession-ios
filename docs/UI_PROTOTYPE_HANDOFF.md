@@ -412,6 +412,18 @@ Through 2026-07-24:
   tests passed on the iPhone 14 Pro iOS 26.5 simulator after the final review
   fixes, including post-grace lifecycle semantics, explicit Now Playing
   accessibility, full-session capacity, and shared long-track fixture identity.
+- The permission explainer uses a scrollable sheet body so expanded title,
+  description, fixture notice, and action remain reachable at accessibility
+  sizes. Its Host path passed a focused UI test at accessibility XXXL, and the
+  AX5 dark preview rendered successfully.
+- The localized participant count now uses singular and plural variations. A
+  deterministic solo fixture and the full eight-person fixture assert “1 person”
+  and “8 people” respectively.
+- Xcode discovers 64 enabled tests: 57 unit tests and seven UI tests. All 57 unit
+  tests and the focused permission-sheet accessibility UI test passed on the
+  iPhone 14 Pro iOS 26.5 simulator. The project built successfully, Issue
+  Navigator reported no warnings, the string catalog parsed, and
+  `git diff --check` passed.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.

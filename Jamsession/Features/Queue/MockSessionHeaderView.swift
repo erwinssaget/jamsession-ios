@@ -60,16 +60,20 @@ struct MockSessionHeaderView: View {
                 .scrollIndicators(.hidden)
 
                 Text(
-                    String(
-                        localized: "mockQueue.participantCount",
-                        defaultValue: "\(presentation.participants.count) people"
-                    )
+                    participantCountDescription
                 )
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: true, vertical: false)
             }
         }
+    }
+
+    var participantCountDescription: String {
+        String(
+            localized: "mockQueue.participantCount",
+            defaultValue: "\(presentation.participants.count) people"
+        )
     }
 }
 

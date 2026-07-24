@@ -78,6 +78,15 @@ nonisolated enum MockSessionFixtures {
         connectionStatus: .connected
     )
 
+    static let solo = MockSessionPresentation(
+        sessionName: "Maya’s Jam",
+        roomCode: "BEAT",
+        participants: [populated.participants[0]],
+        nowPlaying: nil,
+        upcoming: [],
+        connectionStatus: .connected
+    )
+
     static let reconnecting = MockSessionPresentation(
         sessionName: "Maya’s Jam",
         roomCode: "BEAT",

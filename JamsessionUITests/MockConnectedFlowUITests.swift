@@ -56,6 +56,48 @@ final class MockConnectedFlowUITests: XCTestCase {
     }
 
     @MainActor
+    func testPermissionExplainerIsScrollableAtAccessibilityTextSize() {
+        let app = XCUIApplication()
+        app.launchArguments += [
+            "-UIPreferredContentSizeCategoryName",
+            "UICTContentSizeCategoryAccessibilityXXXL"
+        ]
+        app.launch()
+
+        openConnectedFlow(in: app)
+        tapButton(
+            "mock.flow.role.host",
+            in: app,
+            scrollingIfNeeded: true
+        )
+
+        let nameField = app.textFields["mock.flow.profile.name"]
+        XCTAssertTrue(nameField.waitForExistence(timeout: 3))
+        nameField.tap()
+        nameField.typeText("AX Host")
+
+        let keyboardDone = app.keyboards.buttons["Done"]
+        XCTAssertTrue(keyboardDone.waitForExistence(timeout: 2))
+        keyboardDone.tap()
+
+        tapButton(
+            "mock.flow.profile.continue",
+            in: app,
+            scrollingIfNeeded: true
+        )
+        tapButton(
+            "mock.flow.permission.finish",
+            in: app,
+            scrollingIfNeeded: true
+        )
+
+        XCTAssertTrue(
+            app.buttons["mock.flow.host.start"].waitForExistence(timeout: 3),
+            "The permission action should remain reachable at accessibility text sizes."
+        )
+    }
+
+    @MainActor
     private func launchApplication() -> XCUIApplication {
         let app = XCUIApplication()
         app.launch()
@@ -64,7 +106,11 @@ final class MockConnectedFlowUITests: XCTestCase {
 
     @MainActor
     private func openConnectedFlow(in app: XCUIApplication) {
-        tapButton("mock.flow.open", in: app)
+        tapButton(
+            "mock.flow.open",
+            in: app,
+            scrollingIfNeeded: true
+        )
     }
 
     @MainActor
@@ -132,6 +178,13 @@ final class MockConnectedFlowUITests: XCTestCase {
         line: UInt = #line
     ) {
         let button = app.buttons[identifier]
+
+        if scrollingIfNeeded {
+            for _ in 0..<8 where !button.exists || !button.isHittable {
+                app.swipeUp()
+            }
+        }
+
         XCTAssertTrue(
             button.waitForExistence(timeout: 3),
             "Expected button \(identifier) to exist.",

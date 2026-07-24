@@ -9,47 +9,53 @@ struct MockPermissionExplainerView: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
-                Image(systemName: role == .host ? "music.note" : "wifi")
-                    .font(.largeTitle)
-                    .foregroundStyle(.tint)
-                    .frame(width: 88, height: 88)
-                    .background(.tint.opacity(0.14))
-                    .clipShape(.circle)
-                    .accessibilityHidden(true)
+            ScrollView {
+                VStack {
+                    Image(systemName: role == .host ? "music.note" : "wifi")
+                        .font(.largeTitle)
+                        .foregroundStyle(.tint)
+                        .frame(width: 88, height: 88)
+                        .background(.tint.opacity(0.14))
+                        .clipShape(.circle)
+                        .accessibilityHidden(true)
 
-                Text(
-                    role == .host
-                        ? "mockEntry.permission.host.title"
-                        : "mockEntry.permission.join.title"
-                )
-                .font(.title2)
-                .bold()
-                .multilineTextAlignment(.center)
+                    Text(
+                        role == .host
+                            ? "mockEntry.permission.host.title"
+                            : "mockEntry.permission.join.title"
+                    )
+                    .font(.title2)
+                    .bold()
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                Text(
-                    role == .host
-                        ? "mockEntry.permission.host.description"
-                        : "mockEntry.permission.join.description"
-                )
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-
-                Label("mockEntry.permission.inert", systemImage: "hammer")
-                    .font(.footnote)
+                    Text(
+                        role == .host
+                            ? "mockEntry.permission.host.description"
+                            : "mockEntry.permission.join.description"
+                    )
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
 
-                Button("mockEntry.permission.preview", systemImage: "checkmark") {
-                    if let onContinue {
-                        onContinue()
-                    } else {
-                        dismiss()
+                    Label("mockEntry.permission.inert", systemImage: "hammer")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Button("mockEntry.permission.preview", systemImage: "checkmark") {
+                        if let onContinue {
+                            onContinue()
+                        } else {
+                            dismiss()
+                        }
                     }
+                    .buttonStyle(.borderedProminent)
+                    .accessibilityIdentifier("mock.flow.permission.finish")
                 }
-                .buttonStyle(.borderedProminent)
-                .accessibilityIdentifier("mock.flow.permission.finish")
+                .padding()
             }
-            .padding()
+            .scrollIndicators(.hidden)
             .navigationTitle(displayName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -62,4 +68,11 @@ struct MockPermissionExplainerView: View {
         }
         .presentationDetents([.medium, .large])
     }
+}
+
+#Preview {
+    MockPermissionExplainerView(
+        role: .host,
+        displayName: "Maya"
+    )
 }
