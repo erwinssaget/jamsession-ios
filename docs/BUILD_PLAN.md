@@ -1,7 +1,7 @@
 # Build Plan — Ephemeral Shared-Queue Music Sessions
 
-Revision: 4
-Last updated: 2026-07-18
+Revision: 5
+Last updated: 2026-07-24
 
 ## Authority and usage
 
@@ -9,9 +9,11 @@ This is the canonical implementation sequence. Read
 [`PRODUCT_DECISIONS.md`](PRODUCT_DECISIONS.md) and the repository
 [`AGENTS.md`](../AGENTS.md) before starting a slice.
 
-Implement one slice at a time. Do not begin the next slice until the current
-slice's exit gate has been demonstrated. If a feasibility gate fails, update the
-product decision record before changing architecture or scope.
+Implement one vertical slice at a time. A slice may begin when every capability
+gate named by that slice has passed; an unrelated blocked capability does not
+block it. Do not declare a slice complete until its own exit gate has been
+demonstrated. If a feasibility check fails, update the product decision record
+before changing architecture or scope.
 
 Physical-device results and unresolved hardware gates are tracked in
 [`VERIFICATION_LOG.md`](VERIFICATION_LOG.md). A hardware or account dependency
@@ -19,23 +21,24 @@ does not make an exit gate pass.
 
 ### Provisional work while a feasibility gate is blocked
 
-When a Slice 0 check cannot run solely because required physical hardware or an
-account state is unavailable, low-coupling work from a later slice may proceed
-provisionally only when all of the following are true:
+When a capability check cannot run solely because required physical hardware or
+an account state is unavailable, work that does not depend on that capability may
+proceed only when all of the following are true:
 
 - The blocked check and exact dependency are recorded in `VERIFICATION_LOG.md`.
 - The work is independently useful and does not assume an unverified MusicKit,
   Network framework, permission, or lifecycle behavior.
 - The work has a mockable or pure boundary and can be revised without preserving
   compatibility with an unverified spike.
-- No dependent integration slice starts, and no later slice is declared complete,
-  until Slice 0 passes or the product decision and this plan are deliberately
-  revised.
+- No integration slice that names the blocked capability as a prerequisite starts,
+  and no dependent slice is declared complete until the capability passes or the
+  product decision and this plan are deliberately revised.
 
-The pure Slice 1 fairness engine is authorized under this exception because it has
-no MusicKit, Network, clock, I/O, or physical-device dependency. Transport,
-playback, permission-flow, and lifecycle architecture are not authorized by this
-exception where their design depends on an unresolved Slice 0 result.
+The pure Slice 1 fairness engine and Slice 2A domain-backed queue UI are authorized
+while hardware/account checks remain blocked because they have no MusicKit,
+Network, clock, I/O, or physical-device dependency. Transport, guest catalog,
+permission-flow, playback, and lifecycle work still require their named capability
+gate.
 
 ### Provisional mock-driven UI track
 
@@ -146,6 +149,19 @@ file reflexively.
 
 Invalidate the riskiest assumptions cheaply before production architecture grows.
 
+Slice 0 is tracked as independent capability gates:
+
+- **0M — host MusicKit:** host authorization, subscription, catalog access,
+  playback, and lock-screen behavior.
+- **0G — guest catalog:** MusicKit authorization and catalog search for a guest
+  without an active Apple Music subscription.
+- **0N — nearby networking:** Bonjour discovery, framed messaging, denial
+  distinction, foreground/background behavior, reconnection, and clean
+  termination on two physical devices.
+
+A later slice names the gates it requires. Passing 0M does not imply 0G or 0N;
+blocked 0G or 0N does not block host-only work that depends solely on 0M.
+
 ### Tasks
 
 - Verify the installed Xcode/Swift compiler and set the true minimum deployment
@@ -168,17 +184,17 @@ Invalidate the riskiest assumptions cheaply before production architecture grows
   - Observe foreground/background disconnect and reconnect behavior.
 - Define `SessionTransport` only after the spike exposes the concrete needs.
 
-### Exit gate
+### Capability exit gates
 
-- Physical subscriber playback works.
-- Physical non-subscriber catalog search is either proven or the product promise is
-  revised.
-- Two devices discover, connect, exchange framed messages, and terminate cleanly.
-- Permission denial is distinguishable from no nearby room.
-- Findings and platform limitations are recorded in `PRODUCT_DECISIONS.md`.
-
-Do not proceed if either MusicKit or local peer-to-peer feasibility remains
-unverified.
+- **0M:** physical subscriber playback, pause, skip, denial recovery, and intended
+  device-lock behavior work.
+- **0G:** physical non-subscriber catalog search works or the guest product promise
+  is deliberately revised.
+- **0N:** two devices discover, connect, exchange framed messages, distinguish
+  denial from no nearby room, observe foreground/background behavior, reconnect as
+  designed, and terminate cleanly.
+- Findings and platform limitations are recorded in `PRODUCT_DECISIONS.md` and
+  `VERIFICATION_LOG.md`.
 
 ## Slice 1 — Pure fairness engine
 
@@ -244,128 +260,144 @@ behavior requires it), not historical plays.
 - The domain module has no MusicKit, SwiftUI, Network, date, timer, or I/O import.
 - Skip and tombstone semantics match `PRODUCT_DECISIONS.md` exactly.
 
-## Slice 2 — Host player and reconciliation spike
+## Slice 2A — Domain-backed functional queue UI
+
+### Prerequisite
+
+Slice 1 only. This slice does not depend on MusicKit, Network, permissions, a
+clock, or physical devices.
 
 ### Goal
 
-Turn the fair logical queue into stable host playback without restarting the current
-track or advancing rotation twice.
+Connect real fairness behavior to reusable SwiftUI presentation without promoting
+the provisional mock coordinator or scenario state into production architecture.
 
 ### Tasks
 
-- Add cancellable, debounced catalog search behind a protocol.
-- Add a Main Actor host player around `ApplicationMusicPlayer.shared`.
-- Add host-storefront resolution behind a mockable protocol.
-- Map MusicKit `Song` values into domain metadata without leaking MusicKit types into
-  fairness.
-- Build `QueueReconciler` as a testable diff planner plus a thin MusicKit executor.
-- Own exactly one playback transition observation task with an explicit cancellation
-  path and event deduplication.
-- Handle pause, host skip, track completion, unplayable entry, reconciliation
-  failure, interruption, and route change.
+- Add one Main Actor authoritative in-memory host session owner.
+- Define typed queue commands with explicit request identity.
+- Map canonical `RotationState` and participant metadata into immutable,
+  production-neutral queue presentation values.
+- Reuse visual queue components only after their inputs no longer depend on mock
+  fixtures.
+- Drive submit, remove-own, host removal, turn skip, pending-limit, and duplicate
+  behavior through `FairnessScheduler`.
+- Surface typed accepted/rejected outcomes with localized, accessible feedback.
+- Keep any deterministic catalog or participant harness Debug-only and clearly
+  separate from the production state owner.
 
 ### Exit gate
 
-- A fair multi-participant fixture plays on a subscriber device.
-- Adding/removing future tracks does not disturb the current track.
-- Completion and skip advance once even under repeated callbacks.
-- A reconciliation failure pauses and surfaces an actionable state.
-- Pure diff-planning and transition-deduplication tests pass.
+- UI actions mutate only canonical session state through typed commands.
+- Derived queue order exactly matches `FairnessScheduler.upcomingQueue`.
+- Duplicate, pending-cap, unauthorized removal, replay, and turn-skip outcomes have
+  focused integration tests.
+- The app builds with no new warnings; the complete fairness suite passes.
+- No MusicKit, Network, permission, timer, or persistence dependency is introduced.
 
-## Slice 3 — Authoritative session protocol and transport
+## Slice 2B — Single-device host experience
+
+### Prerequisite
+
+Capability gate 0M and Slice 2A.
 
 ### Goal
 
-Make two or more devices converge on host-owned state across discovery, admission,
-commands, snapshots, loss, and reconnection.
+Deliver the first usable production path: a subscriber hosts alone, searches,
+queues fairly, and plays music on one device.
+
+### Tasks
+
+- Connect first-run role/profile presentation to a production app coordinator.
+- Add the just-in-time host Music explanation, authorization, subscription, and
+  recovery flow.
+- Allow the host to create a lobby and start alone.
+- Add cancellable, debounced catalog search behind a protocol.
+- Add host-storefront resolution and map MusicKit `Song` into domain metadata.
+- Add a Main Actor host player around `ApplicationMusicPlayer.shared`.
+- Build `QueueReconciler` as a pure diff planner plus thin MusicKit executor.
+- Own one playback-transition observation task with cancellation and
+  deduplication.
+- Connect real search, submission, queue, now-playing, pause, skip, failure, empty
+  queue, and end-session UI.
+
+### Exit gate
+
+- A subscriber completes profile → host authorization → lobby → start alone →
+  search → queue → playback → end on a physical device.
+- Adding/removing future tracks does not disturb the current track.
+- Completion and skip advance once under repeated callbacks.
+- Reconciliation failure pauses and surfaces actionable UI.
+- Pure diff-planning, transition-deduplication, mapping, and UI-flow tests pass.
+
+## Slice 3 — Nearby lobby and admission
+
+### Prerequisite
+
+Capability gate 0N and Slice 2A. Guest catalog gate 0G is not required.
+
+### Goal
+
+Deliver discovery, admission, lobby convergence, and a canonical empty joined
+queue on real nearby devices.
 
 ### Tasks
 
 - Implement production `SessionTransport` with the proven iOS 26 Network APIs.
 - Use host-and-spoke connections and structured tasks with explicit ownership and
   cancellation.
-- Define length-prefixed framing, maximum message size, protocol version, session
-  ID, participant ID, request ID, host revision, and typed payload.
-- Implement random on-device identity and per-session reconnect credential.
-- Implement Bonjour discovery, host approval, QR admission secret, and short-code
-  local filtering. Short codes never bypass approval.
-- Enforce eight total devices, preserving a reconnecting participant's slot.
-- Implement host command authorization, request idempotency, typed acknowledgement
-  or rejection, monotonic revisions, and full reconnect snapshots.
-- Rate-limit before command processing. Reject malformed, oversized, stale,
-  unauthorized, version-incompatible, and blocked requests.
-- Never include peer credentials or admission secrets in broadcast snapshots.
-
-### Tests
-
-- Envelope and every payload round-trip.
-- Truncated, oversized, malformed, and unknown-version frames fail safely.
-- Replayed request mutates state once and returns a consistent result.
-- Unauthorized cross-participant remove/skip is rejected.
-- Old snapshot cannot replace a newer guest mirror.
-- Ninth device is rejected; reconnecting identity reclaims reserved slot.
-- Blocked identity cannot rejoin or submit.
-- Connection and observation tasks terminate on session end.
-- Physical-device discovery, approval, QR join, short-code join, disconnect, and
-  reconnect scenarios pass.
+- Define framing, maximum message size, protocol version, session ID, participant
+  ID, request ID, host revision, and typed payload.
+- Implement on-device identity, reconnect credentials, Bonjour discovery, host
+  approval, QR admission, and short-code filtering.
+- Enforce capacity, authorization, idempotency, monotonic revisions, rate limits,
+  defensive decoding, and credential privacy.
+- Connect local-network explanation/recovery, discovery, no-room, approval,
+  rejection, room-full, update-required, invite, lobby, and empty joined-queue UI
+  to canonical host/guest state.
 
 ### Exit gate
 
-- At least three physical devices maintain a consistent mock session through a
-  disconnect/reconnect cycle.
-- Host state remains canonical under duplicate and stale delivery.
-- Instruments/log inspection shows no leaked participant or credential data.
+- Host and guest discover, approve, form a lobby, start, and display the same
+  canonical empty queue on two physical devices.
+- Duplicate/stale delivery and unauthorized commands cannot diverge state.
+- Framing, snapshots, admission, capacity, cancellation, and presentation mapping
+  tests pass.
+- Physical denial/no-room distinction and clean termination pass with no private
+  values in logs or accessibility output.
 
-## Slice 4A — Lobby, joining, and session shell
+## Slice 4 — Guest submission and full fair loop
 
-### Goal
+### Prerequisite
 
-Deliver the complete pre-play experience and authoritative lifecycle shell.
-
-### Tasks
-
-- First-run name/avatar setup and Host/Join entry.
-- Just-in-time MusicKit and local-network explainers and permission flows.
-- Host eligibility and guest search eligibility states.
-- Lobby creation, host ordering, guest approval, pre-submission, start, and locked
-  order.
-- Discovery, QR scan, short-code filtering, room-full, rejection, and update-required
-  UI.
-- Guest mirror, connected/reconnecting/gone/removed states, and empty queue shell.
-
-### Exit gate
-
-- Host and two guests can form a lobby, arrange order, pre-submit mock tracks, start,
-  late join, disconnect, reconnect, remove, and end without MusicKit playback.
-- All introduced states are VoiceOver and Dynamic Type usable.
-
-## Slice 4B — Search, submission, fairness, and playback
+Capability gate 0G, Slice 2B, and Slice 3. If 0G fails, revise the guest product
+decision before changing this slice.
 
 ### Goal
 
-Deliver the actual multi-device fair queue and playback loop.
+Deliver the complete multi-device fair queue and playback loop.
 
 ### Tasks
 
-- Guest pending submission -> host storefront resolution -> authorization and
-  fairness validation -> acknowledgement/rejection -> canonical snapshot.
-- Separate `FairnessRejection`, `TrackValidationRejection`, and session-command
-  rejection, then map them into localized `SubmissionRejection` UI.
-- Search loading, cancellation, empty, denial, offline, and failure states.
-- Pending-cap and duplicate feedback.
-- Queue, now playing, participant attribution, remove-own, turn skip, host turn
-  skip, current-track skip, moderation removal, gone/return, and late join.
-- Fair queue reconciliation, automatic empty-queue resume, track failure, and play
-  history in memory.
+- Connect guest Music authorization and cancellable catalog search.
+- Send idempotent pending submission commands to the host.
+- Resolve each item against the host storefront, then apply authorization and
+  fairness validation.
+- Separate fairness, track-validation, and session-command rejections and map each
+  into localized feedback.
+- Connect acknowledgement, canonical snapshots, pending cap, duplicate feedback,
+  remove-own, turn skip, host moderation, current-track skip, gone/return, late
+  join, automatic empty-queue resume, track failure, and in-memory play history.
 
 ### Exit gate
 
 - Host plus two guests complete the full fair loop on physical devices.
 - Every skip/failure type has correct queue, duplicate, cap, rotation, and history
   behavior.
-- Integration tests drive the scheduler through fake transport and player services.
+- Integration tests drive the scheduler through fake transport and player
+  services, including replay, stale response, cancellation, and failure paths.
 
-## Slice 4C — Lifecycle and release hardening
+## Slice 5 — Lifecycle and release hardening
 
 ### Goal
 
@@ -397,7 +429,7 @@ Make the core loop survive realistic party conditions and meet the MVP quality b
 
 This gate is the closed-TestFlight MVP target.
 
-## Slice 5 — Save the night (post-MVP)
+## Slice 6 — Save the night (post-MVP)
 
 ### Goal
 

@@ -1,6 +1,6 @@
 # Verification Ledger — Physical-Device and Multi-Device Testing
 
-Last updated: 2026-07-18
+Last updated: 2026-07-24
 
 ## Purpose and authority
 
@@ -17,7 +17,10 @@ product-decision update before architecture or scope changes.
 
 | Gate | State | Required checks still open | Work allowed while blocked |
 |------|-------|----------------------------|----------------------------|
-| Slice 0 | **CLOSED — hardware/account verification incomplete** | V0-2, V0-4, V0-5, V0-6B, and V0-7B need additional hardware or account conditions | Remaining Slice 0 work, the pure Slice 1 fairness engine, and the mock-only provisional UI track defined in `BUILD_PLAN.md`. No dependent transport, playback, permission, or lifecycle integration may treat Slice 0 assumptions as proven. |
+| 0M — Host MusicKit | **OPEN for Slice 2B implementation** | Retest the production integration at the Slice 2B exit gate | Host-only MusicKit integration may proceed from V0-1 and V0-7A evidence. Production behavior still requires current physical-device verification. |
+| 0G — Guest catalog | **CLOSED — account verification incomplete** | V0-2 | Guest catalog integration and Slice 4 remain blocked. |
+| 0N — Nearby networking | **CLOSED — hardware verification incomplete** | V0-4, V0-5, V0-6B, and V0-7B | Transport, discovery, admission, reconnection, and Slice 3 remain blocked. |
+| Slice 2A | **OPEN — pure/domain dependency only** | Implementation exit gate | Domain-backed queue UI may proceed without MusicKit or Network. |
 | Closed TestFlight | **CLOSED — implementation and release matrix incomplete** | VM-1 through VM-13 | Work authorized by the current completed gate or the explicit provisional-work rule only. |
 
 The summary is informational. A gate opens only when every check required by its

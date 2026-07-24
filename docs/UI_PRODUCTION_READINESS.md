@@ -13,8 +13,10 @@ visual exploration while Slice 0 remains closed. Production integration must
 replace fixture ownership with canonical mapped state and typed intents rather
 than promoting mock coordinators or scenario enums into app architecture.
 
-Canonical gate status remains authoritative in `VERIFICATION_LOG.md`. At this
-review, Slice 0 is closed by V0-2, V0-4, V0-5, V0-6B, and V0-7B.
+Canonical gate status remains authoritative in `VERIFICATION_LOG.md`. Revision 5
+of the build plan splits feasibility by capability: Slice 2A is open, host-only
+MusicKit work may proceed under 0M, guest catalog work remains blocked by 0G, and
+nearby transport work remains blocked by 0N.
 
 ## What is reusable now
 
@@ -251,8 +253,8 @@ The first mock surface is ready to connect only when:
 
 ## Next authorized task
 
-The generic R1–R6 backlog and connected-flow smoke coverage are complete. The
-next safe mock task is a **connected accessibility pass** at AX5 Dynamic Type and
-dark appearance, checking the Host and Join paths for hittable controls, readable
-expanded copy, keyboard avoidance, and sheet dismissal. Otherwise, limit work to
-targeted accessibility/localization defects until Slice 0 opens.
+The generic R1–R6 backlog and connected-flow smoke coverage are complete. Build
+Slice 2A by introducing a real Main Actor session owner, typed queue commands, and
+a production-neutral queue presentation beside that real caller. Reuse visual
+components through immutable presentation input, keep mock scenario ownership
+isolated, and do not introduce MusicKit or Network into Slice 2A.
