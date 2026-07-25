@@ -8,9 +8,10 @@ The P0–P6 mock UI remains suitable for presentation review and provisional
 walkthroughs. The queue is now the first production-connected presentation
 surface: Slice 2A maps canonical `HostSessionModel` state into immutable
 `QueueSessionPresentation` values and applies typed actions through the real
-fairness scheduler.
+fairness scheduler. Slice 2B-A also connects the Host profile, typed Music
+eligibility, solo lobby, and start transition to that same owner.
 
-The mock coordinators, scenario enums, search, lobby, lifecycle, MusicKit,
+The mock coordinators, scenario enums, search, admission/invite, lifecycle,
 playback, and transport surfaces are not production-connected. Future integration
 must continue replacing fixture ownership with canonical mapped state and typed
 intents rather than promoting mock coordinators into app architecture.
@@ -28,6 +29,9 @@ nearby transport work remains blocked by 0N.
   including viewer-specific remove/skip actions and typed feedback.
 - A Main Actor authoritative local session owner with idempotent commands that
   route every queue mutation through the fairness scheduler.
+- A Main Actor Host flow coordinator with a shared validated profile form,
+  protocol-isolated Apple Music eligibility check, typed recovery states, and
+  immutable solo-lobby presentation.
 - Search result and typed-feedback presentation concepts.
 - Participant identity presentation using name, emoji, and color without relying
   on color alone.
@@ -56,10 +60,10 @@ caller.
 
 | Area | Current input/state | Current intents | Readiness finding |
 |------|---------------------|-----------------|-------------------|
-| Role choice | `MockEntryRole`; optional local navigation | select Host or Join | The leaf choice is reusable. Production navigation should own the selected role and permission flow. |
-| Profile | Local name, emoji, color, validation | `onContinue(ProfileDraft)` | The pure validated seam preserves normalized name, emoji, and color. Production may map it to local preferences and a separate session-scoped identity when the owning slice opens. |
-| Permission explanation | Role and display name | continue or dismiss | Visual content is reusable, but the view owns sheet/navigation behavior. Production coordinators must own authorization, subscription checks, recovery, and cancellation. |
-| Host lobby | Immutable participant array | invite and optional start | Suitable presentation seam. Production must also represent admission requests, capacity, and start eligibility without allowing views to reorder participants. |
+| Role choice | `SessionRole`; mock-only choice navigation | select Host or Join | The value is production-neutral, but production role-choice navigation remains open. The Debug Host route currently selects Host explicitly. |
+| Profile | Shared `ProfileSetupView` with local editing state and validated `ProfileDraft` output | submit profile | Production-connected for Host. `HostFlowCoordinator` creates a separate session-scoped identity; local preference persistence remains intentionally absent. |
+| Permission explanation | `HostMusicAccessView` plus typed `HostMusicAccessState`; Join mock remains inert | request/check again, open Settings, return to profile | Production-connected for Host through `HostMusicEligibilityChecking`. Async work is lifecycle-owned by `HostFlowView`; catalog and player revalidation remain open. |
+| Host lobby | `HostLobbyPresentation` mapped from solo `HostSessionModel` | start alone or cancel | Production-connected for solo Host start. Admission, invite, capacity changes, and nearby participants remain blocked on Slice 3/0N. |
 | Admission | Fixture scenario and participant | approve, reject, retry, select room | Leaf intents are useful but ad hoc. Define typed coordinator intents when the authoritative host/guest caller exists. |
 | Invite | Decorative QR and hard-coded room code | dismiss | Not production-ready. A production invite value must distinguish shareable room code from sensitive high-entropy join credential and prevent secret exposure in logs/accessibility. |
 | Queue | `QueueSessionPresentation` mapped from `HostSessionModel` in the functional harness or constructed from deterministic mock fixtures in galleries | Add Music, remove pending, skip turn, advance playback, dismiss feedback | Ready and connected for Slice 2A. Canonical mutations pass through idempotent `QueueCommand` handling and `FairnessScheduler`; the Debug harness is not a production coordinator. Slice 2B should retain this boundary while adding real host flow, search, and playback. |
@@ -263,15 +267,16 @@ The first mock surface is ready to connect only when:
 - relevant unit tests exist; and
 - the mock route remains isolated or debug-scoped during transition.
 
-The queue satisfies this definition for Slice 2A. Other mock surfaces must be
+The queue satisfies this definition for Slice 2A. Host profile, Music
+eligibility, and solo lobby satisfy it for Slice 2B-A. Other surfaces must be
 evaluated independently as their owning production slices open.
 
 ## Next authorized task
 
-The generic R1–R6 backlog, connected-flow smoke coverage, and Slice 2A are
-complete. Begin Slice 2B with the production Host path: connect the validated
-profile to an app coordinator, add just-in-time Music authorization/subscription
-state, and create a single-device lobby around the existing `HostSessionModel`.
-Then add cancellable catalog search and host playback behind dedicated
-boundaries. Keep guest catalog work blocked on 0G and transport work blocked on
-0N.
+The generic R1–R6 backlog, connected-flow smoke coverage, Slice 2A, and Slice
+2B-A are complete. Continue Slice 2B with a cancellable, debounced Host catalog
+service, host-storefront resolution, `Song` mapping, and real Add Music
+submission through `HostSessionModel`. Keep MusicKit types behind the service
+boundary and leave `ApplicationMusicPlayer`, reconciliation, and transition
+observation for the following increment. Guest catalog remains blocked on 0G and
+transport remains blocked on 0N.

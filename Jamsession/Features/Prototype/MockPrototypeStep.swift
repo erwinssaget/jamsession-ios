@@ -1,6 +1,6 @@
 enum MockPrototypeStep: Equatable {
     case welcome
-    case profile(MockEntryRole)
+    case profile(SessionRole)
     case hostLobby
     case discovery
     case awaitingApproval

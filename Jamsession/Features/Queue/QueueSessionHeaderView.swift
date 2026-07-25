@@ -2,7 +2,7 @@ import SwiftUI
 
 struct QueueSessionHeaderView: View {
     let presentation: QueueSessionPresentation
-    let addMusic: () -> Void
+    var addMusic: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -24,9 +24,11 @@ struct QueueSessionHeaderView: View {
 
                     Spacer()
 
-                    Button("queue.addMusic", systemImage: "plus", action: addMusic)
-                    .accessibilityIdentifier("mock.flow.queue.addMusic")
-                    .buttonStyle(.borderedProminent)
+                    if let addMusic {
+                        Button("queue.addMusic", systemImage: "plus", action: addMusic)
+                            .accessibilityIdentifier("queue.addMusic")
+                            .buttonStyle(.borderedProminent)
+                    }
                 }
 
                 VStack(alignment: .leading) {
@@ -42,10 +44,12 @@ struct QueueSessionHeaderView: View {
                     .font(.subheadline.monospaced())
                     .foregroundStyle(.secondary)
 
-                    Button("queue.addMusic", systemImage: "plus", action: addMusic)
-                    .accessibilityIdentifier("mock.flow.queue.addMusic")
-                    .buttonStyle(.borderedProminent)
-                    .frame(maxWidth: .infinity)
+                    if let addMusic {
+                        Button("queue.addMusic", systemImage: "plus", action: addMusic)
+                            .accessibilityIdentifier("queue.addMusic")
+                            .buttonStyle(.borderedProminent)
+                            .frame(maxWidth: .infinity)
+                    }
                 }
             }
 

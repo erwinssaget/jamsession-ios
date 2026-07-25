@@ -2,7 +2,7 @@ import SwiftUI
 
 struct MockPrototypeFlowView: View {
     @State private var step = MockPrototypeStep.welcome
-    @State private var permissionRole: MockEntryRole?
+    @State private var permissionRole: SessionRole?
     @State private var profileDraft: ProfileDraft?
     @State private var isShowingInvite = false
 

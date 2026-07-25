@@ -48,8 +48,9 @@ Do not convert mock observations into canonical gate evidence.
 ## Current status
 
 The provisional galleries remain isolated from production authority. Slice 2A
-now adds a separate domain-backed functional queue path that reuses the queue
-presentation components without promoting fixture state.
+adds a domain-backed functional queue path, and Slice 2B-A now adds the first
+production Host coordinator through profile, Music eligibility, solo lobby, and
+canonical empty queue.
 
 - **P0 complete:** the canonical plan authorizes the mock-only track and the
   feasibility harness exposes an explicit mock queue route.
@@ -91,6 +92,12 @@ presentation components without promoting fixture state.
   `QueueCommand`, canonical fairness state, immutable `QueueSessionPresentation`,
   and localized typed feedback now drive a Debug-only functional queue harness.
   The reusable queue components no longer depend on mock presentation types.
+- **Slice 2B-A complete; Slice 2B remains in progress:** the shared
+  `ProfileSetupView` feeds `HostFlowCoordinator`; a typed async Music eligibility
+  boundary handles eligible, denied, restricted, subscription-required,
+  unavailable, and cancellation outcomes; and eligible Hosts create an ephemeral
+  solo lobby and start the canonical empty queue. The path stays Debug-reachable
+  until catalog search and playback are connected.
 
 “Complete” above means complete only for provisional design exploration. It does
 not satisfy or open a canonical Slice 4 gate. Slice 2A is separately complete
@@ -102,6 +109,9 @@ under its pure/domain implementation exit gate and does not alter 0M, 0G, or 0N.
 |------|----------|----------------|
 | Mock entry route | `Jamsession/ContentView.swift` and `Jamsession/FeasibilityDestination.swift` | Keeps the prototype reachable in Debug without replacing Slice 0 tools; no Release navigation route is compiled |
 | First-run prototype | `Jamsession/Features/FirstRun/` | Host/Join choice, identity setup, validation, and inert permission explanation |
+| Shared profile form | `Jamsession/Features/FirstRun/ProfileSetupView.swift` and `Jamsession/Models/SessionRole.swift` | Production-neutral validated role/profile input shared by the Host coordinator and mock wrapper |
+| Production Host flow | `Jamsession/Features/HostFlow/` | Main Actor profile → Music eligibility → solo lobby → canonical queue coordination plus immutable lobby presentation |
+| Host Music eligibility boundary | `Jamsession/Music/HostMusicEligibilityChecking.swift` and `AppleMusicHostEligibilityChecker.swift` | Isolates just-in-time Music authorization and subscription capability from the coordinator and SwiftUI |
 | Lobby prototype | `Jamsession/Features/Lobby/` | Host participant order, admission state gallery, discovery fixtures, and decorative invite |
 | Connected walkthrough | `Jamsession/Features/Prototype/` | Fixture-only navigation state joining first run, lobby/discovery, approval, and joined queue |
 | Search prototype | `Jamsession/Features/Search/` | Catalog-state fixtures, result rows, and typed submission feedback presentation |
@@ -115,7 +125,7 @@ under its pure/domain implementation exit gate and does not alter 0M, 0G, or 0N.
 | Functional queue harness | `Jamsession/Features/Queue/Debug/` | Owns deterministic participants and catalog choices in Debug only while exercising the real session owner, commands, scheduler, and presentation mapper |
 | Intent inventory | `docs/UI_INTENT_INVENTORY.md` | Records eventual owners, payloads, validation/results, repetition, cancellation, and mock-only controls |
 | Presentation and session tests | `JamsessionTests/MockUI/`, `JamsessionTests/Queue/`, and `JamsessionTests/Session/` | Protect fixture behavior plus canonical command, fairness-integration, authorization, replay, mapper, and feedback behavior |
-| Connected UI smoke tests | `JamsessionUITests/MockConnectedFlowUITests.swift` and `DomainQueueHarnessUITests.swift` | Exercises debug-only fixture navigation and one canonical fairness-backed queue flow without invoking services |
+| Connected UI smoke tests | `JamsessionUITests/MockConnectedFlowUITests.swift`, `DomainQueueHarnessUITests.swift`, and `HostFlowUITests.swift` | Exercises mock navigation, canonical fairness-backed queue behavior, and Host profile/solo-start flow with a Debug-only injected eligibility result |
 | User-facing copy | `Jamsession/Localizable.xcstrings` | Manual English localization keys for provisional and functional queue UI |
 
 The Xcode project uses synchronized groups, so new files under `Jamsession/` should
@@ -129,6 +139,12 @@ harness:
 
 ```text
 ContentView
+├── Open Host Flow
+│   └── HostFlowView
+│       ├── shared ProfileSetupView
+│       ├── real AppleMusicHostEligibilityChecker (explicit user action only)
+│       ├── Host lobby → Start Session
+│       └── canonical empty queue (catalog/playback intentionally pending)
 ├── Open Functional Queue
 │   └── DomainQueueHarnessView
 │       ├── real HostSessionModel → FairnessScheduler → QueueSessionPresentation
@@ -190,10 +206,10 @@ preserve useful views and replace fixture ownership at explicit seams:
 | Prototype area | Fixture/state used now | Production source later | Integration action |
 |----------------|------------------------|-------------------------|--------------------|
 | Connected walkthrough | `MockPrototypeStep` and local sheet state | App-level host/join coordinators and typed navigation destinations | Replace the mock step switch with production coordinator state. Keep reusable screens driven by values and intent closures; do not preserve simulated approval as production behavior. |
-| First-run role choice | `MockEntryRole` and local navigation state | App navigation plus host/join coordinators | Keep the visual choice surface; route actions into production permission and session flows only after their canonical slices open. |
-| Profile setup | Local `@State` name, emoji, and color | Local non-session profile preferences plus session-scoped participant creation | Extract a validated profile value at the boundary. Remember only allowed profile preferences; never persist session identity, credentials, or listening data. |
-| Permission explainers | `MockPermissionExplainerView` with inert completion | Music authorization/subscription flow for Host; local-network preparation for Join; guest Music authorization only when search opens | Replace the inert completion action with coordinator intents. Permission APIs and failure recovery stay outside reusable presentation views. |
-| Host lobby | `MockLobbyFixtures.participants` | Authoritative host session presentation mapped from host-owned actor state | Supply locked participant order as immutable presentation input. Host commands perform start, approve, reject, remove, and block after validation. |
+| First-run role choice | Production-neutral `SessionRole` with mock-only choice navigation | App navigation plus host/join coordinators | Keep the visual choice surface; production Host routing exists only as an explicit Debug entry while complete role-choice navigation remains open. |
+| Profile setup | Shared `ProfileSetupView` emits a validated `ProfileDraft`; mock wrapper retains fixture-only explainer ownership | `HostFlowCoordinator` now creates a session-scoped Host identity; later app coordination may remember only allowed local preferences | Preserve the shared form and validated value. Never persist session identity, room state, credentials, or listening data. |
+| Permission explainers | Production `HostMusicAccessView` maps typed Host eligibility state; Join mock explainer remains inert | `AppleMusicHostEligibilityChecker` requests Music access and verifies host playback capability only after explicit action | Preserve protocol injection, lifecycle-owned async work, typed recovery, and Settings/check-again actions. Guest permission behavior remains blocked on its owning slice. |
+| Host lobby | `HostLobbyPresentation` mapped from the canonical solo `HostSessionModel`; mock lobby remains for admission/invite states | Host coordinator now starts alone; Slice 3 later extends canonical participants/admission through transport | Preserve immutable order and Main Actor ownership. Do not promote mock invites or admission scenarios. |
 | Guest discovery/admission | `MockLobbyScenario` transitions | `SessionTransport` discovery plus revisioned admission state | Replace scenario mutation with read-only presentation state and typed coordinator commands. Do not encode or simulate transport behavior in views. |
 | Invite | Decorative SF Symbol QR and `"BEAT"` | Session ID plus high-entropy join secret encoded by the production invite service; short room code remains only a local discovery filter | Replace the placeholder image with a generated invite artifact. Never log, persist, or expose the reusable secret through accessibility text or screenshots. |
 | Joined queue | `MockJoinedQueueView` owns scenario/sheet state; `MockJoinedQueuePresentationView` and the functional harness both receive `QueueSessionPresentation` | `HostSessionModel` already maps authoritative local state; a future guest mirror maps revisioned canonical snapshots into the same presentation model | Preserve the shared immutable presentation and visual components. Replace only gallery/harness ownership with Slice 2B host coordination or a later guest mirror; views never run fairness logic. |
@@ -480,6 +496,14 @@ Through 2026-07-24:
   `git diff --check` passed. These checks prove only the domain-backed local
   queue path and do not claim MusicKit, playback, Network, or physical-device
   behavior.
+- Slice 2B-A added eight unit cases and two focused UI flows. All 74 unit tests
+  passed. One UI flow stopped at the just-in-time Music explanation without
+  requesting permission; the other used a Debug-only eligible checker to reach
+  the solo lobby, start, and canonical empty queue. Standard and AX5 lobby
+  screenshots were inspected; the AX5 row was corrected to stack and the
+  rerun passed. Debug and Release simulator builds succeeded. No real Music
+  authorization, subscription, catalog, playback, Network, or physical-device
+  pass is claimed.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.
@@ -488,17 +512,19 @@ preview variants and any fixture-only behavior.
 
 Use this prompt in a new context:
 
-> Continue with Slice 2B, the single-device Host experience. The P0–P6
+> Continue with Slice 2B-B, real Host catalog search and storefront mapping. The P0–P6
 > presentation track, R1–R6 hardening backlog, connected mock-flow smoke
-> coverage, and Slice 2A domain-backed functional queue are complete.
+> coverage, Slice 2A domain-backed functional queue, and Slice 2B-A Host
+> profile/Music-eligibility/solo-lobby increment are complete.
 > Read `AGENTS.md`,
 > `docs/PRODUCT_DECISIONS.md`, `docs/BUILD_PLAN.md`,
 > `docs/VERIFICATION_LOG.md`, `docs/UI_PRODUCTION_READINESS.md`, and this handoff
 > before acting. Preserve `HostSessionModel` as the Main Actor authority,
 > `FairnessScheduler` as a pure value type, and `QueueSessionPresentation` as the
-> SwiftUI boundary. Under gate 0M, connect the Host profile/permission path and a
-> single-device lobby before adding cancellable catalog search and
-> `ApplicationMusicPlayer` integration. Do not begin guest catalog or nearby
+> SwiftUI boundary. Under gate 0M, add a cancellable debounced Host catalog
+> service, host-storefront resolution, `Song` → `CatalogTrackSelection` mapping,
+> and real Add Music submission before starting `ApplicationMusicPlayer`,
+> reconciliation, and playback observation. Do not begin guest catalog or nearby
 > transport work while 0G and 0N remain closed. Record only checks actually run
 > and keep the readiness review, intent inventory, verification log, and handoff
 > current.

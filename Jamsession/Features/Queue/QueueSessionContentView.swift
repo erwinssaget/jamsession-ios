@@ -2,7 +2,7 @@ import SwiftUI
 
 struct QueueSessionContentView: View {
     let presentation: QueueSessionPresentation
-    let addMusic: () -> Void
+    var addMusic: (() -> Void)?
     var removeTrack: ((SubmissionID) -> Void)?
     var skipTurn: ((SubmissionID) -> Void)?
 

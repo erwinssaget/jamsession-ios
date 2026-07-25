@@ -1,6 +1,7 @@
 #if DEBUG
 enum FeasibilityDestination: Hashable {
     case domainQueue
+    case hostFlow
     case mockEntry
     case mockFullFlow
     case mockLifecycle

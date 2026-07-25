@@ -13,7 +13,7 @@ final class DomainQueueHarnessUITests: XCTestCase {
         app.buttons["queue.harness.advance"].tap()
         XCTAssertTrue(app.staticTexts["Now Playing"].waitForExistence(timeout: 2))
 
-        app.buttons["mock.flow.queue.addMusic"].tap()
+        app.buttons["queue.addMusic"].tap()
         let duplicateAddButton = app.buttons["queue.catalog.catalog-golden-hour.add"]
         XCTAssertTrue(duplicateAddButton.waitForExistence(timeout: 2))
         duplicateAddButton.tap()

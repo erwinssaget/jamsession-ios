@@ -33,6 +33,10 @@ struct ContentView: View {
                     }
                     .disabled(!musicSpike.canControlPlayback)
                     #if DEBUG
+                    Button("feasibility.hostFlow") {
+                        path.append(FeasibilityDestination.hostFlow)
+                    }
+                    .accessibilityIdentifier("host.flow.open")
                     Button("feasibility.domainQueue") {
                         path.append(FeasibilityDestination.domainQueue)
                     }
@@ -102,6 +106,16 @@ struct ContentView: View {
                 switch destination {
                 case .domainQueue:
                     DomainQueueHarnessView()
+                case .hostFlow:
+                    if ProcessInfo.processInfo.arguments.contains("-host-flow-eligible") {
+                        HostFlowView(
+                            eligibilityChecker: DebugHostMusicEligibilityChecker(
+                                outcome: .eligible
+                            )
+                        )
+                    } else {
+                        HostFlowView()
+                    }
                 case .mockEntry:
                     MockEntryView()
                 case .mockFullFlow:

@@ -5,9 +5,9 @@ Last reviewed: 2026-07-24
 ## Purpose
 
 This inventory defines the user intents exposed by the UI and records which
-queue intents gained a canonical local owner in Slice 2A. Transport messages,
-MusicKit requests, real playback coordination, and session lifecycle remain
-unimplemented.
+queue intents gained a canonical local owner in Slice 2A and which Host setup
+intents gained a production owner in Slice 2B-A. Transport messages, catalog
+requests, real playback coordination, and session lifecycle remain unimplemented.
 
 Names remain conceptual until a canonical production caller exists. Slice 2A's
 implemented names are called out below. Later production types must preserve the
@@ -28,14 +28,28 @@ rather than copying a mock coordinator.
 
 ## First run
 
+Slice 2B-A implements Host `submitProfile` and
+`continuePermissionExplanation` through `HostFlowCoordinator`. The async
+`HostMusicEligibilityChecking` boundary requests access only after explicit user
+action, suppresses cancelled/stale outcomes, and maps eligible, denied,
+restricted, subscription-required, and unavailable results into typed
+presentation state. Production role-choice navigation and the Join permission
+path remain open.
+
 | Conceptual intent | Payload | Production owner | Validation and result | Repeat/cancel behavior |
 |-------------------|---------|------------------|-----------------------|------------------------|
 | `selectRole` | Host or Join | App flow coordinator | Role must remain changeable until a permission/session action begins. | Re-selecting replaces the uncommitted choice. Back returns to role selection. |
 | `submitProfile` | Validated `ProfileDraft` | App flow coordinator | Draft is already normalized locally; production creates or updates allowed local profile preference separately from session identity. | Repeated submission while advancing is ignored or disabled. Cancellation preserves only explicitly allowed local preferences. |
 | `cancelFirstRunStep` | Current step | App flow coordinator | No service mutation. | Idempotent; returns to the prior presentation step. |
 | `continuePermissionExplanation` | Role | Host or Join coordinator | Begins the role-specific production permission flow only when its canonical slice is open. | One owned task; repeated taps do not start duplicate requests. Cancellation maps back to an actionable explanation state. |
+| `retryHostMusicEligibility` | Current Host profile and a new lifecycle-owned request generation | Host flow coordinator / Music eligibility boundary | Rechecks authorization and subscription capability after Settings, subscription changes, or transient failure. | A newer generation cancels/supersedes the old task; stale or cancelled results cannot create a lobby. |
 
 ## Host lobby and admission
+
+Slice 2B-A implements the solo form of `startSession`: an eligible Host owns one
+ephemeral `HostSessionModel`, the immutable lobby reflects its locked one-person
+order, and repeated start calls after leaving the lobby are stable no-ops.
+Admission, invite, capacity, and revisioned peer commands remain Slice 3 work.
 
 | Conceptual intent | Payload | Production owner | Validation and result | Repeat/cancel behavior |
 |-------------------|---------|------------------|-----------------------|------------------------|
