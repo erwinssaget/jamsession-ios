@@ -5,7 +5,7 @@ struct HostFlowView: View {
     @Environment(\.openURL) private var openURL
     @State private var coordinator: HostFlowCoordinator
     @State private var catalogSearchModel: HostCatalogSearchModel
-    @State private var eligibilityRequestGeneration = 0
+    @State private var eligibilityRequestID: UUID?
 
     init(
         eligibilityChecker: any HostMusicEligibilityChecking =
@@ -38,14 +38,14 @@ struct HostFlowView: View {
                     state: coordinator.musicAccessState,
                     requestAccess: requestMusicEligibility,
                     openSettings: openMusicSettings,
-                    cancel: coordinator.returnToProfile
+                    cancel: returnToProfile
                 )
             case .lobby:
                 if let session = coordinator.session {
                     HostLobbyView(
                         presentation: HostLobbyPresentationMapper.map(session),
                         start: coordinator.startSession,
-                        cancel: coordinator.returnToProfile
+                        cancel: returnToProfile
                     )
                 }
             case .queue:
@@ -59,16 +59,27 @@ struct HostFlowView: View {
             }
         }
         .navigationBarBackButtonHidden(coordinator.step != .profile)
-        .task(id: eligibilityRequestGeneration) {
-            guard eligibilityRequestGeneration > 0 else {
+        .task(id: eligibilityRequestID) {
+            guard let requestID = eligibilityRequestID else {
                 return
             }
             await coordinator.requestMusicEligibility()
+            if eligibilityRequestID == requestID {
+                eligibilityRequestID = nil
+            }
         }
     }
 
     private func requestMusicEligibility() {
-        eligibilityRequestGeneration += 1
+        guard eligibilityRequestID == nil else {
+            return
+        }
+        eligibilityRequestID = UUID()
+    }
+
+    private func returnToProfile() {
+        eligibilityRequestID = nil
+        coordinator.returnToProfile()
     }
 
     private func openMusicSettings() {

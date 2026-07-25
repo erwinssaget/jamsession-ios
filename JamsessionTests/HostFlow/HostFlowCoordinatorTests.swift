@@ -76,19 +76,21 @@ struct HostFlowCoordinatorTests {
     }
 
     @Test
-    func cancelledEligibilityDoesNotCreateSessionOrLeaveLoadingState() async {
+    func cancelledEligibilityStopsUnderlyingWorkAndResetsLoadingState() async {
+        let checker = CancellationRecordingEligibilityChecker()
         let coordinator = HostFlowCoordinator(
-            eligibilityChecker: SlowEligibilityChecker()
+            eligibilityChecker: checker
         )
         coordinator.submitProfile(profile)
 
         let request = Task {
             await coordinator.requestMusicEligibility()
         }
-        await Task.yield()
+        await checker.waitUntilStarted()
         request.cancel()
         await request.value
 
+        #expect(await checker.wasCancelled)
         #expect(coordinator.step == .musicAccess)
         #expect(coordinator.musicAccessState == .explanation)
         #expect(coordinator.session == nil)
@@ -133,13 +135,25 @@ struct HostFlowCoordinatorTests {
         }
     }
 
-    private struct SlowEligibilityChecker: HostMusicEligibilityChecking {
+    private actor CancellationRecordingEligibilityChecker:
+        HostMusicEligibilityChecking {
+        private var didStart = false
+        private(set) var wasCancelled = false
+
         func requestEligibility() async -> HostMusicEligibilityOutcome {
+            didStart = true
             do {
                 try await Task.sleep(for: .seconds(10))
                 return .eligible
             } catch {
+                wasCancelled = true
                 return .unavailable
+            }
+        }
+
+        func waitUntilStarted() async {
+            while !didStart {
+                await Task.yield()
             }
         }
     }

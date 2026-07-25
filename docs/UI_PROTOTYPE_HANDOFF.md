@@ -111,7 +111,10 @@ submission to that queue authority.
   or Guest role. Turn-skip commands bind to the submission displayed by the
   initiating control and reject stale actions before fairness state changes.
   Asynchronous queue feedback moves VoiceOver focus to a combined title/message
-  summary. The live MusicKit denial/recovery gate question remains open.
+  summary. Host Music eligibility requests now have explicit SwiftUI task identity
+  that is cleared when the user leaves the step, cancelling abandoned work before
+  another attempt can start. The live MusicKit denial/recovery gate question
+  remains open.
 
 “Complete” above means complete only for provisional design exploration. It does
 not satisfy or open a canonical Slice 4 gate. Slice 2A is separately complete
@@ -546,6 +549,13 @@ Through 2026-07-24:
   Release simulator builds passed. Manual VoiceOver focus confirmation, live
   MusicKit denial/recovery, and the previously listed physical-device work remain
   open.
+- A third PR #4 review follow-up replaced the Host eligibility generation counter
+  with an optional request identity owned by `.task(id:)`. Returning to profile
+  clears the identity and cancels the in-flight checker; a cancellation probe
+  confirmed the underlying work receives cancellation and the UI returns to a
+  non-loading state. Both Host UI flows, all 88 unit tests, and Debug and Release
+  simulator builds passed. Whether an already-presented system Music authorization
+  sheet can be withdrawn remains a physical-device verification gap.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.
