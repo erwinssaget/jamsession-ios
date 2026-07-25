@@ -58,9 +58,9 @@ struct HostLobbyParticipantRow: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(
-            String(
-                localized: "host.lobby.participant.accessibility",
-                defaultValue: "Position \(position), \(participant.name), Host"
+            HostLobbyParticipantAccessibility.label(
+                for: participant,
+                position: position
             )
         )
     }

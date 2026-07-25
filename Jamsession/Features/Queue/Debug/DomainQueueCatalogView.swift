@@ -3,7 +3,9 @@ import SwiftUI
 
 struct DomainQueueCatalogView: View {
     let tracks: [CatalogTrackSelection]
+    let commandOutcome: QueueCommandOutcome?
     let add: (CatalogTrackSelection) -> Void
+    let dismissCommandOutcome: () -> Void
 
     @Environment(\.dismiss) private var dismiss
 
@@ -49,6 +51,18 @@ struct DomainQueueCatalogView: View {
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(.thinMaterial)
+        }
+        .safeAreaInset(edge: .bottom) {
+            if let commandOutcome {
+                QueueCommandFeedbackView(
+                    presentation: QueueCommandFeedbackPresentation.map(
+                        commandOutcome
+                    ),
+                    accessibilityIdentifierPrefix: "queue.catalog.feedback",
+                    dismiss: dismissCommandOutcome
+                )
+                .padding()
+            }
         }
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {

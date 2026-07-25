@@ -105,6 +105,10 @@ submission to that queue authority.
   authorization, subscription, offline, unavailable, unplayable, and fairness
   feedback drive production-neutral views. The path stays Debug-reachable until
   playback and lifecycle are connected.
+- **PR #4 review follow-up complete:** the Debug functional catalog presents
+  canonical queue-command feedback above the sheet, including a reachable dismiss
+  action, and the production solo-lobby participant rows announce the correct Host
+  or Guest role. The live MusicKit denial/recovery gate question remains open.
 
 “Complete” above means complete only for provisional design exploration. It does
 not satisfy or open a canonical Slice 4 gate. Slice 2A is separately complete
@@ -526,6 +530,11 @@ Through 2026-07-24:
   string-catalog parse, and whitespace/boundary checks passed. Live Apple Music
   search, storefront data, playability resolution, playback, Network, and
   physical-device behavior were not exercised and remain open.
+- The PR #4 review follow-up added role-specific solo-lobby accessibility
+  coverage and kept queue-command feedback visible and dismissible while the
+  Debug functional catalog sheet is presented. The focused catalog UI regression,
+  all 87 unit tests, and Debug and Release simulator builds passed. Live MusicKit
+  denial/recovery and all previously listed physical-device work remain open.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.

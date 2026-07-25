@@ -2878,6 +2878,17 @@
         }
       }
     },
+    "host.lobby.participant.guest.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Position %lld, %@, Guest"
+          }
+        }
+      }
+    },
     "host.lobby.participant.host" : {
       "extractionState" : "manual",
       "localizations" : {

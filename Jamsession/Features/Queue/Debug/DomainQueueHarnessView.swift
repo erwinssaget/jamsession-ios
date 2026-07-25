@@ -50,9 +50,12 @@ struct DomainQueueHarnessView: View {
         }
         .sheet(isPresented: $isShowingCatalog) {
             NavigationStack {
-                DomainQueueCatalogView(tracks: DomainQueueHarnessFixtures.catalog) { track in
-                    submit(track)
-                }
+                DomainQueueCatalogView(
+                    tracks: DomainQueueHarnessFixtures.catalog,
+                    commandOutcome: session.lastCommandOutcome,
+                    add: submit,
+                    dismissCommandOutcome: session.dismissLastCommandOutcome
+                )
             }
         }
     }

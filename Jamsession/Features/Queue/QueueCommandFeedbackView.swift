@@ -2,6 +2,7 @@ import SwiftUI
 
 struct QueueCommandFeedbackView: View {
     let presentation: QueueCommandFeedbackPresentation
+    var accessibilityIdentifierPrefix = "queue.feedback"
     let dismiss: () -> Void
 
     var body: some View {
@@ -13,17 +14,25 @@ struct QueueCommandFeedbackView: View {
             VStack(alignment: .leading) {
                 Text(presentation.title)
                     .font(.headline)
+                    .accessibilityIdentifier(
+                        "\(accessibilityIdentifierPrefix).title"
+                    )
                 Text(presentation.message)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier(
+                        "\(accessibilityIdentifierPrefix).message"
+                    )
             }
 
             Spacer()
 
             Button("queue.feedback.dismiss", systemImage: "xmark", action: dismiss)
                 .labelStyle(.iconOnly)
-                .accessibilityIdentifier("queue.feedback.dismiss")
+                .accessibilityIdentifier(
+                    "\(accessibilityIdentifierPrefix).dismiss"
+                )
         }
         .padding()
         .background(.regularMaterial)
