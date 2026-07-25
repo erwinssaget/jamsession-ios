@@ -2,7 +2,7 @@ nonisolated struct QueueCommand: Sendable, Equatable {
     nonisolated enum Action: Sendable, Equatable {
         case submit(selection: CatalogTrackSelection, submissionID: SubmissionID)
         case removePending(SubmissionID)
-        case skipNextTurn
+        case skipNextTurn(expectedSubmissionID: SubmissionID)
         case advancePlayback
     }
 

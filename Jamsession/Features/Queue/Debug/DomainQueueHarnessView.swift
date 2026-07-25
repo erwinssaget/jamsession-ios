@@ -20,7 +20,7 @@ struct DomainQueueHarnessView: View {
                     ),
                     addMusic: { isShowingCatalog = true },
                     removeTrack: removeTrack,
-                    skipTurn: { _ in skipNextTurn() }
+                    skipTurn: skipNextTurn
                 )
             }
             .padding()
@@ -78,9 +78,9 @@ struct DomainQueueHarnessView: View {
         )
     }
 
-    private func skipNextTurn() {
+    private func skipNextTurn(_ expectedSubmissionID: SubmissionID) {
         send(
-            .skipNextTurn,
+            .skipNextTurn(expectedSubmissionID: expectedSubmissionID),
             commandID: "skip-\(UUID().uuidString)"
         )
     }

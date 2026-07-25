@@ -18,21 +18,20 @@ final class DomainQueueHarnessUITests: XCTestCase {
         XCTAssertTrue(duplicateAddButton.waitForExistence(timeout: 2))
         duplicateAddButton.tap()
 
-        let feedbackTitle = app.staticTexts["queue.catalog.feedback.title"]
-        XCTAssertTrue(feedbackTitle.waitForExistence(timeout: 2))
-        XCTAssertTrue(feedbackTitle.isHittable)
-        XCTAssertEqual(feedbackTitle.label, "Couldn’t update the queue")
-
-        let feedbackMessage = app.staticTexts["queue.catalog.feedback.message"]
-        XCTAssertTrue(feedbackMessage.isHittable)
+        let feedbackSummary = app
+            .descendants(matching: .any)
+            .matching(identifier: "queue.catalog.feedback.summary")
+            .firstMatch
+        XCTAssertTrue(feedbackSummary.waitForExistence(timeout: 2))
+        XCTAssertTrue(feedbackSummary.isHittable)
         XCTAssertEqual(
-            feedbackMessage.label,
-            "That song is already pending in this session."
+            feedbackSummary.label,
+            "Couldn’t update the queue. That song is already pending in this session."
         )
 
         let dismissFeedback = app.buttons["queue.catalog.feedback.dismiss"]
         XCTAssertTrue(dismissFeedback.isHittable)
         dismissFeedback.tap()
-        XCTAssertFalse(feedbackTitle.exists)
+        XCTAssertFalse(feedbackSummary.exists)
     }
 }

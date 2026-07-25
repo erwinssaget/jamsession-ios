@@ -5,6 +5,8 @@ struct QueueCommandFeedbackView: View {
     var accessibilityIdentifierPrefix = "queue.feedback"
     let dismiss: () -> Void
 
+    @AccessibilityFocusState private var isFeedbackFocused: Bool
+
     var body: some View {
         HStack(alignment: .top) {
             Image(systemName: presentation.tone == .success ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
@@ -25,6 +27,14 @@ struct QueueCommandFeedbackView: View {
                         "\(accessibilityIdentifierPrefix).message"
                     )
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(
+                "\(presentation.title). \(presentation.message)"
+            )
+            .accessibilityIdentifier(
+                "\(accessibilityIdentifierPrefix).summary"
+            )
+            .accessibilityFocused($isFeedbackFocused)
 
             Spacer()
 
@@ -37,5 +47,10 @@ struct QueueCommandFeedbackView: View {
         .padding()
         .background(.regularMaterial)
         .clipShape(.rect(cornerRadius: 18))
+        .task(id: presentation) {
+            isFeedbackFocused = false
+            await Task.yield()
+            isFeedbackFocused = true
+        }
     }
 }

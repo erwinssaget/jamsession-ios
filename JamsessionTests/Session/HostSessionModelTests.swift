@@ -80,13 +80,43 @@ struct HostSessionModelTests {
         let skip = QueueCommand(
             id: FairnessEventID("event-3"),
             participantID: hostID,
-            action: .skipNextTurn
+            action: .skipNextTurn(
+                expectedSubmissionID: SubmissionID("submission-A1")
+            )
         )
         #expect(model.handle(skip) == .accepted)
 
         let presentation = model.presentation(viewedBy: hostID)
         #expect(presentation.upcoming.map(\.title) == ["B1", "A1"])
         #expect(model.rotationState.pending(for: hostID).map(\.title) == ["A1"])
+    }
+
+    @Test
+    func staleTurnSkipDoesNotSkipTheReplacementNextTrack() {
+        let model = makeModel()
+        #expect(model.handle(submit("A1", by: hostID, event: 1)) == .accepted)
+        #expect(model.handle(submit("A2", by: hostID, event: 2)) == .accepted)
+        #expect(model.handle(submit("B1", by: guestID, event: 3)) == .accepted)
+
+        let displayedSubmissionID = model.presentation(viewedBy: hostID).upcoming[0].id
+        let removal = QueueCommand(
+            id: FairnessEventID("event-4"),
+            participantID: hostID,
+            action: .removePending(displayedSubmissionID)
+        )
+        #expect(model.handle(removal) == .accepted)
+        #expect(model.presentation(viewedBy: hostID).upcoming.map(\.title) == ["B1", "A2"])
+
+        let staleSkip = QueueCommand(
+            id: FairnessEventID("event-5"),
+            participantID: hostID,
+            action: .skipNextTurn(
+                expectedSubmissionID: displayedSubmissionID
+            )
+        )
+        #expect(model.handle(staleSkip) == .rejected(.notNextUp))
+        #expect(model.presentation(viewedBy: hostID).upcoming.map(\.title) == ["B1", "A2"])
+        #expect(model.rotationState.currentRoundSkips.isEmpty)
     }
 
     @Test

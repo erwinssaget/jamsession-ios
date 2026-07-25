@@ -90,7 +90,10 @@ final class HostSessionModel {
                     submissionID: submissionID,
                     participantID: command.participantID
                 )
-        case .skipNextTurn:
+        case .skipNextTurn(let expectedSubmissionID):
+            guard scheduler.nextUp(in: rotationState)?.id == expectedSubmissionID else {
+                throw FairnessRejection.notNextUp
+            }
             action = command.participantID == hostID
                 ? .hostSkipTurn
                 : .skipOwnTurn(participantID: command.participantID)

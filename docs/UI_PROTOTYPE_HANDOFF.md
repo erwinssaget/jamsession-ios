@@ -108,7 +108,10 @@ submission to that queue authority.
 - **PR #4 review follow-up complete:** the Debug functional catalog presents
   canonical queue-command feedback above the sheet, including a reachable dismiss
   action, and the production solo-lobby participant rows announce the correct Host
-  or Guest role. The live MusicKit denial/recovery gate question remains open.
+  or Guest role. Turn-skip commands bind to the submission displayed by the
+  initiating control and reject stale actions before fairness state changes.
+  Asynchronous queue feedback moves VoiceOver focus to a combined title/message
+  summary. The live MusicKit denial/recovery gate question remains open.
 
 “Complete” above means complete only for provisional design exploration. It does
 not satisfy or open a canonical Slice 4 gate. Slice 2A is separately complete
@@ -535,6 +538,14 @@ Through 2026-07-24:
   Debug functional catalog sheet is presented. The focused catalog UI regression,
   all 87 unit tests, and Debug and Release simulator builds passed. Live MusicKit
   denial/recovery and all previously listed physical-device work remain open.
+- A second PR #4 review follow-up bound turn-skip commands to the displayed
+  submission identity and added a stale-action regression that proves a
+  replacement next track is not skipped. Queue feedback now exposes a combined
+  VoiceOver summary and requests accessibility focus whenever the outcome appears
+  or changes. The focused model/UI regressions, all 88 unit tests, and Debug and
+  Release simulator builds passed. Manual VoiceOver focus confirmation, live
+  MusicKit denial/recovery, and the previously listed physical-device work remain
+  open.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.
