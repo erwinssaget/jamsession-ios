@@ -313,12 +313,18 @@ In progress. The 2026-07-24 Slice 2B-A increment connects the validated Host
 profile to a Main Actor flow coordinator, isolates Music authorization and
 subscription eligibility behind an async protocol, maps typed recovery states,
 creates an ephemeral solo `HostSessionModel`, and supports lobby → start →
-canonical empty queue. The incomplete path remains Debug-reachable.
+canonical empty queue.
+
+The 2026-07-24 Slice 2B-B increment adds a cancellable, debounced Host catalog
+boundary, Host-storefront country resolution, `Song` mapping, typed search and
+resolution failures, stale-response suppression, and fresh storefront
+re-resolution before every Host submission reaches `HostSessionModel`. The
+incomplete path remains Debug-reachable.
 
 Still open: production role-choice navigation and subscription-offer handoff,
-real catalog search/storefront resolution, player and reconciliation,
-playback-transition observation, queue controls, end-session behavior, and the
-physical-device exit gate.
+the Main Actor player and queue reconciliation, playback-transition observation,
+remaining queue controls, end-session behavior, real MusicKit integration
+verification, and the physical-device exit gate.
 
 ### Goal
 

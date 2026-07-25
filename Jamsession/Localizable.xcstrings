@@ -3076,17 +3076,6 @@
         }
       }
     },
-    "host.queue.catalogPending" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Catalog search and playback are the next Slice 2B increment."
-          }
-        }
-      }
-    },
     "host.queue.returnToLobby" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -3105,6 +3094,270 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Host Session"
+          }
+        }
+      }
+    },
+    "host.search.add.accessibility" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add %@ by %@"
+          }
+        }
+      }
+    },
+    "host.search.authorization.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable Music access in Settings before searching the Host catalog."
+          }
+        }
+      }
+    },
+    "host.search.authorization.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Music access is off"
+          }
+        }
+      }
+    },
+    "host.search.failure.authorization" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconnect Apple Music before adding songs."
+          }
+        }
+      }
+    },
+    "host.search.failure.offline" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your connection, then try again."
+          }
+        }
+      }
+    },
+    "host.search.failure.subscription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An active Apple Music subscription is required to host."
+          }
+        }
+      }
+    },
+    "host.search.failure.trackUnavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That song isn’t playable in the Host’s storefront."
+          }
+        }
+      }
+    },
+    "host.search.failure.unavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Music couldn’t verify that song. Try again."
+          }
+        }
+      }
+    },
+    "host.search.feedback.unavailable.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t add that song"
+          }
+        }
+      }
+    },
+    "host.search.idle.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find a song to add to the fair queue."
+          }
+        }
+      }
+    },
+    "host.search.idle.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Apple Music"
+          }
+        }
+      }
+    },
+    "host.search.loading" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching Apple Music…"
+          }
+        }
+      }
+    },
+    "host.search.offline.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your connection, then retry the search."
+          }
+        }
+      }
+    },
+    "host.search.offline.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You’re offline"
+          }
+        }
+      }
+    },
+    "host.search.openSettings" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        }
+      }
+    },
+    "host.search.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Song or artist"
+          }
+        }
+      }
+    },
+    "host.search.results.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Songs"
+          }
+        }
+      }
+    },
+    "host.search.subscription.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Host subscription can’t currently play catalog songs."
+          }
+        }
+      }
+    },
+    "host.search.subscription.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription required"
+          }
+        }
+      }
+    },
+    "host.search.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Music"
+          }
+        }
+      }
+    },
+    "host.search.trackUnavailable.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That song is no longer playable in this storefront."
+          }
+        }
+      }
+    },
+    "host.search.tryAgain" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try Again"
+          }
+        }
+      }
+    },
+    "host.search.unavailable.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Music couldn’t complete the search. Try again."
+          }
+        }
+      }
+    },
+    "host.search.unavailable.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search unavailable"
           }
         }
       }

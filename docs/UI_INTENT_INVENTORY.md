@@ -5,9 +5,11 @@ Last reviewed: 2026-07-24
 ## Purpose
 
 This inventory defines the user intents exposed by the UI and records which
-queue intents gained a canonical local owner in Slice 2A and which Host setup
-intents gained a production owner in Slice 2B-A. Transport messages, catalog
-requests, real playback coordination, and session lifecycle remain unimplemented.
+queue intents gained a canonical local owner in Slice 2A, which Host setup
+intents gained a production owner in Slice 2B-A, and which Host catalog/search
+intents gained a production owner in Slice 2B-B. Transport messages, guest
+catalog requests, real playback coordination, and session lifecycle remain
+unimplemented.
 
 Names remain conceptual until a canonical production caller exists. Slice 2A's
 implemented names are called out below. Later production types must preserve the
@@ -84,6 +86,15 @@ to the correct production Host surface.
 
 ## Search and submission
 
+Slice 2B-B implements the Host-local forms of `updateSearchQuery`,
+`retrySearch`, `submitTrack`, `dismissSubmissionFeedback`, and `cancelSearch`.
+`HostCatalogSearchModel` is Main Actor isolated, owns request identities and
+typed states, and is driven by lifecycle-owned SwiftUI tasks.
+`AppleMusicHostCatalogService` resolves the current country storefront, maps
+`Song` into `CatalogTrackSelection`, and re-fetches a selected ID before the
+authoritative command is constructed. Guest search and remote acknowledgement
+remain Slice 4 work.
+
 | Conceptual intent | Payload | Production owner | Validation and result | Repeat/cancel behavior |
 |-------------------|---------|------------------|-----------------------|------------------------|
 | `updateSearchQuery` | Normalized query and generation | Search coordinator | Non-empty query; Music authorization handled by coordinator; catalog response maps to current generation only. | Debounced. New input cancels the previous request and suppresses stale results. |
@@ -92,12 +103,12 @@ to the correct production Host surface.
 | `dismissSubmissionFeedback` | Feedback/request ID | Search coordinator | Presentation-only dismissal; does not cancel an accepted host mutation. | Idempotent. A newer outcome may supersede dismissed feedback. |
 | `cancelSearch` | Active generation and pending local tasks | Search coordinator | Cancels catalog work and closes presentation. Does not retract already-sent submission commands. | Idempotent and lifecycle-owned. |
 
-Slice 2A implements the post-resolution portion of `submitTrack`: a trusted
-`CatalogTrackSelection` plus submission and command identities reaches
-`HostSessionModel`, which applies fairness validation and maps accepted or typed
-rejected outcomes into localized feedback. MusicKit lookup, storefront
-validation, debounce, cancellation, and guest acknowledgement remain Slice 2B/4
-work.
+Slice 2A implements the post-resolution command portion of `submitTrack`.
+Slice 2B-B now supplies the Host-local MusicKit lookup, storefront validation,
+debounce, cancellation, stale-response suppression, and typed catalog/fairness
+feedback before a trusted `CatalogTrackSelection` reaches `HostSessionModel`.
+Guest authorization, cross-storefront peer submission, transport identity and
+revision validation, and acknowledgement remain Slice 4 work.
 
 ## Session lifecycle
 

@@ -4,16 +4,22 @@ import UIKit
 struct HostFlowView: View {
     @Environment(\.openURL) private var openURL
     @State private var coordinator: HostFlowCoordinator
+    @State private var catalogSearchModel: HostCatalogSearchModel
     @State private var eligibilityRequestGeneration = 0
 
     init(
         eligibilityChecker: any HostMusicEligibilityChecking =
-            AppleMusicHostEligibilityChecker()
+            AppleMusicHostEligibilityChecker(),
+        catalogService: any HostCatalogServicing =
+            AppleMusicHostCatalogService()
     ) {
         _coordinator = State(
             initialValue: HostFlowCoordinator(
                 eligibilityChecker: eligibilityChecker
             )
+        )
+        _catalogSearchModel = State(
+            initialValue: HostCatalogSearchModel(service: catalogService)
         )
     }
 
@@ -46,6 +52,7 @@ struct HostFlowView: View {
                 if let session = coordinator.session {
                     HostFlowQueueView(
                         session: session,
+                        catalogSearchModel: catalogSearchModel,
                         returnToLobby: coordinator.returnToLobby
                     )
                 }

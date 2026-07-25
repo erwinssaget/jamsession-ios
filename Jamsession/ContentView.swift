@@ -111,7 +111,8 @@ struct ContentView: View {
                         HostFlowView(
                             eligibilityChecker: DebugHostMusicEligibilityChecker(
                                 outcome: .eligible
-                            )
+                            ),
+                            catalogService: DebugHostCatalogService()
                         )
                     } else {
                         HostFlowView()

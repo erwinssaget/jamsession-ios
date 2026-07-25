@@ -57,7 +57,29 @@ final class HostFlowUITests: XCTestCase {
 
         XCTAssertTrue(app.staticTexts["Host Session"].waitForExistence(timeout: 2))
         XCTAssertTrue(app.staticTexts["The queue is wide open"].exists)
-        XCTAssertFalse(app.buttons["queue.addMusic"].exists)
+        tapButton("queue.addMusic", in: app, scrollingIfNeeded: true)
+
+        let searchField = app.searchFields.firstMatch
+        XCTAssertTrue(searchField.waitForExistence(timeout: 2))
+        searchField.tap()
+        searchField.typeText("Midnight")
+        app.keyboards.buttons["Search"].tap()
+
+        let addButton = app.buttons["host.flow.search.debug-midnight-drive.add"]
+        XCTAssertTrue(addButton.waitForExistence(timeout: 3))
+        addButton.tap()
+
+        XCTAssertTrue(app.staticTexts["Queue updated"].waitForExistence(timeout: 2))
+
+        let searchScreenshot = XCTAttachment(screenshot: app.screenshot())
+        searchScreenshot.name = "Host catalog search at AX5"
+        searchScreenshot.lifetime = .keepAlways
+        add(searchScreenshot)
+
+        tapButton("host.flow.search.done", in: app, scrollingIfNeeded: true)
+
+        XCTAssertTrue(app.staticTexts["Midnight Drive"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Nova Lane"].exists)
     }
 
     @MainActor

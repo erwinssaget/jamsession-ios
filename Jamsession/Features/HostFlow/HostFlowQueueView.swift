@@ -2,20 +2,16 @@ import SwiftUI
 
 struct HostFlowQueueView: View {
     let session: HostSessionModel
+    let catalogSearchModel: HostCatalogSearchModel
     let returnToLobby: () -> Void
+    @State private var isShowingCatalog = false
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading) {
-                Label("host.queue.catalogPending", systemImage: "hammer")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                QueueSessionContentView(
-                    presentation: session.presentation(viewedBy: session.hostID)
-                )
-            }
+            QueueSessionContentView(
+                presentation: session.presentation(viewedBy: session.hostID),
+                addMusic: { isShowingCatalog = true }
+            )
             .padding()
         }
         .navigationTitle("host.queue.title")
@@ -28,6 +24,14 @@ struct HostFlowQueueView: View {
                     action: returnToLobby
                 )
                 .accessibilityIdentifier("host.flow.queue.lobby")
+            }
+        }
+        .sheet(isPresented: $isShowingCatalog) {
+            NavigationStack {
+                HostCatalogSearchView(
+                    model: catalogSearchModel,
+                    session: session
+                )
             }
         }
     }
