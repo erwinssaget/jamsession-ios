@@ -243,8 +243,9 @@ Completed on 2026-07-23:
    only when a concrete production caller or testing benefit justifies it.
 2. Implement Slice 2B under the open host-MusicKit gate 0M, and retest its
    physical-device behavior at the Slice 2B exit gate.
-3. Keep guest catalog work blocked on 0G and nearby transport/admission work
-   blocked on 0N unless the canonical decisions are deliberately revised.
+3. Gates 0G and 0N are open for their named slices. Continue the current Slice 2B
+   work before Slice 3 nearby transport/admission; begin Slice 4 guest catalog
+   only after Slice 2B and Slice 3 satisfy their exit gates.
 4. Reuse the canonical host owner and immutable queue presentation rather than
    creating a second queue authority.
 5. Replace ad-hoc closure seams with typed coordinator intents where production
@@ -284,5 +285,6 @@ and Slice 2B-B are complete. Continue Slice 2B-C with a Main Actor Host player
 around `ApplicationMusicPlayer.shared`, a pure queue-diff reconciliation planner,
 and a thin MusicKit executor that preserves the current track. Add deterministic
 planner and failure-state tests before connecting playback-transition
-observation. Guest catalog remains blocked on 0G and transport remains blocked
-on 0N.
+observation. Defer nearby transport to Slice 3 and guest catalog to Slice 4; their
+capability gates are open, but the canonical slice prerequisites and current
+Slice 2B scope still apply.

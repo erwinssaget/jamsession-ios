@@ -341,13 +341,15 @@ playback model.
 
 ## Recommended continuation order
 
-### Next: connected accessibility pass, not production integration
+### Historical provisional continuation
 
 The production-readiness review is recorded in
-[`UI_PRODUCTION_READINESS.md`](UI_PRODUCTION_READINESS.md). It confirms that
-Slice 0 remains closed while its named hardware/account checks are incomplete.
-Do not treat the completed gallery as authorization to integrate MusicKit,
-Network transport, playback, or session lifecycle.
+[`UI_PRODUCTION_READINESS.md`](UI_PRODUCTION_READINESS.md). This section records
+the continuation guidance that applied while Slice 0 hardware/account checks were
+still incomplete. Gates 0M, 0G, and 0N are now open for their named production
+slices; current status and remaining production retests live in
+[`VERIFICATION_LOG.md`](VERIFICATION_LOG.md). The completed gallery still does
+not satisfy any MusicKit, Network, playback, or lifecycle exit gate.
 
 R1–R6 are complete. Profile completion passes an explicitly nonisolated,
 validated `ProfileDraft`; the joined queue has an immutable leaf presentation;
@@ -578,6 +580,7 @@ Use this prompt in a new context:
 > `ApplicationMusicPlayer.shared`, a pure queue-diff reconciliation planner, and
 > a thin MusicKit executor that preserves the current track and surfaces typed
 > failure state. Add deterministic planner/failure tests before beginning
-> playback-transition observation. Do not begin guest catalog or nearby transport
-> work while 0G and 0N remain closed. Record only checks actually run and keep
-> the readiness review, intent inventory, verification log, and handoff current.
+> playback-transition observation. Gates 0G and 0N are open, but keep this
+> continuation scoped to Slice 2B-C; begin Slice 3 and Slice 4 only in their
+> canonical prerequisite order. Record only checks actually run and keep the
+> readiness review, intent inventory, verification log, and handoff current.
