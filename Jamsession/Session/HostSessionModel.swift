@@ -9,6 +9,7 @@ final class HostSessionModel {
     private(set) var participants: [SessionParticipant]
     private(set) var rotationState: RotationState
     private(set) var lastCommandOutcome: QueueCommandOutcome?
+    private(set) var queueRevision = 0
 
     private let scheduler = FairnessScheduler()
     private var commandOutcomes: [FairnessEventID: QueueCommandOutcome] = [:]
@@ -33,6 +34,7 @@ final class HostSessionModel {
             return existing
         }
 
+        let originalPlaybackQueueItems = playbackQueueItems
         let outcome: QueueCommandOutcome
         do {
             let event = try fairnessEvent(for: command)
@@ -44,6 +46,10 @@ final class HostSessionModel {
 
         commandOutcomes[command.id] = outcome
         lastCommandOutcome = outcome
+        if outcome == .accepted,
+           playbackQueueItems != originalPlaybackQueueItems {
+            queueRevision += 1
+        }
         return outcome
     }
 
@@ -61,6 +67,14 @@ final class HostSessionModel {
             state: rotationState,
             scheduler: scheduler
         )
+    }
+
+    var playbackQueueItems: [PlaybackQueueItem] {
+        let tracks = rotationState.currentlyPlaying.map { [$0] } ?? []
+            + scheduler.upcomingQueue(in: rotationState)
+        return tracks.map {
+            PlaybackQueueItem(id: $0.id, trackID: $0.trackID)
+        }
     }
 
     private func fairnessEvent(

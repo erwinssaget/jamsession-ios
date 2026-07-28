@@ -131,6 +131,50 @@ struct HostSessionModelTests {
         #expect(presentation.upcoming[1].canRemove == true)
     }
 
+    @Test
+    func acceptedMutationAdvancesPlaybackQueueRevision() {
+        let model = makeModel()
+
+        #expect(model.queueRevision == 0)
+        #expect(model.handle(submit("A1", by: hostID, event: 1)) == .accepted)
+        #expect(model.queueRevision == 1)
+        #expect(
+            model.playbackQueueItems == [
+                PlaybackQueueItem(
+                    id: SubmissionID("submission-A1"),
+                    trackID: TrackID("track-A1")
+                )
+            ]
+        )
+    }
+
+    @Test
+    func rejectionAndReplayDoNotAdvancePlaybackQueueRevision() {
+        let model = makeModel()
+        let command = submit("A1", by: hostID, event: 1)
+
+        #expect(model.handle(command) == .accepted)
+        #expect(model.queueRevision == 1)
+        #expect(model.handle(command) == .accepted)
+        #expect(model.queueRevision == 1)
+        #expect(model.handle(submit("A1", by: guestID, event: 2)) == .rejected(.duplicate))
+        #expect(model.queueRevision == 1)
+    }
+
+    @Test
+    func acceptedCommandThatLeavesPlaybackOrderUnchangedDoesNotAdvanceRevision() {
+        let model = makeModel()
+        let command = QueueCommand(
+            id: FairnessEventID("event-1"),
+            participantID: hostID,
+            action: .advancePlayback
+        )
+
+        #expect(model.handle(command) == .accepted)
+        #expect(model.queueRevision == 0)
+        #expect(model.playbackQueueItems.isEmpty)
+    }
+
     private func makeModel() -> HostSessionModel {
         HostSessionModel(
             sessionName: "Test Session",

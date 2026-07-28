@@ -5,13 +5,15 @@ struct HostFlowView: View {
     @Environment(\.openURL) private var openURL
     @State private var coordinator: HostFlowCoordinator
     @State private var catalogSearchModel: HostCatalogSearchModel
+    @State private var hostPlayer: HostPlayer
     @State private var eligibilityRequestID: UUID?
 
     init(
         eligibilityChecker: any HostMusicEligibilityChecking =
             AppleMusicHostEligibilityChecker(),
         catalogService: any HostCatalogServicing =
-            AppleMusicHostCatalogService()
+            AppleMusicHostCatalogService(),
+        queueExecutor: (any HostQueueExecuting)? = nil
     ) {
         _coordinator = State(
             initialValue: HostFlowCoordinator(
@@ -20,6 +22,11 @@ struct HostFlowView: View {
         )
         _catalogSearchModel = State(
             initialValue: HostCatalogSearchModel(service: catalogService)
+        )
+        _hostPlayer = State(
+            initialValue: HostPlayer(
+                executor: queueExecutor ?? AppleMusicHostQueueExecutor()
+            )
         )
     }
 
@@ -53,6 +60,7 @@ struct HostFlowView: View {
                     HostFlowQueueView(
                         session: session,
                         catalogSearchModel: catalogSearchModel,
+                        hostPlayer: hostPlayer,
                         returnToLobby: coordinator.returnToLobby
                     )
                 }

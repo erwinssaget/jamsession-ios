@@ -1,14 +1,15 @@
 # UI Intent Inventory
 
-Last reviewed: 2026-07-24
+Last reviewed: 2026-07-28
 
 ## Purpose
 
 This inventory defines the user intents exposed by the UI and records which
 queue intents gained a canonical local owner in Slice 2A, which Host setup
 intents gained a production owner in Slice 2B-A, and which Host catalog/search
-intents gained a production owner in Slice 2B-B. Transport messages, guest
-catalog requests, real playback coordination, and session lifecycle remain
+intents gained a production owner in Slice 2B-B. Slice 2B-C gives Host queue
+reconciliation and retry a production owner. Transport messages, guest catalog
+requests, playback transitions and controls, and session lifecycle remain
 unimplemented.
 
 Names remain conceptual until a canonical production caller exists. Slice 2A's
@@ -70,6 +71,8 @@ Slice 2A implements `removeOwnPendingTrack`, `skipOwnNextTurn`, and host
 `HostSessionModel`. The participant identity on a command is trusted local
 context; a future transport boundary must authenticate and validate a peer before
 constructing that command. `openAddMusic` remains presentation navigation.
+Slice 2B-C automatically reconciles canonical queue identity changes through
+`HostPlayer`; retry is the only new user intent.
 
 | Conceptual intent | Payload | Production owner | Validation and result | Repeat/cancel behavior |
 |-------------------|---------|------------------|-----------------------|------------------------|
@@ -77,12 +80,14 @@ constructing that command. `openAddMusic` remains presentation navigation.
 | `removeOwnPendingTrack` | Submission ID and current revision | Authoritative host actor | Participant owns the pending submission and it has not started. Returns typed fairness rejection when invalid. | Idempotent request ID; replay returns original outcome. |
 | `skipOwnNextTurn` | Participant ID and current revision | Authoritative host actor | Participant owns `nextUp`; track remains pending and skip semantics are applied once. | Idempotent; repeat cannot skip multiple turns. |
 | `advancePlayback` | Host identity and playback-transition request ID | Authoritative host actor | Host authorization is required; the scheduler advances canonical rotation exactly once. Slice 2A exercises this with a Debug control, not a player callback. | Idempotent request ID; repeated transition delivery returns the original outcome and cannot advance twice. |
+| `retryQueueReconciliation` | Current canonical playback queue identities and a new attempt ID | Main Actor Host player | Replans from a fresh player snapshot. A protected current entry cannot be removed or replaced; failure pauses playback and returns typed recovery state. | A new lifecycle-owned `.task(id:)` supersedes the prior attempt. Stale completion cannot replace newer state. |
 | `openLifecycleDetails` | Current lifecycle presentation | App/queue coordinator | Presentation-only navigation; does not start timers or reconnection. | Repeated presentation is coalesced. |
 
 Host-only moderation and playback controls remain absent from the joined-guest
 mock queue. The Debug functional harness exposes authorized host controls solely
-to exercise the Slice 2A command boundary; Slice 2B must connect those controls
-to the correct production Host surface.
+to exercise the Slice 2A command boundary. Slice 2B-C connects queue
+reconciliation and retry; Slice 2B-D must connect playback controls to the
+correct production Host surface.
 
 ## Search and submission
 
