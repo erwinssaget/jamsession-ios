@@ -507,6 +507,149 @@
         }
       }
     },
+    "host.playback.failure.authorization.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable Music access in Settings, then retry the queue."
+          }
+        }
+      }
+    },
+    "host.playback.failure.authorization.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Music access is off"
+          }
+        }
+      }
+    },
+    "host.playback.failure.offline.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your connection, then retry the queue."
+          }
+        }
+      }
+    },
+    "host.playback.failure.offline.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Queue sync is offline"
+          }
+        }
+      }
+    },
+    "host.playback.failure.queue.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playback is paused because the Apple Music queue no longer matches this session."
+          }
+        }
+      }
+    },
+    "host.playback.failure.queue.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Playback queue changed"
+          }
+        }
+      }
+    },
+    "host.playback.failure.retry" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry Queue Sync"
+          }
+        }
+      }
+    },
+    "host.playback.failure.subscription.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An active Apple Music subscription is required for Host playback."
+          }
+        }
+      }
+    },
+    "host.playback.failure.subscription.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subscription required"
+          }
+        }
+      }
+    },
+    "host.playback.failure.track.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A queued song is unavailable in the Host storefront. Playback is paused."
+          }
+        }
+      }
+    },
+    "host.playback.failure.track.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A song can’t be played"
+          }
+        }
+      }
+    },
+    "host.playback.failure.unavailable.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Music couldn’t update the queue. Playback is paused."
+          }
+        }
+      }
+    },
+    "host.playback.failure.unavailable.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Queue sync failed"
+          }
+        }
+      }
+    },
     "host.queue.returnToLobby" : {
       "extractionState" : "manual",
       "localizations" : {

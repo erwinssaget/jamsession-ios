@@ -1,7 +1,7 @@
 # Build Plan — Ephemeral Shared-Queue Music Sessions
 
-Revision: 5
-Last updated: 2026-07-24
+Revision: 6
+Last updated: 2026-07-28
 
 ## Authority and usage
 
@@ -321,10 +321,18 @@ resolution failures, stale-response suppression, and fresh storefront
 re-resolution before every Host submission reaches `HostSessionModel`. The
 incomplete path remains Debug-reachable.
 
+The 2026-07-28 Slice 2B-C increment adds a Main Actor Host player boundary, a
+pure deterministic queue-diff planner, and a thin MusicKit executor that resolves
+catalog IDs immediately before insertion, preserves an active current entry,
+revalidates the player snapshot after suspension points, and pauses with typed,
+localized recovery when reconciliation cannot be applied safely. Canonical queue
+changes drive lifecycle-owned reconciliation tasks; the Debug Host route uses a
+deterministic in-memory executor.
+
 Still open: production role-choice navigation and subscription-offer handoff,
-the Main Actor player and queue reconciliation, playback-transition observation,
-remaining queue controls, end-session behavior, real MusicKit integration
-verification, and the physical-device exit gate.
+playback-transition observation, play/pause/current-track controls, end-session
+behavior, real MusicKit queue integration verification, and the physical-device
+exit gate.
 
 ### Goal
 
