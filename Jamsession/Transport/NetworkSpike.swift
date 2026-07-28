@@ -13,6 +13,7 @@ final class NetworkSpike {
 
     private var task: Task<Void, Never>?
     private var runGeneration = 0
+    private var completedGuestExchangeGeneration: Int?
 
     func startHosting() {
         needsSettings = false
@@ -63,7 +64,7 @@ final class NetworkSpike {
                     return .finish(())
                 }
             } catch is CancellationError {
-                self.updateStatus("Discovery stopped cleanly.", generation: generation)
+                self.updateDiscoveryStoppedStatus(generation: generation)
             } catch {
                 self.updateStatus(
                     "Discovery or connection failed: \(error.localizedDescription)",
@@ -78,6 +79,7 @@ final class NetworkSpike {
         task?.cancel()
         task = nil
         runGeneration += 1
+        completedGuestExchangeGeneration = nil
         isRunning = false
         needsSettings = false
         status = "Network spike stopped. Start it again to test reconnection."
@@ -122,6 +124,7 @@ final class NetworkSpike {
         guard incoming.kind == .acknowledgment else {
             throw SpikeFrameError.malformedPayload
         }
+        completedGuestExchangeGeneration = generation
         updateStatus(
             "Bidirectional framed exchange completed and connection terminated cleanly.",
             generation: generation
@@ -171,7 +174,7 @@ final class NetworkSpike {
         case .failed(let error):
             status = "Discovery failed (permission or network error): \(error.localizedDescription)"
         case .cancelled:
-            status = "Discovery stopped cleanly."
+            updateDiscoveryStoppedStatus(generation: generation)
         case .setup:
             break
         @unknown default:
@@ -184,6 +187,22 @@ final class NetworkSpike {
             return
         }
         status = newStatus
+    }
+
+    private func updateDiscoveryStoppedStatus(generation: Int) {
+        guard generation == runGeneration else {
+            return
+        }
+        guard let stoppedStatus = Self.discoveryStoppedStatus(
+            didCompleteExchange: completedGuestExchangeGeneration == generation
+        ) else {
+            return
+        }
+        status = stoppedStatus
+    }
+
+    nonisolated static func discoveryStoppedStatus(didCompleteExchange: Bool) -> String? {
+        didCompleteExchange ? nil : "Discovery stopped cleanly."
     }
 
     private func updateWaitingState(_ error: NWError, role: String) {
@@ -217,6 +236,7 @@ final class NetworkSpike {
     ) {
         task?.cancel()
         runGeneration += 1
+        completedGuestExchangeGeneration = nil
         let generation = runGeneration
         isRunning = true
         task = Task {
