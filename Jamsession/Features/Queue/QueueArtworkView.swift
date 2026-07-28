@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MockArtworkView: View {
+struct QueueArtworkView: View {
     let title: String
     var size: CGFloat = 52
 
@@ -21,7 +21,7 @@ struct MockArtworkView: View {
             }
             .accessibilityLabel(
                 String(
-                    localized: "mockQueue.artwork.accessibility",
+                    localized: "queue.artwork.accessibility",
                     defaultValue: "Artwork for \(title)"
                 )
             )

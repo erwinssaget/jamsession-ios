@@ -1,75 +1,80 @@
 import Foundation
 
 nonisolated enum MockSessionFixtures {
-    static let populated: MockSessionPresentation = {
-        let host = MockSessionPresentation.Participant(
-            id: MockFixtureID.mayaParticipant,
+    static let populated: QueueSessionPresentation = {
+        let host = QueueSessionPresentation.Participant(
+            id: ParticipantID(MockFixtureID.mayaParticipant.uuidString),
             name: "Maya",
             emoji: "🎸",
-            color: .orange,
-            isCurrentUser: false
+            colorID: .orange,
+            isCurrentUser: false,
+            isHost: true,
+            status: .connected
         )
-        let currentUser = MockSessionPresentation.Participant(
-            id: MockFixtureID.currentParticipant,
+        let currentUser = QueueSessionPresentation.Participant(
+            id: ParticipantID(MockFixtureID.currentParticipant.uuidString),
             name: "You",
             emoji: "🪩",
-            color: .purple,
-            isCurrentUser: true
+            colorID: .purple,
+            isCurrentUser: true,
+            isHost: false,
+            status: .connected
         )
-        let friend = MockSessionPresentation.Participant(
-            id: MockFixtureID.jordanParticipant,
+        let friend = QueueSessionPresentation.Participant(
+            id: ParticipantID(MockFixtureID.jordanParticipant.uuidString),
             name: "Jordan",
             emoji: "🎧",
-            color: .green,
-            isCurrentUser: false
+            colorID: .green,
+            isCurrentUser: false,
+            isHost: false,
+            status: .connected
         )
 
-        return MockSessionPresentation(
+        return QueueSessionPresentation(
             sessionName: "Maya’s Jam",
             roomCode: "BEAT",
             participants: [host, currentUser, friend],
-            nowPlaying: .init(
+            nowPlaying: track(
                 id: MockFixtureID.midnightDriveTrack,
                 title: "Midnight Drive",
                 artist: "The Satellites",
-                submitter: host,
-                isExplicit: false
+                submitter: host
             ),
             upcoming: [
-                .init(
+                track(
                     id: MockFixtureID.goldenHourTrack,
                     title: "Golden Hour",
                     artist: "Paper Planes",
                     submitter: currentUser,
-                    isExplicit: false
+                    canRemove: true,
+                    canSkipTurn: true
                 ),
-                .init(
+                track(
                     id: MockFixtureID.afterglowTrack,
                     title: "Afterglow",
                     artist: "Northbound",
                     submitter: friend,
                     isExplicit: true
                 ),
-                .init(
+                track(
                     id: MockFixtureID.sideStreetsTrack,
                     title: "Side Streets",
                     artist: "The Satellites",
-                    submitter: host,
-                    isExplicit: false
+                    submitter: host
                 ),
-                .init(
+                track(
                     id: MockFixtureID.electricBlueTrack,
                     title: "Electric Blue",
                     artist: "Night Swim",
                     submitter: currentUser,
-                    isExplicit: false
+                    canRemove: true
                 )
             ],
             connectionStatus: .connected
         )
     }()
 
-    static let empty = MockSessionPresentation(
+    static let empty = QueueSessionPresentation(
         sessionName: "Maya’s Jam",
         roomCode: "BEAT",
         participants: populated.participants,
@@ -78,7 +83,7 @@ nonisolated enum MockSessionFixtures {
         connectionStatus: .connected
     )
 
-    static let solo = MockSessionPresentation(
+    static let solo = QueueSessionPresentation(
         sessionName: "Maya’s Jam",
         roomCode: "BEAT",
         participants: [populated.participants[0]],
@@ -87,7 +92,7 @@ nonisolated enum MockSessionFixtures {
         connectionStatus: .connected
     )
 
-    static let reconnecting = MockSessionPresentation(
+    static let reconnecting = QueueSessionPresentation(
         sessionName: "Maya’s Jam",
         roomCode: "BEAT",
         participants: populated.participants,
@@ -96,56 +101,65 @@ nonisolated enum MockSessionFixtures {
         connectionStatus: .reconnecting
     )
 
-    static let fullSession = MockSessionPresentation(
+    static let fullSession = QueueSessionPresentation(
         sessionName: "Maya’s Jam",
         roomCode: "BEAT",
         participants: populated.participants + [
-            .init(
-                id: MockFixtureID.samParticipant,
-                name: "Sam",
-                emoji: "🥁",
-                color: .blue,
-                isCurrentUser: false
-            ),
-            .init(
-                id: MockFixtureID.alexParticipant,
-                name: "Alex",
-                emoji: "🎹",
-                color: .purple,
-                isCurrentUser: false
-            ),
-            .init(
-                id: MockFixtureID.rileyParticipant,
-                name: "Riley",
-                emoji: "🎤",
-                color: .green,
-                isCurrentUser: false
-            ),
-            .init(
-                id: MockFixtureID.caseyParticipant,
-                name: "Casey",
-                emoji: "🎷",
-                color: .orange,
-                isCurrentUser: false
-            ),
-            .init(
-                id: MockFixtureID.morganParticipant,
-                name: "Morgan",
-                emoji: "🎻",
-                color: .blue,
-                isCurrentUser: false
-            )
+            participant(id: MockFixtureID.samParticipant, name: "Sam", emoji: "🥁", colorID: .blue),
+            participant(id: MockFixtureID.alexParticipant, name: "Alex", emoji: "🎹", colorID: .purple),
+            participant(id: MockFixtureID.rileyParticipant, name: "Riley", emoji: "🎤", colorID: .green),
+            participant(id: MockFixtureID.caseyParticipant, name: "Casey", emoji: "🎷", colorID: .orange),
+            participant(id: MockFixtureID.morganParticipant, name: "Morgan", emoji: "🎻", colorID: .blue)
         ],
         nowPlaying: populated.nowPlaying,
         upcoming: populated.upcoming,
         connectionStatus: .connected
     )
 
-    static let longTitleTrack = MockSessionPresentation.Track(
+    static let longTitleTrack = track(
         id: MockFixtureID.longTitleTrack,
         title: "Dancing Through the Longest Midnight Drive We’ve Ever Known",
         artist: "The Satellites and the Northern Lights Ensemble",
         submitter: populated.participants[1],
-        isExplicit: true
+        isExplicit: true,
+        canRemove: true
     )
+
+    private static func participant(
+        id: UUID,
+        name: String,
+        emoji: String,
+        colorID: ProfileColorID
+    ) -> QueueSessionPresentation.Participant {
+        QueueSessionPresentation.Participant(
+            id: ParticipantID(id.uuidString),
+            name: name,
+            emoji: emoji,
+            colorID: colorID,
+            isCurrentUser: false,
+            isHost: false,
+            status: .connected
+        )
+    }
+
+    private static func track(
+        id: UUID,
+        title: String,
+        artist: String,
+        submitter: QueueSessionPresentation.Participant,
+        isExplicit: Bool = false,
+        canRemove: Bool = false,
+        canSkipTurn: Bool = false
+    ) -> QueueSessionPresentation.Track {
+        QueueSessionPresentation.Track(
+            id: SubmissionID(id.uuidString),
+            catalogID: TrackID(id.uuidString),
+            title: title,
+            artist: artist,
+            submitter: submitter,
+            isExplicit: isExplicit,
+            canRemove: canRemove,
+            canSkipTurn: canSkipTurn
+        )
+    }
 }

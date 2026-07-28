@@ -151,7 +151,7 @@ final class MockConnectedFlowUITests: XCTestCase {
 
         tapButton("mock.flow.discovery.session", in: app)
         tapButton("mock.flow.join.approve", in: app)
-        tapButton("mock.flow.queue.addMusic", in: app)
+        tapButton("queue.addMusic", in: app)
         tapButton("mock.flow.search.previewState", in: app)
         tapButton("mock.flow.search.scenario.musicAccessDenied", in: app)
 
@@ -177,7 +177,7 @@ final class MockConnectedFlowUITests: XCTestCase {
 
         tapButton("mock.flow.discovery.session", in: app)
         tapButton("mock.flow.join.approve", in: app)
-        tapButton("mock.flow.queue.addMusic", in: app)
+        tapButton("queue.addMusic", in: app)
 
         let addButtons = app.buttons.matching(identifier: "mock.flow.search.add")
         let lowerResultAddButton = addButtons.element(boundBy: 3)
@@ -272,7 +272,7 @@ final class MockConnectedFlowUITests: XCTestCase {
 
     @MainActor
     private func openAndCloseSearch(in app: XCUIApplication) {
-        tapButton("mock.flow.queue.addMusic", in: app)
+        tapButton("queue.addMusic", in: app)
         tapButton("mock.flow.search.done", in: app)
     }
 

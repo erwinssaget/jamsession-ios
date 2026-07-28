@@ -1,8 +1,8 @@
 import SwiftUI
 
-struct MockSessionHeaderView: View {
-    let presentation: MockSessionPresentation
-    let addMusic: () -> Void
+struct QueueSessionHeaderView: View {
+    let presentation: QueueSessionPresentation
+    var addMusic: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -14,7 +14,7 @@ struct MockSessionHeaderView: View {
                             .bold()
                         Text(
                             String(
-                                localized: "mockQueue.roomCode",
+                                localized: "queue.roomCode",
                                 defaultValue: "Room \(presentation.roomCode)"
                             )
                         )
@@ -24,9 +24,11 @@ struct MockSessionHeaderView: View {
 
                     Spacer()
 
-                    Button("mockQueue.addMusic", systemImage: "plus", action: addMusic)
-                    .accessibilityIdentifier("mock.flow.queue.addMusic")
-                    .buttonStyle(.borderedProminent)
+                    if let addMusic {
+                        Button("queue.addMusic", systemImage: "plus", action: addMusic)
+                            .accessibilityIdentifier("queue.addMusic")
+                            .buttonStyle(.borderedProminent)
+                    }
                 }
 
                 VStack(alignment: .leading) {
@@ -35,17 +37,19 @@ struct MockSessionHeaderView: View {
                         .bold()
                     Text(
                         String(
-                            localized: "mockQueue.roomCode",
+                            localized: "queue.roomCode",
                             defaultValue: "Room \(presentation.roomCode)"
                         )
                     )
                     .font(.subheadline.monospaced())
                     .foregroundStyle(.secondary)
 
-                    Button("mockQueue.addMusic", systemImage: "plus", action: addMusic)
-                    .accessibilityIdentifier("mock.flow.queue.addMusic")
-                    .buttonStyle(.borderedProminent)
-                    .frame(maxWidth: .infinity)
+                    if let addMusic {
+                        Button("queue.addMusic", systemImage: "plus", action: addMusic)
+                            .accessibilityIdentifier("queue.addMusic")
+                            .buttonStyle(.borderedProminent)
+                            .frame(maxWidth: .infinity)
+                    }
                 }
             }
 
@@ -71,14 +75,14 @@ struct MockSessionHeaderView: View {
 
     var participantCountDescription: String {
         String(
-            localized: "mockQueue.participantCount",
+            localized: "queue.participantCount",
             defaultValue: "\(presentation.participants.count) people"
         )
     }
 }
 
 #Preview("Full Session") {
-    MockSessionHeaderView(
+    QueueSessionHeaderView(
         presentation: MockSessionFixtures.fullSession,
         addMusic: {}
     )

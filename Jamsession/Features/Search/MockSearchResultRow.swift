@@ -11,7 +11,7 @@ struct MockSearchResultRow: View {
             if dynamicTypeSize.isAccessibilitySize {
                 VStack(alignment: .leading) {
                     HStack(alignment: .top) {
-                        MockArtworkView(title: track.title)
+                        QueueArtworkView(title: track.title)
 
                         Spacer()
 
@@ -34,7 +34,7 @@ struct MockSearchResultRow: View {
                 }
             } else {
                 HStack {
-                    MockArtworkView(title: track.title)
+                    QueueArtworkView(title: track.title)
 
                     VStack(alignment: .leading) {
                         HStack {

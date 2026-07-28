@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct MockNowPlayingView: View {
-    let track: MockSessionPresentation.Track
+struct QueueNowPlayingView: View {
+    let track: QueueSessionPresentation.Track
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -10,20 +10,20 @@ struct MockNowPlayingView: View {
             if dynamicTypeSize.isAccessibilitySize {
                 VStack(alignment: .leading) {
                     Image(systemName: "waveform")
-                    Text("mockQueue.nowPlaying")
+                    Text("queue.nowPlaying")
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .font(.headline)
                 .foregroundStyle(.secondary)
             } else {
-                Label("mockQueue.nowPlaying", systemImage: "waveform")
+                Label("queue.nowPlaying", systemImage: "waveform")
                     .font(.headline)
                     .foregroundStyle(.secondary)
             }
 
             if dynamicTypeSize.isAccessibilitySize {
                 VStack(alignment: .leading) {
-                    MockArtworkView(title: track.title, size: 72)
+                    QueueArtworkView(title: track.title, size: 72)
 
                     Text(track.title)
                         .font(.headline)
@@ -38,7 +38,7 @@ struct MockNowPlayingView: View {
                     Label {
                         Text(
                             String(
-                                localized: "mockQueue.addedBy",
+                                localized: "queue.addedBy",
                                 defaultValue: "Added by \(track.submitter.name)"
                             )
                         )
@@ -50,7 +50,7 @@ struct MockNowPlayingView: View {
                 }
             } else {
                 HStack {
-                    MockArtworkView(title: track.title, size: 72)
+                    QueueArtworkView(title: track.title, size: 72)
 
                     VStack(alignment: .leading) {
                         Text(track.title)
@@ -66,7 +66,7 @@ struct MockNowPlayingView: View {
                         Label {
                             Text(
                                 String(
-                                    localized: "mockQueue.addedBy",
+                                    localized: "queue.addedBy",
                                     defaultValue: "Added by \(track.submitter.name)"
                                 )
                             )
@@ -90,16 +90,16 @@ struct MockNowPlayingView: View {
 
     var accessibilityDescription: String {
         let base = String(
-            localized: "mockQueue.nowPlaying.accessibility",
+            localized: "queue.nowPlaying.accessibility",
             defaultValue: "Now playing \(track.title) by \(track.artist), added by \(track.submitter.name)"
         )
         return track.isExplicit
-            ? "\(base), \(String(localized: "mockQueue.explicit.full"))"
+            ? "\(base), \(String(localized: "queue.explicit.full"))"
             : base
     }
 }
 
 #Preview("Long Explicit Track") {
-    MockNowPlayingView(track: MockSessionFixtures.longTitleTrack)
+    QueueNowPlayingView(track: MockSessionFixtures.longTitleTrack)
         .padding()
 }

@@ -1,14 +1,14 @@
 import SwiftUI
 
 struct ParticipantBadgeView: View {
-    let participant: MockSessionPresentation.Participant
+    let participant: QueueSessionPresentation.Participant
     var showsName = false
 
     var body: some View {
         HStack(spacing: 6) {
             Text(participant.emoji)
                 .frame(width: 32, height: 32)
-                .background(participant.color.swiftUIColor.gradient)
+                .background(participant.colorID.color.gradient)
                 .clipShape(.circle)
                 .overlay {
                     Circle()
@@ -24,23 +24,8 @@ struct ParticipantBadgeView: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
             participant.isCurrentUser
-                ? String(localized: "mockQueue.participant.you")
+                ? String(localized: "queue.participant.you")
                 : participant.name
         )
-    }
-}
-
-private extension MockSessionPresentation.ParticipantColor {
-    var swiftUIColor: Color {
-        switch self {
-        case .blue:
-            .blue
-        case .green:
-            .green
-        case .orange:
-            .orange
-        case .purple:
-            .purple
-        }
     }
 }

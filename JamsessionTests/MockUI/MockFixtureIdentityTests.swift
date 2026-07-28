@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import Jamsession
 
@@ -7,26 +8,28 @@ struct MockFixtureIdentityTests {
         let queueParticipants = MockSessionFixtures.populated.participants
         let lobbyParticipants = MockLobbyFixtures.participants
 
-        #expect(queueParticipants.map(\.id) == [
-            MockFixtureID.mayaParticipant,
-            MockFixtureID.currentParticipant,
-            MockFixtureID.jordanParticipant
+        #expect(queueParticipants.map(\.id.rawValue) == [
+            MockFixtureID.mayaParticipant.uuidString,
+            MockFixtureID.currentParticipant.uuidString,
+            MockFixtureID.jordanParticipant.uuidString
         ])
-        #expect(lobbyParticipants.map(\.id) == queueParticipants.map(\.id))
+        #expect(lobbyParticipants.map(\.id.uuidString) == queueParticipants.map(\.id.rawValue))
         #expect(MockLobbyFixtures.pendingParticipant.id == MockFixtureID.samParticipant)
     }
 
     @Test
     func trackFixturesUseStableIdentityAcrossQueueAndSearch() {
         let queue = MockSessionFixtures.populated
-        let queueTrackIDs = [queue.nowPlaying?.id].compactMap(\.self) + queue.upcoming.map(\.id)
+        let queueTrackIDs = (
+            [queue.nowPlaying?.id].compactMap(\.self) + queue.upcoming.map(\.id)
+        ).map(\.rawValue)
 
         #expect(queueTrackIDs == [
-            MockFixtureID.midnightDriveTrack,
-            MockFixtureID.goldenHourTrack,
-            MockFixtureID.afterglowTrack,
-            MockFixtureID.sideStreetsTrack,
-            MockFixtureID.electricBlueTrack
+            MockFixtureID.midnightDriveTrack.uuidString,
+            MockFixtureID.goldenHourTrack.uuidString,
+            MockFixtureID.afterglowTrack.uuidString,
+            MockFixtureID.sideStreetsTrack.uuidString,
+            MockFixtureID.electricBlueTrack.uuidString
         ])
         #expect(MockSearchFixtures.tracks.map(\.id) == [
             MockFixtureID.goldenHourTrack,
@@ -34,7 +37,10 @@ struct MockFixtureIdentityTests {
             MockFixtureID.electricBlueTrack,
             MockFixtureID.longTitleTrack
         ])
-        #expect(MockSessionFixtures.longTitleTrack.id == MockFixtureID.longTitleTrack)
+        #expect(
+            MockSessionFixtures.longTitleTrack.id.rawValue
+                == MockFixtureID.longTitleTrack.uuidString
+        )
     }
 
     @Test
@@ -49,7 +55,10 @@ struct MockFixtureIdentityTests {
 
         #expect(participantIDs.count == 4)
         #expect(trackIDs.count == 5)
-        #expect(participantIDs.isDisjoint(with: trackIDs))
+        #expect(
+            Set(participantIDs.map(\.uuidString))
+                .isDisjoint(with: Set(trackIDs.map(\.rawValue)))
+        )
     }
 
     @Test

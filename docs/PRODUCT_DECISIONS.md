@@ -1,6 +1,6 @@
 # Product Decisions — Ephemeral Shared-Queue Music Sessions
 
-Last updated: 2026-07-18
+Last updated: 2026-07-25
 
 ## Authority
 
@@ -48,6 +48,13 @@ decision history at the end of this file.
 - Networking is foreground-oriented in the MVP. Host background audio may
   continue, but session management requires the host to remain foregrounded.
   Guests reconnect when returning to the foreground.
+- Slice 0 physical-device testing on an iPhone 14 Pro and iPhone 12 Pro running
+  iOS 26.5.2 confirmed Bonjour discovery, a length-prefixed message in each
+  direction, clean termination, role reversal, denial/no-room distinction, and
+  successful rediscovery and exchange after guest and host background/lock
+  transitions of 10 and 45 seconds. The feasibility connection is one-shot, so
+  these lifecycle results prove recovery after return, not persistence of an open
+  connection while suspended.
 - Slice 0 physical-device testing found that `ApplicationMusicPlayer` playback
   continued under device lock without enabling the background-audio capability;
   Lock Screen pause and resume worked, and skipping the spike's only queued entry
@@ -280,12 +287,11 @@ The authoritative execution status and evidence for this matrix live in
 
 ## Open verification
 
-1. Confirm on physical hardware that a guest without an Apple Music subscription
-   can authorize MusicKit and search the catalog.
-2. Confirm the selected iOS 26 Network APIs support the required Bonjour plus
-   peer-to-peer behavior on the minimum supported OS and devices.
-3. Confirm host background audio and foreground-only session-management behavior
-   under device lock and common interruptions.
+1. Retest guest catalog search through the production Slice 4 integration.
+2. Retest discovery, admission, reconnection, and termination through the
+   production Slice 3 transport.
+3. Confirm production session behavior under calls, Siri, route changes, and
+   other common interruptions.
 
 ## Slice 0 feasibility evidence
 
@@ -296,8 +302,18 @@ The authoritative execution status and evidence for this matrix live in
 - Automatic developer-token generation required an explicit MusicKit-enabled App
   ID whose capitalization exactly matched the app bundle identifier:
   `com.jamsession.jamsession`. No custom developer token or private key was used.
-- Non-subscriber guest search, two-device Network discovery/messaging, and
-  lifecycle observations remain unverified, so the Slice 0 exit gate remains open.
+- 2026-07-25: A physical iPhone 12 Pro running iOS 26.5.2 authenticated with a
+  non-subscriber USA Apple Music account, authorized MusicKit, and returned ten
+  catalog results in two cold-launch runs without starting a subscription.
+- 2026-07-25: An iPhone 14 Pro and iPhone 12 Pro, both running iOS 26.5.2,
+  discovered each other over home Wi-Fi, exchanged framed messages in both
+  directions with roles reversed, distinguished local-network denial from no
+  nearby host, terminated cleanly, and re-exchanged successfully after all guest
+  and host 10- and 45-second background and lock transitions.
+- Slice 0 capability gates 0M and 0G are open. Gate 0N remains closed until an
+  active peer link's disconnect and reconnect behavior is observed across host
+  and guest foreground/background transitions. The successful post-transition
+  rediscovery checks do not substitute for that lifecycle evidence.
 
 ## Decision history
 
@@ -312,3 +328,12 @@ The authoritative execution status and evidence for this matrix live in
 - 2026-07-18: Physically verified subscriber-host authorization, catalog search,
   queueing, playback, pause, and skip on iPhone 14 Pro with iOS 26.5.2; confirmed
   automatic MusicKit token generation with the exact MusicKit-enabled bundle ID.
+- 2026-07-25: Physically verified non-subscriber guest catalog search and opened
+  capability gate 0G.
+- 2026-07-25: Physically verified two-device Bonjour discovery, framed exchange,
+  denial/no-room distinction, clean role-reversed termination, and successful
+  rediscovery after background and lock transitions. Kept capability gate 0N
+  closed because the one-shot connection had already terminated before every
+  transition and therefore did not prove active-link lifecycle behavior.
+- 2026-07-28: Physically verified the current Host flow's Music authorization
+  denial and recovery path on iPhone 14 Pro; retained capability gate 0M as open.

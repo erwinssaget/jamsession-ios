@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct MockEntryView: View {
-    var onSelectRole: ((MockEntryRole) -> Void)?
+    var onSelectRole: ((SessionRole) -> Void)?
 
-    @State private var selectedRole: MockEntryRole?
+    @State private var selectedRole: SessionRole?
 
     var body: some View {
         ScrollView {
@@ -61,7 +61,7 @@ struct MockEntryView: View {
         }
     }
 
-    private func select(_ role: MockEntryRole) {
+    private func select(_ role: SessionRole) {
         if let onSelectRole {
             onSelectRole(role)
         } else {

@@ -3,7 +3,7 @@ import SwiftUI
 struct MockPermissionExplainerView: View {
     @Environment(\.dismiss) private var dismiss
 
-    let role: MockEntryRole
+    let role: SessionRole
     let displayName: String
     var onContinue: (() -> Void)?
 

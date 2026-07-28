@@ -11,7 +11,7 @@ struct MockTrackFailedView: View {
             )
 
             HStack {
-                MockArtworkView(title: "Afterglow")
+                QueueArtworkView(title: "Afterglow")
                 VStack(alignment: .leading) {
                     Text("Afterglow")
                         .font(.headline)

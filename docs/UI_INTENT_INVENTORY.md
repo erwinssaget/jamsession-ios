@@ -1,16 +1,20 @@
 # UI Intent Inventory
 
-Last reviewed: 2026-07-23
+Last reviewed: 2026-07-24
 
 ## Purpose
 
-This inventory defines the user intents exposed by the completed mock UI without
-implementing production coordinators, transport messages, MusicKit requests,
-playback commands, or session lifecycle.
+This inventory defines the user intents exposed by the UI and records which
+queue intents gained a canonical local owner in Slice 2A, which Host setup
+intents gained a production owner in Slice 2B-A, and which Host catalog/search
+intents gained a production owner in Slice 2B-B. Transport messages, guest
+catalog requests, real playback coordination, and session lifecycle remain
+unimplemented.
 
-Names are conceptual until a canonical production caller exists. When production
-types are introduced, preserve the ownership, validation, repetition, and
-cancellation expectations recorded here rather than copying the mock coordinator.
+Names remain conceptual until a canonical production caller exists. Slice 2A's
+implemented names are called out below. Later production types must preserve the
+ownership, validation, repetition, and cancellation expectations recorded here
+rather than copying a mock coordinator.
 
 ## Intent rules
 
@@ -26,14 +30,28 @@ cancellation expectations recorded here rather than copying the mock coordinator
 
 ## First run
 
+Slice 2B-A implements Host `submitProfile` and
+`continuePermissionExplanation` through `HostFlowCoordinator`. The async
+`HostMusicEligibilityChecking` boundary requests access only after explicit user
+action, suppresses cancelled/stale outcomes, and maps eligible, denied,
+restricted, subscription-required, and unavailable results into typed
+presentation state. Production role-choice navigation and the Join permission
+path remain open.
+
 | Conceptual intent | Payload | Production owner | Validation and result | Repeat/cancel behavior |
 |-------------------|---------|------------------|-----------------------|------------------------|
 | `selectRole` | Host or Join | App flow coordinator | Role must remain changeable until a permission/session action begins. | Re-selecting replaces the uncommitted choice. Back returns to role selection. |
 | `submitProfile` | Validated `ProfileDraft` | App flow coordinator | Draft is already normalized locally; production creates or updates allowed local profile preference separately from session identity. | Repeated submission while advancing is ignored or disabled. Cancellation preserves only explicitly allowed local preferences. |
 | `cancelFirstRunStep` | Current step | App flow coordinator | No service mutation. | Idempotent; returns to the prior presentation step. |
 | `continuePermissionExplanation` | Role | Host or Join coordinator | Begins the role-specific production permission flow only when its canonical slice is open. | One owned task; repeated taps do not start duplicate requests. Cancellation maps back to an actionable explanation state. |
+| `retryHostMusicEligibility` | Current Host profile and a new lifecycle-owned request generation | Host flow coordinator / Music eligibility boundary | Rechecks authorization and subscription capability after Settings, subscription changes, or transient failure. | A newer generation cancels/supersedes the old task; stale or cancelled results cannot create a lobby. |
 
 ## Host lobby and admission
+
+Slice 2B-A implements the solo form of `startSession`: an eligible Host owns one
+ephemeral `HostSessionModel`, the immutable lobby reflects its locked one-person
+order, and repeated start calls after leaving the lobby are stable no-ops.
+Admission, invite, capacity, and revisioned peer commands remain Slice 3 work.
 
 | Conceptual intent | Payload | Production owner | Validation and result | Repeat/cancel behavior |
 |-------------------|---------|------------------|-----------------------|------------------------|
@@ -47,18 +65,35 @@ cancellation expectations recorded here rather than copying the mock coordinator
 
 ## Joined queue
 
+Slice 2A implements `removeOwnPendingTrack`, `skipOwnNextTurn`, and host
+`advancePlayback` through idempotent `QueueCommand` values owned by the Main Actor
+`HostSessionModel`. The participant identity on a command is trusted local
+context; a future transport boundary must authenticate and validate a peer before
+constructing that command. `openAddMusic` remains presentation navigation.
+
 | Conceptual intent | Payload | Production owner | Validation and result | Repeat/cancel behavior |
 |-------------------|---------|------------------|-----------------------|------------------------|
 | `openAddMusic` | None | App/queue coordinator | Presentation-only navigation. Guest may open search even before Music authorization is known. | Repeated presentation is coalesced. Dismissal cancels owned search work. |
 | `removeOwnPendingTrack` | Submission ID and current revision | Authoritative host actor | Participant owns the pending submission and it has not started. Returns typed fairness rejection when invalid. | Idempotent request ID; replay returns original outcome. |
 | `skipOwnNextTurn` | Participant ID and current revision | Authoritative host actor | Participant owns `nextUp`; track remains pending and skip semantics are applied once. | Idempotent; repeat cannot skip multiple turns. |
+| `advancePlayback` | Host identity and playback-transition request ID | Authoritative host actor | Host authorization is required; the scheduler advances canonical rotation exactly once. Slice 2A exercises this with a Debug control, not a player callback. | Idempotent request ID; repeated transition delivery returns the original outcome and cannot advance twice. |
 | `openLifecycleDetails` | Current lifecycle presentation | App/queue coordinator | Presentation-only navigation; does not start timers or reconnection. | Repeated presentation is coalesced. |
 
-Host-only moderation and playback controls are intentionally absent from the
-current joined-guest mock queue. Add them only in the correct host production
-surface with explicit authorization.
+Host-only moderation and playback controls remain absent from the joined-guest
+mock queue. The Debug functional harness exposes authorized host controls solely
+to exercise the Slice 2A command boundary; Slice 2B must connect those controls
+to the correct production Host surface.
 
 ## Search and submission
+
+Slice 2B-B implements the Host-local forms of `updateSearchQuery`,
+`retrySearch`, `submitTrack`, `dismissSubmissionFeedback`, and `cancelSearch`.
+`HostCatalogSearchModel` is Main Actor isolated, owns request identities and
+typed states, and is driven by lifecycle-owned SwiftUI tasks.
+`AppleMusicHostCatalogService` resolves the current country storefront, maps
+`Song` into `CatalogTrackSelection`, and re-fetches a selected ID before the
+authoritative command is constructed. Guest search and remote acknowledgement
+remain Slice 4 work.
 
 | Conceptual intent | Payload | Production owner | Validation and result | Repeat/cancel behavior |
 |-------------------|---------|------------------|-----------------------|------------------------|
@@ -67,6 +102,13 @@ surface with explicit authorization.
 | `submitTrack` | Music item ID, participant ID, request ID, host revision | Host-local coordinator or guest command boundary | Host resolves item in its storefront, then applies fairness validation. Maps to pending, accepted, or typed rejection presentation. | Idempotent request ID. Repeated taps do not create duplicate pending commands. |
 | `dismissSubmissionFeedback` | Feedback/request ID | Search coordinator | Presentation-only dismissal; does not cancel an accepted host mutation. | Idempotent. A newer outcome may supersede dismissed feedback. |
 | `cancelSearch` | Active generation and pending local tasks | Search coordinator | Cancels catalog work and closes presentation. Does not retract already-sent submission commands. | Idempotent and lifecycle-owned. |
+
+Slice 2A implements the post-resolution command portion of `submitTrack`.
+Slice 2B-B now supplies the Host-local MusicKit lookup, storefront validation,
+debounce, cancellation, stale-response suppression, and typed catalog/fairness
+feedback before a trusted `CatalogTrackSelection` reaches `HostSessionModel`.
+Guest authorization, cross-storefront peer submission, transport identity and
+revision validation, and acknowledgement remain Slice 4 work.
 
 ## Session lifecycle
 
