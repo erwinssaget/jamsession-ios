@@ -346,8 +346,9 @@ playback model.
 The production-readiness review is recorded in
 [`UI_PRODUCTION_READINESS.md`](UI_PRODUCTION_READINESS.md). This section records
 the continuation guidance that applied while Slice 0 hardware/account checks were
-still incomplete. Gates 0M, 0G, and 0N are now open for their named production
-slices; current status and remaining production retests live in
+still incomplete. Gates 0M and 0G are open for their named production slices;
+0N remains closed pending active-link lifecycle verification. Current status and
+remaining production retests live in
 [`VERIFICATION_LOG.md`](VERIFICATION_LOG.md). The completed gallery still does
 not satisfy any MusicKit, Network, playback, or lifecycle exit gate.
 
@@ -580,7 +581,8 @@ Use this prompt in a new context:
 > `ApplicationMusicPlayer.shared`, a pure queue-diff reconciliation planner, and
 > a thin MusicKit executor that preserves the current track and surfaces typed
 > failure state. Add deterministic planner/failure tests before beginning
-> playback-transition observation. Gates 0G and 0N are open, but keep this
-> continuation scoped to Slice 2B-C; begin Slice 3 and Slice 4 only in their
-> canonical prerequisite order. Record only checks actually run and keep the
+> playback-transition observation. Gate 0G is open, but 0N remains closed pending
+> active-link lifecycle verification. Keep this continuation scoped to Slice
+> 2B-C; begin Slice 3 and Slice 4 only in their canonical prerequisite order.
+> Record only checks actually run and keep the
 > readiness review, intent inventory, verification log, and handoff current.

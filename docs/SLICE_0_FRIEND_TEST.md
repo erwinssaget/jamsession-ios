@@ -90,10 +90,11 @@ failure before changing networks; do not treat a simulator exchange as a pass.
    selected nearby host, visibly distinct from denial.
 4. Start the host and confirm the browser can subsequently connect.
 
-## Test D — foreground, background, lock, and reconnect (V0-5 and V0-7B)
+## Test D — foreground, background, lock, and reconnect (V0-5A, V0-5B, and V0-7B)
 
-Start from a successful connection and record the status shown on both phones
-after each step.
+Run the post-transition recovery checks below for V0-5A and V0-7B. They do not
+satisfy V0-5B because the current one-shot spike terminates the connection after
+its acknowledgement.
 
 1. Background the guest for 10 seconds, return it to foreground, and reconnect if
    necessary. Exchange must work again and **Stop** must terminate cleanly.
@@ -108,6 +109,12 @@ The expected MVP behavior is foreground-oriented. A disconnect is not itself a
 failure; failure means the observed state is ambiguous, the app cannot reconnect,
 or tasks do not terminate cleanly. Record whether each transition persisted,
 disconnected, and/or reconnected rather than summarizing all transitions together.
+
+V0-5B requires a lifecycle-capable spike that deliberately keeps the peer link
+active before the app transitions. After that harness exists, repeat the guest
+and host background cases while recording the active link's disconnect and
+reconnect states on both devices. Do not mark V0-5B PASS from a new exchange
+started only after returning to the foreground.
 
 ## Evidence template
 

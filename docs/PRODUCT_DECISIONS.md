@@ -310,8 +310,10 @@ The authoritative execution status and evidence for this matrix live in
   directions with roles reversed, distinguished local-network denial from no
   nearby host, terminated cleanly, and re-exchanged successfully after all guest
   and host 10- and 45-second background and lock transitions.
-- Slice 0 capability gates 0M, 0G, and 0N are open. Their production integrations
-  still require the exit-gate retests named by later slices.
+- Slice 0 capability gates 0M and 0G are open. Gate 0N remains closed until an
+  active peer link's disconnect and reconnect behavior is observed across host
+  and guest foreground/background transitions. The successful post-transition
+  rediscovery checks do not substitute for that lifecycle evidence.
 
 ## Decision history
 
@@ -329,5 +331,9 @@ The authoritative execution status and evidence for this matrix live in
 - 2026-07-25: Physically verified non-subscriber guest catalog search and opened
   capability gate 0G.
 - 2026-07-25: Physically verified two-device Bonjour discovery, framed exchange,
-  denial/no-room distinction, clean role-reversed termination, and recovery after
-  background and lock transitions; opened capability gate 0N.
+  denial/no-room distinction, clean role-reversed termination, and successful
+  rediscovery after background and lock transitions. Kept capability gate 0N
+  closed because the one-shot connection had already terminated before every
+  transition and therefore did not prove active-link lifecycle behavior.
+- 2026-07-28: Physically verified the current Host flow's Music authorization
+  denial and recovery path on iPhone 14 Pro; retained capability gate 0M as open.
