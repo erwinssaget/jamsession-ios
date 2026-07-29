@@ -7,14 +7,19 @@ struct HostFlowView: View {
     @State private var catalogSearchModel: HostCatalogSearchModel
     @State private var hostPlayer: HostPlayer
     @State private var eligibilityRequestID: UUID?
+    @State private var isShowingSubscriptionOffer = false
+
+    private let sessionEnded: () -> Void
 
     init(
         eligibilityChecker: any HostMusicEligibilityChecking =
             AppleMusicHostEligibilityChecker(),
         catalogService: any HostCatalogServicing =
             AppleMusicHostCatalogService(),
-        queueExecutor: (any HostQueueExecuting)? = nil
+        queueExecutor: (any HostQueueExecuting)? = nil,
+        sessionEnded: @escaping () -> Void = {}
     ) {
+        self.sessionEnded = sessionEnded
         _coordinator = State(
             initialValue: HostFlowCoordinator(
                 eligibilityChecker: eligibilityChecker
@@ -44,6 +49,7 @@ struct HostFlowView: View {
                     displayName: coordinator.profile?.displayName ?? "",
                     state: coordinator.musicAccessState,
                     requestAccess: requestMusicEligibility,
+                    showSubscriptionOffer: showSubscriptionOffer,
                     openSettings: openMusicSettings,
                     cancel: returnToProfile
                 )
@@ -76,6 +82,10 @@ struct HostFlowView: View {
                 eligibilityRequestID = nil
             }
         }
+        .appleMusicSubscriptionOffer(
+            isPresented: $isShowingSubscriptionOffer,
+            loadFailed: coordinator.subscriptionOfferLoadFailed
+        )
     }
 
     private func requestMusicEligibility() {
@@ -95,6 +105,10 @@ struct HostFlowView: View {
             return
         }
         openURL(settingsURL)
+    }
+
+    private func showSubscriptionOffer() {
+        isShowingSubscriptionOffer = true
     }
 }
 

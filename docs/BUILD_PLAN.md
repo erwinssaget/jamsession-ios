@@ -1,6 +1,6 @@
 # Build Plan — Ephemeral Shared-Queue Music Sessions
 
-Revision: 7
+Revision: 8
 Last updated: 2026-07-28
 
 ## Authority and usage
@@ -339,9 +339,17 @@ not advance it again. MusicKit observation and controls remain confined to the
 executor, with deterministic integration and UI coverage through the Debug
 executor.
 
-Still open: production role-choice navigation and subscription-offer handoff,
-end-session behavior, live `ApplicationMusicPlayer` queue/observation/control
-verification, and the physical-device Slice 2B exit gate.
+The 2026-07-28 Slice 2B-E increment replaces the Release feasibility root with
+production Host/Join role selection, routes Host into the existing production
+coordinator, and presents an honest non-networking Join-unavailable state until
+Slice 3. Host eligibility distinguishes users who can receive Apple Music
+subscription offers, presents the system offer through a thin MusicKit UI
+adapter, and retains typed retry/load-failure recovery. The feasibility harness
+remains available only through an explicit Debug launch argument.
+
+Still open: confirmed end-session behavior, live `ApplicationMusicPlayer`
+queue/observation/control verification, and the physical-device Slice 2B exit
+gate.
 
 ### Goal
 

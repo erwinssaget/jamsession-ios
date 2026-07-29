@@ -55,7 +55,9 @@ submission to that queue authority. Slice 2B-C connects canonical queue identity
 changes to a Main Actor Host player through pure diff planning, a thin MusicKit
 executor, and typed reconciliation recovery. Slice 2B-D connects one cancelable
 player observer plus current-track play/pause/skip controls to that same Host
-surface while canonical fairness remains authoritative.
+surface while canonical fairness remains authoritative. Slice 2B-E makes
+production role selection the Release root and adds the capability-gated Apple
+Music subscription-offer handoff.
 
 - **P0 complete:** the canonical plan authorizes the mock-only track and the
   feasibility harness exposes an explicit mock queue route.
@@ -124,6 +126,13 @@ surface while canonical fairness remains authoritative.
   play/pause, and current-track skip state through production-neutral
   presentation values; the real MusicKit player remains isolated in
   `AppleMusicHostQueueExecutor`, while Debug tests use a deterministic executor.
+- **Slice 2B-E complete; Slice 2B remains in progress:** `ContentView` now opens
+  production Host/Join role selection in Release. Host routes to `HostFlowView`;
+  Join reaches an explicit unavailable state without starting discovery.
+  Offer-capable non-subscribers can present Apple’s system subscription sheet
+  through a thin MusicKit modifier, with typed load-failure and eligibility
+  recheck paths. The feasibility harness requires an explicit Debug launch
+  argument.
 - **PR #4 review follow-up complete:** the Debug functional catalog presents
   canonical queue-command feedback above the sheet, including a reachable dismiss
   action, and the production solo-lobby participant rows announce the correct Host
@@ -147,8 +156,10 @@ under its pure/domain implementation exit gate and does not alter 0M, 0G, or 0N.
 | Mock entry route | `Jamsession/ContentView.swift` and `Jamsession/FeasibilityDestination.swift` | Keeps the prototype reachable in Debug without replacing Slice 0 tools; no Release navigation route is compiled |
 | First-run prototype | `Jamsession/Features/FirstRun/` | Host/Join choice, identity setup, validation, and inert permission explanation |
 | Shared profile form | `Jamsession/Features/FirstRun/ProfileSetupView.swift` and `Jamsession/Models/SessionRole.swift` | Production-neutral validated role/profile input shared by the Host coordinator and mock wrapper |
+| Production app flow | `Jamsession/ContentView.swift` and `Jamsession/Features/AppFlow/` | Owns Release role selection, routes Host into the canonical Host flow, and keeps pre-Slice-3 Join behavior explicit without starting networking |
 | Production Host flow | `Jamsession/Features/HostFlow/` | Main Actor profile → Music eligibility → solo lobby → canonical queue coordination plus immutable lobby/current-track playback presentation |
 | Host Music eligibility boundary | `Jamsession/Music/HostMusicEligibilityChecking.swift` and `AppleMusicHostEligibilityChecker.swift` | Isolates just-in-time Music authorization and subscription capability from the coordinator and SwiftUI |
+| Host subscription-offer adapter | `Jamsession/Music/AppleMusicSubscriptionOfferModifier.swift` | Contains the MusicKit SwiftUI offer API and reports load failure without assuming purchase or eligibility success |
 | Host catalog boundary | `Jamsession/Music/HostCatalogServicing.swift`, `AppleMusicHostCatalogService.swift`, and `AppleMusicCatalogTrackMapper.swift` | Isolates Host storefront resolution, MusicKit search/resource requests, playability checks, and `Song` mapping from state and views |
 | Host playback and reconciliation | `Jamsession/Music/HostPlayer.swift`, `HostQueueExecuting.swift`, `QueueReconciliationPlanner.swift`, `PlaybackTransitionDeduplicator.swift`, and `AppleMusicHostQueueExecutor.swift` | Keeps canonical queue identities and pure diff/transition planning outside MusicKit, applies queue/control work through one Main Actor executor, owns one cancelable observation loop, protects the active entry, deduplicates player transitions into stable canonical commands, and maps failures into typed paused state |
 | Lobby prototype | `Jamsession/Features/Lobby/` | Host participant order, admission state gallery, discovery fixtures, and decorative invite |
@@ -171,17 +182,19 @@ The Xcode project uses synchronized groups, so new files under `Jamsession/` sho
 be discovered automatically. Verify target membership instead of reflexively
 editing `project.pbxproj`.
 
-## Current mock route graph
+## Current route graph
 
-In Debug builds, all provisional routes begin in the existing Slice 0 feasibility
-harness:
+Release begins in production role selection. Debug UI tests can opt into the
+existing Slice 0 feasibility harness with `-show-feasibility-harness`:
 
 ```text
 ContentView
-├── Open Host Flow
-│   └── HostFlowView
+├── production AppFlowView
+│   ├── Host a Session
+│   │   └── HostFlowView
 │       ├── shared ProfileSetupView
 │       ├── real AppleMusicHostEligibilityChecker (explicit user action only)
+│       ├── capability-gated Apple Music subscription offer
 │       ├── Host lobby → Start Session
 │       └── canonical queue
 │           ├── Add Music → real Host catalog boundary
@@ -189,6 +202,8 @@ ContentView
 │           └── current track → play / pause / current-track skip
 │               → Host player boundary → deduplicated canonical transition
 │               (Debug Music services injected for UI tests)
+│   └── Join a Session → explicit unavailable state (no discovery)
+├── Debug argument → FeasibilityView
 ├── Open Functional Queue
 │   └── DomainQueueHarnessView
 │       ├── real HostSessionModel → FairnessScheduler → QueueSessionPresentation
@@ -607,6 +622,17 @@ Through 2026-07-24:
   `ApplicationMusicPlayer` callback ordering, queue mutation, audible controls,
   physical-device behavior, end-session teardown, and production
   role/subscription routing remain open.
+- Slice 2B-E replaced the Release feasibility root with production role
+  selection, Host routing, and an explicit pre-Slice-3 Join-unavailable state.
+  Offer-capable accounts map to Apple’s system subscription sheet through a thin
+  MusicKit modifier with typed load-failure/recheck behavior. The complete unit
+  target passed 123 tests and 132 simulator executions with zero failures or
+  skips. Four production-root Host/Join/offer UI tests and all eight affected
+  feasibility-harness queue/mock regressions passed. Debug, Release, and Xcode
+  MCP builds succeeded; Issue Navigator reported no warnings. Standard light and
+  AX5 dark role-selection previews were inspected, and the AX5 Host action was
+  exercised successfully. Live offer/purchase behavior, physical-device
+  playback, and end-session teardown remain open.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.
@@ -615,11 +641,11 @@ preview variants and any fixture-only behavior.
 
 Use this prompt in a new context:
 
-> Continue the remaining bounded Slice 2B work after Slice 2B-D. The P0–P6
+> Continue with bounded Slice 2B-F end-session teardown. The P0–P6
 > presentation track, R1–R6 hardening backlog, connected mock-flow smoke
 > coverage, Slice 2A domain-backed functional queue, Slice 2B-A Host
 > profile/Music-eligibility/solo-lobby, and Slice 2B-B Host catalog/search
-> through Slice 2B-D Host queue-reconciliation/playback increments are complete
+> through Slice 2B-E production Host entry/subscription-offer increment are complete
 > in automated scope.
 > Read `AGENTS.md`,
 > `docs/PRODUCT_DECISIONS.md`, `docs/BUILD_PLAN.md`,
@@ -627,10 +653,11 @@ Use this prompt in a new context:
 > before acting. Preserve `HostSessionModel` as the Main Actor authority,
 > `FairnessScheduler` as a pure value type, `QueueSessionPresentation` as the
 > SwiftUI boundary, and `HostPlayer`/`HostQueueExecuting` as the only player
-> seam. First determine one explicit next increment from the remaining Slice 2B
-> work: production role-choice/subscription-offer handoff or confirmed
-> end-session teardown. Do not combine those concerns or absorb networking/guest
-> work. After both are implemented, run the complete physical-device profile →
+> seam. Add confirmed, idempotent end-session behavior that stops and clears the
+> player before destroying canonical in-memory state, cancels lifecycle-owned
+> work by removing the Host flow, and returns to production role selection.
+> Do not absorb networking/guest notification; Slice 2B is solo Host only. After
+> automated teardown coverage passes, run the complete physical-device profile →
 > authorization → lobby → search → queue → playback → end exit flow with live
 > `ApplicationMusicPlayer`, including current-entry preservation and repeated
 > callback behavior. Gate 0G is open, but 0N remains closed pending active-link

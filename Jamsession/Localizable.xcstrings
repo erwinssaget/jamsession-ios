@@ -23,6 +23,127 @@
     "BEAT" : {
 
     },
+    "app.join.unavailable.back" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose Another Role"
+          }
+        }
+      }
+    },
+    "app.join.unavailable.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host mode is ready first. Joining nearby sessions will arrive with the local-network session increment."
+          }
+        }
+      }
+    },
+    "app.join.unavailable.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nearby joining isn’t available yet"
+          }
+        }
+      }
+    },
+    "app.role.ephemeral" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sessions stay on your devices and disappear when they end."
+          }
+        }
+      }
+    },
+    "app.role.hero.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take turns adding songs to one shared Apple Music queue."
+          }
+        }
+      }
+    },
+    "app.role.hero.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pass the aux, fairly."
+          }
+        }
+      }
+    },
+    "app.role.host.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play the fair queue from this iPhone with Apple Music."
+          }
+        }
+      }
+    },
+    "app.role.host.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Host a Session"
+          }
+        }
+      }
+    },
+    "app.role.join.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join a nearby host and add songs without playing audio here."
+          }
+        }
+      }
+    },
+    "app.role.join.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join a Session"
+          }
+        }
+      }
+    },
+    "app.role.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jamsession"
+          }
+        }
+      }
+    },
     "feasibility.domainQueue" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -463,6 +584,28 @@
         }
       }
     },
+    "host.music.subscriptionOfferAvailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An Apple Music plan is required to host."
+          }
+        }
+      }
+    },
+    "host.music.subscriptionOfferUnavailable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple Music plans couldn’t be loaded. Try the offer again or check your subscription."
+          }
+        }
+      }
+    },
     "host.music.subscriptionRequired" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -470,6 +613,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "An active Apple Music subscription is required to host. You can still join another session."
+          }
+        }
+      }
+    },
+    "host.music.viewSubscriptionOffer" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View Apple Music Plans"
           }
         }
       }

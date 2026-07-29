@@ -4,6 +4,7 @@ final class DomainQueueHarnessUITests: XCTestCase {
     @MainActor
     func testQueueActionsUseCanonicalFairnessState() {
         let app = XCUIApplication()
+        app.launchArguments.append("-show-feasibility-harness")
         app.launch()
 
         app.buttons["queue.harness.open"].tap()

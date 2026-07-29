@@ -6,7 +6,7 @@ final class HostFlowUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        app.buttons["host.flow.open"].tap()
+        app.buttons["app.role.host"].tap()
 
         let nameField = app.textFields["host.flow.profile.name"]
         XCTAssertTrue(nameField.waitForExistence(timeout: 2))
@@ -34,7 +34,7 @@ final class HostFlowUITests: XCTestCase {
         ]
         app.launch()
 
-        tapButton("host.flow.open", in: app, scrollingIfNeeded: true)
+        tapButton("app.role.host", in: app, scrollingIfNeeded: true)
 
         let nameField = app.textFields["host.flow.profile.name"]
         XCTAssertTrue(nameField.waitForExistence(timeout: 2))
@@ -101,6 +101,46 @@ final class HostFlowUITests: XCTestCase {
         tapButton("host.playback.skip", in: app, scrollingIfNeeded: true)
         XCTAssertTrue(app.staticTexts["The queue is wide open"].waitForExistence(timeout: 2))
         XCTAssertFalse(app.otherElements["host.playback.controls"].exists)
+    }
+
+    @MainActor
+    func testJoinRoleExplainsCurrentAvailabilityWithoutStartingDiscovery() {
+        let app = XCUIApplication()
+        app.launch()
+
+        app.buttons["app.role.join"].tap()
+
+        XCTAssertTrue(
+            app.staticTexts["Nearby joining isn’t available yet"].waitForExistence(timeout: 2)
+        )
+        XCTAssertTrue(app.buttons["app.join.unavailable.back"].exists)
+        XCTAssertFalse(app.buttons["mock.flow.discovery.session"].exists)
+
+        app.buttons["app.join.unavailable.back"].tap()
+        XCTAssertTrue(app.buttons["app.role.host"].waitForExistence(timeout: 2))
+    }
+
+    @MainActor
+    func testHostWithoutSubscriptionCanOpenAppleMusicOfferHandoff() {
+        let app = XCUIApplication()
+        app.launchArguments.append("-host-flow-subscription-offer")
+        app.launch()
+
+        app.buttons["app.role.host"].tap()
+        let nameField = app.textFields["host.flow.profile.name"]
+        XCTAssertTrue(nameField.waitForExistence(timeout: 2))
+        nameField.tap()
+        nameField.typeText("Maya")
+        app.buttons["host.flow.profile.continue"].tap()
+        app.buttons["host.flow.music.continue"].tap()
+
+        XCTAssertTrue(
+            app.staticTexts["An Apple Music plan is required to host."].waitForExistence(
+                timeout: 2
+            )
+        )
+        XCTAssertTrue(app.buttons["host.flow.music.subscriptionOffer"].exists)
+        XCTAssertTrue(app.buttons["host.flow.music.retry"].exists)
     }
 
     @MainActor
