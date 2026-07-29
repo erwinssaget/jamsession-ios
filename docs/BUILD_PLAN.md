@@ -1,6 +1,6 @@
 # Build Plan — Ephemeral Shared-Queue Music Sessions
 
-Revision: 9
+Revision: 10
 Last updated: 2026-07-28
 
 ## Authority and usage
@@ -354,6 +354,13 @@ invalidated; removal of the Host flow cancels lifecycle-owned reconciliation,
 observation, and control tasks; late callbacks and suspended work cannot restore
 ended state; and navigation returns to production role selection. Guest
 notification remains intentionally out of scope until nearby transport exists.
+
+A 2026-07-28 exit-gate audit follow-up connects the existing authoritative
+Host `removePending` command to the production queue surface. Removal feedback
+is scoped to the initiating user action, so internal playback-transition
+commands do not surface or cover controls. The accessibility-size integration
+flow queues two tracks, starts the first, removes only the future track, and
+verifies current playback remains active before skip and confirmed teardown.
 
 Still open: live `ApplicationMusicPlayer` queue/observation/control/end
 verification and the physical-device Slice 2B exit gate.
