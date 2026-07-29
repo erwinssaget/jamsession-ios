@@ -77,6 +77,10 @@ final class HostSessionModel {
         }
     }
 
+    var nextPlaybackItemID: SubmissionID? {
+        scheduler.nextUp(in: rotationState)?.id
+    }
+
     private func fairnessEvent(
         for command: QueueCommand
     ) throws(FairnessRejection) -> FairnessEvent {

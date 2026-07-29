@@ -5,6 +5,7 @@ struct QueueSessionContentView: View {
     var addMusic: (() -> Void)?
     var removeTrack: ((SubmissionID) -> Void)?
     var skipTurn: ((SubmissionID) -> Void)?
+    var showsNowPlaying = true
 
     var body: some View {
         LazyVStack(alignment: .leading) {
@@ -24,7 +25,7 @@ struct QueueSessionContentView: View {
                     .accessibilityAddTraits(.updatesFrequently)
             }
 
-            if let nowPlaying = presentation.nowPlaying {
+            if showsNowPlaying, let nowPlaying = presentation.nowPlaying {
                 QueueNowPlayingView(track: nowPlaying)
             }
 

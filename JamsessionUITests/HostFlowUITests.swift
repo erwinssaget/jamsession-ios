@@ -80,6 +80,27 @@ final class HostFlowUITests: XCTestCase {
 
         XCTAssertTrue(app.staticTexts["Midnight Drive"].waitForExistence(timeout: 2))
         XCTAssertTrue(app.staticTexts["Nova Lane"].exists)
+        XCTAssertTrue(app.staticTexts["Ready to Play"].waitForExistence(timeout: 2))
+        XCTAssertFalse(app.buttons["host.playback.skip"].isEnabled)
+
+        tapButton("host.playback.playPause", in: app, scrollingIfNeeded: true)
+        XCTAssertTrue(app.staticTexts["Now Playing"].waitForExistence(timeout: 2))
+        XCTAssertEqual(app.buttons["host.playback.playPause"].label, "Pause")
+        XCTAssertTrue(app.buttons["host.playback.skip"].isEnabled)
+
+        let playbackScreenshot = XCTAttachment(screenshot: app.screenshot())
+        playbackScreenshot.name = "Host playback controls at AX5"
+        playbackScreenshot.lifetime = .keepAlways
+        add(playbackScreenshot)
+
+        tapButton("host.playback.playPause", in: app, scrollingIfNeeded: true)
+        XCTAssertEqual(app.buttons["host.playback.playPause"].label, "Play")
+        tapButton("host.playback.playPause", in: app, scrollingIfNeeded: true)
+        XCTAssertEqual(app.buttons["host.playback.playPause"].label, "Pause")
+
+        tapButton("host.playback.skip", in: app, scrollingIfNeeded: true)
+        XCTAssertTrue(app.staticTexts["The queue is wide open"].waitForExistence(timeout: 2))
+        XCTAssertFalse(app.otherElements["host.playback.controls"].exists)
     }
 
     @MainActor
