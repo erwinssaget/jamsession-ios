@@ -62,7 +62,7 @@ final class HostFlowUITests: XCTestCase {
         let searchField = app.searchFields.firstMatch
         XCTAssertTrue(searchField.waitForExistence(timeout: 2))
         searchField.tap()
-        searchField.typeText("Midnight")
+        searchField.typeText("i")
         app.keyboards.buttons["Search"].tap()
 
         let addButton = app.buttons["host.flow.search.debug-midnight-drive.add"]
@@ -70,6 +70,13 @@ final class HostFlowUITests: XCTestCase {
         addButton.tap()
 
         XCTAssertTrue(app.staticTexts["Queue updated"].waitForExistence(timeout: 2))
+        app.buttons["queue.feedback.dismiss"].tap()
+        tapButton(
+            "host.flow.search.debug-golden-hour.add",
+            in: app,
+            scrollingIfNeeded: true
+        )
+        XCTAssertTrue(app.buttons["queue.feedback.dismiss"].waitForExistence(timeout: 2))
 
         let searchScreenshot = XCTAttachment(screenshot: app.screenshot())
         searchScreenshot.name = "Host catalog search at AX5"
@@ -80,6 +87,7 @@ final class HostFlowUITests: XCTestCase {
 
         XCTAssertTrue(app.staticTexts["Midnight Drive"].waitForExistence(timeout: 2))
         XCTAssertTrue(app.staticTexts["Nova Lane"].exists)
+        XCTAssertTrue(app.staticTexts["Golden Hour"].exists)
         XCTAssertTrue(app.staticTexts["Ready to Play"].waitForExistence(timeout: 2))
         XCTAssertFalse(app.buttons["host.playback.skip"].isEnabled)
 
@@ -93,12 +101,32 @@ final class HostFlowUITests: XCTestCase {
         playbackScreenshot.lifetime = .keepAlways
         add(playbackScreenshot)
 
-        tapButton("host.playback.playPause", in: app, scrollingIfNeeded: true)
-        XCTAssertEqual(app.buttons["host.playback.playPause"].label, "Play")
-        tapButton("host.playback.playPause", in: app, scrollingIfNeeded: true)
-        XCTAssertEqual(app.buttons["host.playback.playPause"].label, "Pause")
+        XCTAssertTrue(waitUntilEnabled(app.buttons["host.playback.playPause"]))
 
-        tapButton("host.playback.skip", in: app, scrollingIfNeeded: true)
+        let removeButton = app.buttons.matching(
+            NSPredicate(
+                format: "identifier BEGINSWITH 'queue.track.' AND identifier ENDSWITH '.remove'"
+            )
+        ).firstMatch
+        for _ in 0..<8 where !removeButton.exists || !removeButton.isHittable {
+            app.swipeUp()
+        }
+        XCTAssertTrue(removeButton.waitForExistence(timeout: 2))
+        XCTAssertTrue(removeButton.isHittable)
+        removeButton.tap()
+        XCTAssertFalse(app.staticTexts["Golden Hour"].exists)
+        XCTAssertTrue(app.staticTexts["Now Playing"].exists)
+        XCTAssertEqual(app.buttons["host.playback.playPause"].label, "Pause")
+        XCTAssertTrue(app.buttons["queue.feedback.dismiss"].waitForExistence(timeout: 2))
+        app.buttons["queue.feedback.dismiss"].tap()
+
+        let skipButton = app.buttons["host.playback.skip"]
+        for _ in 0..<8 where !skipButton.exists || !skipButton.isHittable {
+            app.swipeDown()
+        }
+        XCTAssertTrue(skipButton.waitForExistence(timeout: 2))
+        XCTAssertTrue(skipButton.isHittable)
+        skipButton.tap()
         XCTAssertTrue(app.staticTexts["The queue is wide open"].waitForExistence(timeout: 2))
         XCTAssertFalse(app.otherElements["host.playback.controls"].exists)
 
@@ -182,5 +210,17 @@ final class HostFlowUITests: XCTestCase {
             line: line
         )
         button.tap()
+    }
+
+    @MainActor
+    private func waitUntilEnabled(
+        _ element: XCUIElement,
+        timeout: TimeInterval = 2
+    ) -> Bool {
+        let expectation = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "enabled == true"),
+            object: element
+        )
+        return XCTWaiter.wait(for: [expectation], timeout: timeout) == .completed
     }
 }

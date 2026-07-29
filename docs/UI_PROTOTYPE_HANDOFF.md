@@ -141,6 +141,11 @@ through the same player/coordinator boundaries.
   Removing the flow cancels lifecycle-owned observation, reconciliation, and
   control tasks; generation/ending guards suppress late callbacks and suspended
   failures. Guest notification remains deferred until Slice 3 transport exists.
+- **Slice 2B exit audit follow-up complete:** the production Host queue now
+  connects its existing Remove presentation intent to canonical
+  `removePending`, shows action-scoped typed feedback, and avoids exposing
+  internal playback command outcomes. The AX5 flow verifies removing a future
+  track while the first remains current and playing.
 - **PR #4 review follow-up complete:** the Debug functional catalog presents
   canonical queue-command feedback above the sheet, including a reachable dismiss
   action, and the production solo-lobby participant rows announce the correct Host
@@ -654,6 +659,13 @@ Through 2026-07-24:
   dependency-boundary, prohibited-pattern, dependency-file, and privacy/log
   checks passed. Live `ApplicationMusicPlayer` playback, current-entry
   preservation, queue clearing, and end behavior remain open in V2B-1.
+- The Slice 2B exit audit connected production Host future-track removal. The
+  complete unit target again passed 127 tests and 136 executions; all four
+  Host/role UI tests passed. The extended AX5 Host flow queued two tracks,
+  started the first, removed the second, preserved active Now Playing state,
+  skipped to empty, and confirmed teardown. Generic Debug/Release and Xcode MCP
+  builds passed with zero Issue Navigator warnings. Live MusicKit verification
+  remains V2B-1.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.

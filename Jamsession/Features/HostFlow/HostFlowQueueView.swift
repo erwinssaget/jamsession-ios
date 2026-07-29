@@ -8,6 +8,7 @@ struct HostFlowQueueView: View {
     let endSession: () -> Void
     @State private var isShowingCatalog = false
     @State private var isConfirmingEnd = false
+    @State private var removalOutcome: QueueCommandOutcome?
     @State private var reconciliationAttemptID = UUID()
     @State private var controlRequest: ControlRequest?
 
@@ -40,6 +41,7 @@ struct HostFlowQueueView: View {
                 QueueSessionContentView(
                     presentation: queuePresentation,
                     addMusic: { isShowingCatalog = true },
+                    removeTrack: removeTrack,
                     showsNowPlaying: false
                 )
             }
@@ -116,6 +118,25 @@ struct HostFlowQueueView: View {
         } message: {
             Text("host.end.confirm.message")
         }
+        .safeAreaInset(edge: .bottom) {
+            if let removalOutcome {
+                QueueCommandFeedbackView(
+                    presentation: QueueCommandFeedbackPresentation.map(removalOutcome),
+                    dismiss: { self.removalOutcome = nil }
+                )
+                .padding()
+            }
+        }
+    }
+
+    private func removeTrack(_ submissionID: SubmissionID) {
+        removalOutcome = session.handle(
+            QueueCommand(
+                id: FairnessEventID("host-remove-\(UUID().uuidString)"),
+                participantID: session.hostID,
+                action: .removePending(submissionID)
+            )
+        )
     }
 
     private func retryReconciliation() {

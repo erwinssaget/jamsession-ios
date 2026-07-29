@@ -80,7 +80,9 @@ constructing that command. `openAddMusic` remains presentation navigation.
 Slice 2B-C automatically reconciles canonical queue identity changes through
 `HostPlayer`. Slice 2B-D observes player transitions through that same boundary
 and converts each start or departure into one idempotent canonical
-`advancePlayback` command.
+`advancePlayback` command. The Slice 2B exit audit connects the production Host
+queue’s existing `removeOwnPendingTrack` presentation action to the
+authoritative host-removal form of `removePending`.
 
 | Conceptual intent | Payload | Production owner | Validation and result | Repeat/cancel behavior |
 |-------------------|---------|------------------|-----------------------|------------------------|
@@ -100,8 +102,10 @@ mock queue. The Debug functional harness exposes authorized host controls solely
 to exercise the Slice 2A command boundary. Slice 2B-C connects queue
 reconciliation and retry. Slice 2B-D adds Host-only playback controls to the
 production Host queue surface through `HostPlayer`. Slice 2B-F adds confirmed
-solo-Host end-session teardown. Guest controls and multi-device end notification
-remain absent.
+solo-Host end-session teardown. The Slice 2B exit audit also connects Host
+future-track removal with action-scoped typed feedback while protected-current
+reconciliation keeps the playing entry unchanged. Guest controls and
+multi-device end notification remain absent.
 
 ## Search and submission
 
