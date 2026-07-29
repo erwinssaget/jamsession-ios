@@ -106,8 +106,25 @@ struct HostPlayerTests {
             }
         }
 
+        func observePlayback(
+            _ receive: @escaping @MainActor @Sendable (HostPlaybackObservation) -> Void
+        ) async {
+            receive(
+                HostPlaybackObservation(
+                    currentItem: .none,
+                    status: .stopped
+                )
+            )
+        }
+
+        func play() async throws {
+        }
+
         func pause() {
             pauseCount += 1
+        }
+
+        func skipToNextEntry() async throws {
         }
     }
 
@@ -127,8 +144,19 @@ struct HostPlayerTests {
             throw HostPlaybackError.offline
         }
 
+        func observePlayback(
+            _ receive: @escaping @MainActor @Sendable (HostPlaybackObservation) -> Void
+        ) async {
+        }
+
+        func play() async throws {
+        }
+
         func pause() {
             pauseCount += 1
+        }
+
+        func skipToNextEntry() async throws {
         }
     }
 }

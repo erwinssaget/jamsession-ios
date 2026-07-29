@@ -1,5 +1,6 @@
 import Foundation
-import MusicKit
+@preconcurrency import Combine
+@preconcurrency import MusicKit
 
 @MainActor
 final class AppleMusicHostQueueExecutor: HostQueueExecuting {
@@ -69,8 +70,97 @@ final class AppleMusicHostQueueExecutor: HostQueueExecuting {
         )
     }
 
+    func observePlayback(
+        _ receive: @escaping @MainActor @Sendable (HostPlaybackObservation) -> Void
+    ) async {
+        receive(playbackObservation)
+        // MusicPlayer.Queue and MusicPlayer.State expose their change streams
+        // through ObservableObject compatibility. Keep that legacy bridge
+        // confined here and consume it as one structured async sequence.
+        let changes = Publishers.Merge(
+            player.queue.objectWillChange,
+            player.state.objectWillChange
+        )
+
+        for await _ in changes.values {
+            guard !Task.isCancelled else {
+                return
+            }
+            await Task.yield()
+            guard !Task.isCancelled else {
+                return
+            }
+            receive(playbackObservation)
+        }
+    }
+
+    func play() async throws {
+        try await performEligibleControl {
+            try await player.play()
+        }
+    }
+
     func pause() {
         player.pause()
+    }
+
+    func skipToNextEntry() async throws {
+        try await performEligibleControl {
+            try await player.skipToNextEntry()
+        }
+    }
+
+    private var playbackObservation: HostPlaybackObservation {
+        let currentItem: HostPlaybackCurrentItem
+        if let currentEntry = player.queue.currentEntry {
+            if let item = itemsByEntryID[currentEntry.id] {
+                currentItem = .managed(item.id)
+            } else {
+                currentItem = .unmanaged
+            }
+        } else {
+            currentItem = .none
+        }
+
+        return HostPlaybackObservation(
+            currentItem: currentItem,
+            status: playbackStatus
+        )
+    }
+
+    private var playbackStatus: HostPlaybackStatus {
+        switch player.state.playbackStatus {
+        case .stopped:
+            .stopped
+        case .playing:
+            .playing
+        case .paused:
+            .paused
+        case .interrupted:
+            .interrupted
+        case .seekingForward, .seekingBackward:
+            .seeking
+        @unknown default:
+            .interrupted
+        }
+    }
+
+    private func performEligibleControl(
+        _ operation: () async throws -> Void
+    ) async throws {
+        try await verifyHostEligibility()
+        do {
+            try await operation()
+            try Task.checkCancellation()
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch let error as HostPlaybackError {
+            throw error
+        } catch let error as URLError where error.isPlaybackOffline {
+            throw HostPlaybackError.offline
+        } catch {
+            throw HostPlaybackError.unavailable
+        }
     }
 
     private func queueContext() -> QueueContext {

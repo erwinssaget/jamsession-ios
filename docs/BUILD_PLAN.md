@@ -1,6 +1,6 @@
 # Build Plan — Ephemeral Shared-Queue Music Sessions
 
-Revision: 6
+Revision: 7
 Last updated: 2026-07-28
 
 ## Authority and usage
@@ -329,10 +329,19 @@ localized recovery when reconciliation cannot be applied safely. Canonical queue
 changes drive lifecycle-owned reconciliation tasks; the Debug Host route uses a
 deterministic in-memory executor.
 
+The 2026-07-28 Slice 2B-D increment extends that boundary with one
+lifecycle-owned, cancelable playback observer, pure transition deduplication,
+stable idempotent playback-transition commands, and Host current-track,
+play/pause, and current-track skip controls. The authoritative
+`HostSessionModel` advances fairness exactly once after player start, completion,
+or skip callbacks; repeated callbacks and transient empty-current callbacks do
+not advance it again. MusicKit observation and controls remain confined to the
+executor, with deterministic integration and UI coverage through the Debug
+executor.
+
 Still open: production role-choice navigation and subscription-offer handoff,
-playback-transition observation, play/pause/current-track controls, end-session
-behavior, real MusicKit queue integration verification, and the physical-device
-exit gate.
+end-session behavior, live `ApplicationMusicPlayer` queue/observation/control
+verification, and the physical-device Slice 2B exit gate.
 
 ### Goal
 

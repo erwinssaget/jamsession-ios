@@ -7,8 +7,11 @@ struct HostFlowQueueView: View {
     let returnToLobby: () -> Void
     @State private var isShowingCatalog = false
     @State private var reconciliationAttemptID = UUID()
+    @State private var controlRequest: ControlRequest?
 
     var body: some View {
+        let queuePresentation = session.presentation(viewedBy: session.hostID)
+
         ScrollView {
             VStack {
                 if case .failed(let error) = hostPlayer.state {
@@ -18,9 +21,24 @@ struct HostFlowQueueView: View {
                     )
                 }
 
+                if let controls = HostPlaybackControlsPresentationMapper.map(
+                    queue: queuePresentation,
+                    currentItemID: hostPlayer.currentItemID,
+                    playbackStatus: hostPlayer.playbackStatus,
+                    playerState: hostPlayer.state,
+                    isControlRequestInFlight: hostPlayer.isControlRequestInFlight
+                ) {
+                    HostPlaybackControlsView(
+                        presentation: controls,
+                        playOrPause: playOrPause,
+                        skip: requestSkip
+                    )
+                }
+
                 QueueSessionContentView(
-                    presentation: session.presentation(viewedBy: session.hostID),
-                    addMusic: { isShowingCatalog = true }
+                    presentation: queuePresentation,
+                    addMusic: { isShowingCatalog = true },
+                    showsNowPlaying: false
                 )
             }
             .padding()
@@ -53,14 +71,62 @@ struct HostFlowQueueView: View {
         ) {
             await hostPlayer.reconcile(with: session.playbackQueueItems)
         }
+        .task {
+            await hostPlayer.observePlaybackTransitions(for: session)
+        }
+        .task(id: controlRequest) {
+            guard let request = controlRequest else {
+                return
+            }
+
+            switch request.action {
+            case .play:
+                await hostPlayer.play()
+            case .skip:
+                await hostPlayer.skipCurrentTrack()
+            }
+
+            if controlRequest == request {
+                controlRequest = nil
+            }
+        }
     }
 
     private func retryReconciliation() {
         reconciliationAttemptID = UUID()
     }
 
+    private func playOrPause() {
+        if hostPlayer.playbackStatus.isActivelyPlaying {
+            hostPlayer.pause()
+        } else {
+            requestControl(.play)
+        }
+    }
+
+    private func requestSkip() {
+        requestControl(.skip)
+    }
+
+    private func requestControl(_ action: ControlAction) {
+        guard controlRequest == nil else {
+            return
+        }
+        controlRequest = ControlRequest(id: UUID(), action: action)
+    }
+
     private struct ReconciliationTaskID: Equatable {
         let queueRevision: Int
         let attemptID: UUID
+    }
+
+    private struct ControlRequest: Equatable {
+        let id: UUID
+        let action: ControlAction
+    }
+
+    private enum ControlAction: Equatable {
+        case play
+        case skip
     }
 }
