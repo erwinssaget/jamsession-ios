@@ -16,7 +16,9 @@ Actor Host player, pure queue-diff planning, thin MusicKit execution, and typed
 reconciliation recovery around that canonical queue. Slice 2B-D adds one
 lifecycle-bound playback observer, pure transition deduplication, current-track
 presentation, and Host play/pause/current-track skip controls through the same
-player boundary.
+player boundary. Slice 2B-E replaces the Release feasibility root with production
+role selection, routes Host into that flow, and adds a capability-gated Apple
+Music subscription-offer handoff.
 
 The mock coordinators, scenario enums, guest search, admission/invite, guest
 playback presentation, lifecycle, and transport surfaces are not
@@ -74,9 +76,9 @@ caller.
 
 | Area | Current input/state | Current intents | Readiness finding |
 |------|---------------------|-----------------|-------------------|
-| Role choice | `SessionRole`; mock-only choice navigation | select Host or Join | The value is production-neutral, but production role-choice navigation remains open. The Debug Host route currently selects Host explicitly. |
+| Role choice | Production `RoleSelectionView` plus `SessionRole`; mock choice remains isolated | select Host or Join | Production-connected. Host routes to `HostFlowView`; Join reaches an explicit unavailable state without starting discovery. The feasibility harness now requires an explicit Debug launch argument. |
 | Profile | Shared `ProfileSetupView` with local editing state and validated `ProfileDraft` output | submit profile | Production-connected for Host. `HostFlowCoordinator` creates a separate session-scoped identity; local preference persistence remains intentionally absent. |
-| Permission explanation | `HostMusicAccessView` plus typed `HostMusicAccessState`; Join mock remains inert | request/check again, open Settings, return to profile | Production-connected for Host through `HostMusicEligibilityChecking`. Each request has an optional UUID task identity owned by `HostFlowView`; leaving the step clears that identity and cancels the in-flight checker before another request can start. Catalog requests revalidate authorization/subscription, while physical system-sheet cancellation and player-state recovery remain open. |
+| Permission explanation | `HostMusicAccessView` plus typed `HostMusicAccessState`; Join mock remains inert | request/check again, present subscription offer, open Settings, return to profile | Production-connected for Host through `HostMusicEligibilityChecking`. Each request has an optional UUID task identity owned by `HostFlowView`; leaving the step clears that identity and cancels the in-flight checker before another request can start. Offer-capable accounts use Apple’s system subscription sheet through a thin MusicKit modifier, and purchase success is never assumed without rechecking eligibility. Physical offer/purchase behavior and player-state recovery remain open. |
 | Host lobby | `HostLobbyPresentation` mapped from solo `HostSessionModel` | start alone or cancel | Production-connected for solo Host start. Role-specific accessibility labels distinguish the Host from future Guest rows. Admission, invite, capacity changes, and nearby participants remain blocked on Slice 3/0N. |
 | Admission | Fixture scenario and participant | approve, reject, retry, select room | Leaf intents are useful but ad hoc. Define typed coordinator intents when the authoritative host/guest caller exists. |
 | Invite | Decorative QR and hard-coded room code | dismiss | Not production-ready. A production invite value must distinguish shareable room code from sensitive high-entropy join credential and prevent secret exposure in logs/accessibility. |
@@ -287,19 +289,20 @@ The queue satisfies this definition for Slice 2A. Host profile, Music
 eligibility, and solo lobby satisfy it for Slice 2B-A. Host-local catalog search
 and submission satisfy it for Slice 2B-B. Host queue reconciliation satisfies it
 for Slice 2B-C, and Host playback transitions and controls satisfy it for Slice
-2B-D under deterministic automated boundaries. Other surfaces must be evaluated
-independently as their owning production slices open.
+2B-D under deterministic automated boundaries. Production role selection and the
+Host subscription-offer handoff satisfy it for Slice 2B-E. Other surfaces must
+be evaluated independently as their owning production slices open.
 
 ## Next authorized task
 
 The generic R1–R6 backlog, connected-flow smoke coverage, Slice 2A, and Slice
-2B-A through 2B-D are complete in their stated automated scope. Continue only
-the remaining bounded Slice 2B work: production role-choice/subscription-offer
-handoff and confirmed end-session teardown, followed by the complete
+2B-A through 2B-E are complete in their stated automated scope. Continue only
+the remaining bounded Slice 2B-F work: confirmed end-session teardown, followed
+by the complete
 profile → authorization → lobby → search → queue → playback → end
 physical-device exit flow with live `ApplicationMusicPlayer`. Select the next
-increment explicitly before implementation rather than combining navigation,
-lifecycle, and hardware verification. Defer nearby transport to Slice 3 and
+verification step explicitly rather than combining lifecycle and hardware
+claims. Defer nearby transport to Slice 3 and
 guest catalog to Slice 4. Gate 0N remains closed pending active-link lifecycle
 verification; gate 0G is open, but the canonical prerequisites and current Slice
 2B scope still apply.

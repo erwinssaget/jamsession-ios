@@ -25,7 +25,12 @@ nonisolated struct AppleMusicHostEligibilityChecker: HostMusicEligibilityCheckin
             guard !Task.isCancelled else {
                 return .unavailable
             }
-            return subscription.canPlayCatalogContent ? .eligible : .subscriptionRequired
+            if subscription.canPlayCatalogContent {
+                return .eligible
+            }
+            return subscription.canBecomeSubscriber
+                ? .subscriptionOfferAvailable
+                : .subscriptionRequired
         } catch {
             return .unavailable
         }

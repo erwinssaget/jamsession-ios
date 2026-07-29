@@ -59,6 +59,7 @@ final class MockConnectedFlowUITests: XCTestCase {
     func testPermissionExplainerIsScrollableAtAccessibilityTextSize() {
         let app = XCUIApplication()
         app.launchArguments += [
+            "-show-feasibility-harness",
             "-UIPreferredContentSizeCategoryName",
             "UICTContentSizeCategoryAccessibilityXXXL"
         ]
@@ -101,6 +102,7 @@ final class MockConnectedFlowUITests: XCTestCase {
     func testInviteSheetIsScrollableAtAccessibilityTextSize() {
         let app = XCUIApplication()
         app.launchArguments += [
+            "-show-feasibility-harness",
             "-UIPreferredContentSizeCategoryName",
             "UICTContentSizeCategoryAccessibilityXXXL"
         ]
@@ -223,6 +225,7 @@ final class MockConnectedFlowUITests: XCTestCase {
     @MainActor
     private func launchApplication() -> XCUIApplication {
         let app = XCUIApplication()
+        app.launchArguments.append("-show-feasibility-harness")
         app.launch()
         return app
     }

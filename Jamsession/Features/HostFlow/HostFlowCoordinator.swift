@@ -60,6 +60,15 @@ final class HostFlowCoordinator {
         step = .queue
     }
 
+    func subscriptionOfferLoadFailed() {
+        guard step == .musicAccess,
+              musicAccessState == .subscriptionOfferAvailable
+                || musicAccessState == .subscriptionOfferUnavailable else {
+            return
+        }
+        musicAccessState = .subscriptionOfferUnavailable
+    }
+
     func returnToLobby() {
         guard session != nil else {
             return
@@ -76,6 +85,8 @@ final class HostFlowCoordinator {
             musicAccessState = .authorizationDenied
         case .authorizationRestricted:
             musicAccessState = .authorizationRestricted
+        case .subscriptionOfferAvailable:
+            musicAccessState = .subscriptionOfferAvailable
         case .subscriptionRequired:
             musicAccessState = .subscriptionRequired
         case .unavailable:

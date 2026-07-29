@@ -52,6 +52,10 @@ struct HostFlowCoordinatorTests {
                 HostMusicAccessState.authorizationRestricted
             ),
             (
+                HostMusicEligibilityOutcome.subscriptionOfferAvailable,
+                HostMusicAccessState.subscriptionOfferAvailable
+            ),
+            (
                 HostMusicEligibilityOutcome.subscriptionRequired,
                 HostMusicAccessState.subscriptionRequired
             ),
@@ -72,6 +76,19 @@ struct HostFlowCoordinatorTests {
 
         #expect(coordinator.step == .musicAccess)
         #expect(coordinator.musicAccessState == expectedState)
+        #expect(coordinator.session == nil)
+    }
+
+    @Test
+    func subscriptionOfferLoadFailureRemainsActionable() async {
+        let coordinator = makeCoordinator(outcome: .subscriptionOfferAvailable)
+        coordinator.submitProfile(profile)
+        await coordinator.requestMusicEligibility()
+
+        coordinator.subscriptionOfferLoadFailed()
+
+        #expect(coordinator.step == .musicAccess)
+        #expect(coordinator.musicAccessState == .subscriptionOfferUnavailable)
         #expect(coordinator.session == nil)
     }
 

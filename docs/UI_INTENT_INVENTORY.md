@@ -10,8 +10,9 @@ intents gained a production owner in Slice 2B-A, and which Host catalog/search
 intents gained a production owner in Slice 2B-B. Slice 2B-C gives Host queue
 reconciliation and retry a production owner. Slice 2B-D gives Host playback
 observation, current-track presentation, play/pause, and current-track skip a
-production owner. Transport messages, guest catalog requests, production entry,
-and session lifecycle remain unimplemented.
+production owner. Slice 2B-E gives production role selection, Host routing, and
+the Apple Music subscription-offer handoff a production owner. Transport
+messages, guest catalog requests, and session lifecycle remain unimplemented.
 
 Names remain conceptual until a canonical production caller exists. Slice 2A's
 implemented names are called out below. Later production types must preserve the
@@ -32,7 +33,9 @@ rather than copying a mock coordinator.
 
 ## First run
 
-Slice 2B-A implements Host `submitProfile` and
+Slice 2B-E implements production `selectRole`: Host routes to the Slice 2B
+coordinator, while Join reaches an explicit unavailable presentation without
+starting discovery before Slice 3. Slice 2B-A implements Host `submitProfile` and
 `continuePermissionExplanation` through `HostFlowCoordinator`. The async
 `HostMusicEligibilityChecking` boundary requests access only after explicit user
 action, suppresses cancelled/stale outcomes, and maps eligible, denied,
@@ -42,11 +45,12 @@ path remain open.
 
 | Conceptual intent | Payload | Production owner | Validation and result | Repeat/cancel behavior |
 |-------------------|---------|------------------|-----------------------|------------------------|
-| `selectRole` | Host or Join | App flow coordinator | Role must remain changeable until a permission/session action begins. | Re-selecting replaces the uncommitted choice. Back returns to role selection. |
+| `selectRole` | Host or Join | `AppFlowView` | Host creates the production Host flow. Join currently presents an explicit unavailable state and never starts discovery before Slice 3. | Re-selecting replaces the uncommitted choice. Back or completed Host teardown returns to role selection. |
 | `submitProfile` | Validated `ProfileDraft` | App flow coordinator | Draft is already normalized locally; production creates or updates allowed local profile preference separately from session identity. | Repeated submission while advancing is ignored or disabled. Cancellation preserves only explicitly allowed local preferences. |
 | `cancelFirstRunStep` | Current step | App flow coordinator | No service mutation. | Idempotent; returns to the prior presentation step. |
 | `continuePermissionExplanation` | Role | Host or Join coordinator | Begins the role-specific production permission flow only when its canonical slice is open. | One owned task; repeated taps do not start duplicate requests. Cancellation maps back to an actionable explanation state. |
 | `retryHostMusicEligibility` | Current Host profile and a new lifecycle-owned request generation | Host flow coordinator / Music eligibility boundary | Rechecks authorization and subscription capability after Settings, subscription changes, or transient failure. | A newer generation cancels/supersedes the old task; stale or cancelled results cannot create a lobby. |
+| `presentHostSubscriptionOffer` | Offer-capable Host eligibility state | Thin Apple Music offer adapter | Uses Apple’s system subscription-offer sheet only when `canBecomeSubscriber` is true. Loading failure maps to typed actionable state; purchase state is verified only through a fresh eligibility request. | Repeated presentation follows the system binding; dismissal does not create a lobby or assume subscription success. |
 
 ## Host lobby and admission
 

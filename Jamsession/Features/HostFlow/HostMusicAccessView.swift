@@ -4,6 +4,7 @@ struct HostMusicAccessView: View {
     let displayName: String
     let state: HostMusicAccessState
     let requestAccess: () -> Void
+    let showSubscriptionOffer: () -> Void
     let openSettings: () -> Void
     let cancel: () -> Void
 
@@ -40,6 +41,18 @@ struct HostMusicAccessView: View {
                 case .authorizationRestricted:
                     Label("host.music.restricted", systemImage: "lock.fill")
                         .foregroundStyle(.orange)
+                case .subscriptionOfferAvailable:
+                    Label(
+                        "host.music.subscriptionOfferAvailable",
+                        systemImage: "music.note.list"
+                    )
+                    .foregroundStyle(.orange)
+                case .subscriptionOfferUnavailable:
+                    Label(
+                        "host.music.subscriptionOfferUnavailable",
+                        systemImage: "exclamationmark.arrow.trianglehead.2.clockwise.rotate.90"
+                    )
+                    .foregroundStyle(.orange)
                 case .subscriptionRequired:
                     Label(
                         "host.music.subscriptionRequired",
@@ -80,6 +93,25 @@ struct HostMusicAccessView: View {
                     )
                     .buttonStyle(.borderedProminent)
                     .accessibilityIdentifier("host.flow.music.continue")
+                } else if state == .subscriptionOfferAvailable
+                            || state == .subscriptionOfferUnavailable {
+                    VStack {
+                        Button(
+                            "host.music.viewSubscriptionOffer",
+                            systemImage: "music.note.list",
+                            action: showSubscriptionOffer
+                        )
+                        .buttonStyle(.borderedProminent)
+                        .accessibilityIdentifier("host.flow.music.subscriptionOffer")
+
+                        Button(
+                            "host.music.tryAgain",
+                            systemImage: "arrow.clockwise",
+                            action: requestAccess
+                        )
+                        .buttonStyle(.bordered)
+                        .accessibilityIdentifier("host.flow.music.retry")
+                    }
                 } else if state != .checking {
                     Button(
                         "host.music.tryAgain",
@@ -109,6 +141,7 @@ struct HostMusicAccessView: View {
             displayName: "Maya",
             state: .explanation,
             requestAccess: {},
+            showSubscriptionOffer: {},
             openSettings: {},
             cancel: {}
         )
