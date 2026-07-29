@@ -67,7 +67,8 @@ struct HostFlowView: View {
                         session: session,
                         catalogSearchModel: catalogSearchModel,
                         hostPlayer: hostPlayer,
-                        returnToLobby: coordinator.returnToLobby
+                        returnToLobby: coordinator.returnToLobby,
+                        endSession: endSession
                     )
                 }
             }
@@ -109,6 +110,15 @@ struct HostFlowView: View {
 
     private func showSubscriptionOffer() {
         isShowingSubscriptionOffer = true
+    }
+
+    private func endSession() {
+        hostPlayer.endSession()
+        catalogSearchModel.invalidateRequests()
+        guard coordinator.endSession() else {
+            return
+        }
+        sessionEnded()
     }
 }
 

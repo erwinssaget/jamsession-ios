@@ -128,6 +128,22 @@ struct HostFlowCoordinatorTests {
         #expect(coordinator.session == nil)
     }
 
+    @Test
+    func endingSessionDestroysEphemeralStateExactlyOnce() async {
+        let coordinator = makeCoordinator(outcome: .eligible)
+        coordinator.submitProfile(profile)
+        await coordinator.requestMusicEligibility()
+        coordinator.startSession()
+
+        #expect(coordinator.endSession())
+        #expect(!coordinator.endSession())
+
+        #expect(coordinator.step == .profile)
+        #expect(coordinator.musicAccessState == .explanation)
+        #expect(coordinator.profile == nil)
+        #expect(coordinator.session == nil)
+    }
+
     private var profile: ProfileDraft {
         ProfileDraft(
             displayName: "Maya",

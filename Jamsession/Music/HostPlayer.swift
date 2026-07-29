@@ -8,6 +8,7 @@ final class HostPlayer {
     private(set) var currentItemID: SubmissionID?
     private(set) var isObservingPlayback = false
     private(set) var isControlRequestInFlight = false
+    private(set) var isEndingSession = false
 
     private let executor: any HostQueueExecuting
     private let planner = QueueReconciliationPlanner()
@@ -19,6 +20,10 @@ final class HostPlayer {
     }
 
     func reconcile(with desiredItems: [PlaybackQueueItem]) async {
+        guard !isEndingSession else {
+            return
+        }
+
         reconciliationID += 1
         let requestID = reconciliationID
         state = .reconciling
@@ -57,7 +62,7 @@ final class HostPlayer {
     }
 
     func observePlaybackTransitions(for session: HostSessionModel) async {
-        guard !isObservingPlayback else {
+        guard !isObservingPlayback, !isEndingSession else {
             return
         }
 
@@ -82,7 +87,7 @@ final class HostPlayer {
     }
 
     func pause() {
-        guard !isControlRequestInFlight else {
+        guard !isControlRequestInFlight, !isEndingSession else {
             return
         }
         executor.pause()
@@ -94,10 +99,28 @@ final class HostPlayer {
         }
     }
 
+    func endSession() {
+        guard !isEndingSession else {
+            return
+        }
+
+        isEndingSession = true
+        reconciliationID += 1
+        executor.endSession()
+        transitionDeduplicator = PlaybackTransitionDeduplicator()
+        currentItemID = nil
+        playbackStatus = .stopped
+        state = .idle
+    }
+
     private func receive(
         _ observation: HostPlaybackObservation,
         session: HostSessionModel
     ) {
+        guard !isEndingSession else {
+            return
+        }
+
         playbackStatus = observation.status
         currentItemID = observation.currentItem.managedID
 
@@ -143,7 +166,7 @@ final class HostPlayer {
     private func performControl(
         _ operation: () async throws -> Void
     ) async {
-        guard !isControlRequestInFlight else {
+        guard !isControlRequestInFlight, !isEndingSession else {
             return
         }
 
@@ -157,9 +180,15 @@ final class HostPlayer {
         } catch is CancellationError {
             return
         } catch let error as HostPlaybackError {
+            guard !isEndingSession else {
+                return
+            }
             executor.pause()
             state = .failed(error)
         } catch {
+            guard !isEndingSession else {
+                return
+            }
             executor.pause()
             state = .failed(.unavailable)
         }

@@ -101,6 +101,20 @@ final class DebugHostQueueExecutor: HostQueueExecuting {
         )
     }
 
+    func endSession() {
+        items.removeAll()
+        observation = HostPlaybackObservation(
+            currentItem: .none,
+            status: .stopped
+        )
+        let continuations = Array(observationContinuations.values)
+        observationContinuations.removeAll()
+        for continuation in continuations {
+            continuation.yield(observation)
+            continuation.finish()
+        }
+    }
+
     private func updateObservation(_ observation: HostPlaybackObservation) {
         self.observation = observation
         for continuation in observationContinuations.values {

@@ -73,6 +73,23 @@ struct HostPlayerTests {
         #expect(executor.pauseCount == 0)
     }
 
+    @Test
+    func endSessionSuppressesLateReconciliationAndRejectsNewWork() async throws {
+        let executor = SupersededFailureExecutor()
+        let player = HostPlayer(executor: executor)
+        let reconciliation = Task {
+            await player.reconcile(with: [item("Old")])
+        }
+        try await Task.sleep(for: .milliseconds(10))
+
+        player.endSession()
+        await reconciliation.value
+        await player.reconcile(with: [item("New")])
+
+        #expect(player.state == .idle)
+        #expect(executor.pauseCount == 0)
+    }
+
     private func item(_ name: String) -> PlaybackQueueItem {
         PlaybackQueueItem(
             id: SubmissionID("submission-\(name)"),
@@ -126,6 +143,9 @@ struct HostPlayerTests {
 
         func skipToNextEntry() async throws {
         }
+
+        func endSession() {
+        }
     }
 
     @MainActor
@@ -157,6 +177,9 @@ struct HostPlayerTests {
         }
 
         func skipToNextEntry() async throws {
+        }
+
+        func endSession() {
         }
     }
 }

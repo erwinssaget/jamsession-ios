@@ -18,7 +18,9 @@ lifecycle-bound playback observer, pure transition deduplication, current-track
 presentation, and Host play/pause/current-track skip controls through the same
 player boundary. Slice 2B-E replaces the Release feasibility root with production
 role selection, routes Host into that flow, and adds a capability-gated Apple
-Music subscription-offer handoff.
+Music subscription-offer handoff. Slice 2B-F adds confirmed solo-Host teardown
+that stops and clears playback before destroying ephemeral state and returning to
+role selection.
 
 The mock coordinators, scenario enums, guest search, admission/invite, guest
 playback presentation, lifecycle, and transport surfaces are not
@@ -26,7 +28,7 @@ production-connected. Future integration must continue replacing fixture
 ownership with canonical mapped state and typed intents rather than promoting
 mock coordinators into app architecture.
 
-Canonical gate status remains authoritative in `VERIFICATION_LOG.md`. Revision 7
+Canonical gate status remains authoritative in `VERIFICATION_LOG.md`. Revision 9
 of the build plan splits feasibility by capability: Slice 2A is complete,
 host-only MusicKit work may proceed under 0M, gate 0G is open but guest catalog
 still waits for its canonical Slice 2B and Slice 3 prerequisites, and nearby
@@ -82,9 +84,9 @@ caller.
 | Host lobby | `HostLobbyPresentation` mapped from solo `HostSessionModel` | start alone or cancel | Production-connected for solo Host start. Role-specific accessibility labels distinguish the Host from future Guest rows. Admission, invite, capacity changes, and nearby participants remain blocked on Slice 3/0N. |
 | Admission | Fixture scenario and participant | approve, reject, retry, select room | Leaf intents are useful but ad hoc. Define typed coordinator intents when the authoritative host/guest caller exists. |
 | Invite | Decorative QR and hard-coded room code | dismiss | Not production-ready. A production invite value must distinguish shareable room code from sensitive high-entropy join credential and prevent secret exposure in logs/accessibility. |
-| Queue | `QueueSessionPresentation` mapped from `HostSessionModel` in the functional harness or Host flow, or constructed from deterministic mock fixtures in galleries | Add Music, remove pending, skip turn, play/pause, current-track skip, dismiss feedback, retry queue sync | Ready and connected for Slice 2A, Host-local Add Music in Slice 2B-B, Host queue reconciliation in Slice 2B-C, and Host playback transitions/controls in Slice 2B-D. Canonical queue identities drive lifecycle-owned reconciliation and observation tasks; pure planning preserves a protected current entry; a pure deduplicator maps managed player transitions to one stable canonical command; and typed failures pause playback and expose retry. Turn-skip and current-track controls bind to canonical submission identities so stale UI cannot mutate a replacement track. Live MusicKit/physical-device behavior and a manual VoiceOver focus pass remain open. |
+| Queue | `QueueSessionPresentation` mapped from `HostSessionModel` in the functional harness or Host flow, or constructed from deterministic mock fixtures in galleries | Add Music, remove pending, skip turn, play/pause, current-track skip, confirmed end, dismiss feedback, retry queue sync | Ready and connected for Slice 2A, Host-local Add Music in Slice 2B-B, Host queue reconciliation in Slice 2B-C, Host playback transitions/controls in Slice 2B-D, and solo-Host teardown in Slice 2B-F. Canonical queue identities drive lifecycle-owned reconciliation and observation tasks; pure planning preserves a protected current entry; a pure deduplicator maps managed player transitions to one stable canonical command; and typed failures pause playback and expose retry. Confirmed end stops/clears the executor before canonical in-memory state is destroyed, while late work is suppressed. Turn-skip and current-track controls bind to canonical submission identities so stale UI cannot mutate a replacement track. Live MusicKit/physical-device behavior and a manual VoiceOver focus pass remain open. |
 | Search | Production `HostCatalogSearchState` and `HostCatalogSubmissionOutcome`; mock scenarios remain isolated | query, retry, add, dismiss feedback, close | Production-connected for Host through `HostCatalogServicing`. Structured tasks own debounce/cancellation, request IDs suppress stale work, the service returns only domain values, and every add re-resolves against the Host storefront before `HostSessionModel`. Guest search remains blocked on 0G/Slice 4. |
-| Lifecycle | Static scenario, countdown, progress | restart | Presentation only. Production must own grace-period clocks, reconnection, end-session cancellation, and teardown. Host playback-transition deduplication is now owned separately by `HostPlayer`. |
+| Lifecycle | Static multi-device scenarios plus production solo-Host end | restart or confirmed end | Solo-Host end is production-connected: `HostPlayer`, `HostFlowCoordinator`, and `AppFlowView` stop/clear playback, destroy ephemeral state, cancel lifecycle-owned work by removing the flow, and return home. Grace-period clocks, reconnection, guest notification, and host-loss teardown remain future transport work. |
 | Connected walkthrough | `MockPrototypeStep` | automatic fixture navigation | Must be replaced wholesale by production coordinators. It is not a session state machine. |
 
 ## Hardening backlog allowed before Slice 0 opens
@@ -291,18 +293,18 @@ and submission satisfy it for Slice 2B-B. Host queue reconciliation satisfies it
 for Slice 2B-C, and Host playback transitions and controls satisfy it for Slice
 2B-D under deterministic automated boundaries. Production role selection and the
 Host subscription-offer handoff satisfy it for Slice 2B-E. Other surfaces must
-be evaluated independently as their owning production slices open.
+be evaluated independently as their owning production slices open. Confirmed
+solo-Host teardown satisfies it for Slice 2B-F under deterministic automated
+boundaries.
 
 ## Next authorized task
 
 The generic R1–R6 backlog, connected-flow smoke coverage, Slice 2A, and Slice
-2B-A through 2B-E are complete in their stated automated scope. Continue only
-the remaining bounded Slice 2B-F work: confirmed end-session teardown, followed
-by the complete
-profile → authorization → lobby → search → queue → playback → end
-physical-device exit flow with live `ApplicationMusicPlayer`. Select the next
-verification step explicitly rather than combining lifecycle and hardware
-claims. Defer nearby transport to Slice 3 and
-guest catalog to Slice 4. Gate 0N remains closed pending active-link lifecycle
-verification; gate 0G is open, but the canonical prerequisites and current Slice
-2B scope still apply.
+2B-A through 2B-F are complete in their stated automated scope. The only
+remaining Slice 2B exit work is V2B-1: the complete production
+profile → authorization → lobby → search → queue → live playback/current-track
+preservation → end flow on a subscribed physical iPhone with
+`ApplicationMusicPlayer`. Defer nearby transport to Slice 3 and guest catalog to
+Slice 4. Gate 0N remains closed pending active-link lifecycle verification; gate
+0G is open, but the canonical prerequisites and current Slice 2B scope still
+apply.
