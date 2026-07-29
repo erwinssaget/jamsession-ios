@@ -163,6 +163,58 @@ struct HostPlayerPlaybackTests {
         #expect(!player.isControlRequestInFlight)
     }
 
+    @Test
+    func endSessionStopsAndClearsOnceAndIgnoresLaterObservations() async {
+        let executor = PlaybackExecutor(
+            observation: observation(firstID, status: .stopped)
+        )
+        let player = HostPlayer(executor: executor)
+        let session = makeSession()
+        let observationTask = Task {
+            await player.observePlaybackTransitions(for: session)
+        }
+        await waitUntil { executor.observationStartCount == 1 }
+
+        executor.send(observation(firstID, status: .playing))
+        await waitUntil { session.rotationState.currentlyPlaying?.id == firstID }
+
+        player.endSession()
+        player.endSession()
+        executor.send(observation(secondID, status: .playing))
+        await Task.yield()
+
+        #expect(executor.endSessionCount == 1)
+        #expect(player.isEndingSession)
+        #expect(player.currentItemID == nil)
+        #expect(player.playbackStatus == .stopped)
+        #expect(player.state == .idle)
+        #expect(session.rotationState.currentlyPlaying?.id == firstID)
+
+        observationTask.cancel()
+        await observationTask.value
+    }
+
+    @Test
+    func endSessionSuppressesLateControlFailure() async {
+        let executor = PlaybackExecutor(
+            observation: observation(firstID, status: .stopped),
+            controlError: .offline,
+            controlDelay: .milliseconds(10)
+        )
+        let player = HostPlayer(executor: executor)
+        let controlTask = Task {
+            await player.play()
+        }
+        await waitUntil { player.isControlRequestInFlight }
+
+        player.endSession()
+        await controlTask.value
+
+        #expect(player.state == .idle)
+        #expect(executor.pauseCount == 0)
+        #expect(!player.isControlRequestInFlight)
+    }
+
     private func makeSession() -> HostSessionModel {
         let session = makeEmptySession()
         #expect(session.handle(submit("A", id: firstID, event: 1)) == .accepted)
@@ -232,6 +284,7 @@ struct HostPlayerPlaybackTests {
         var observationStartCount = 0
         var observationWasCancelled = false
         var controlWasCancelled = false
+        var endSessionCount = 0
 
         private var currentObservation: HostPlaybackObservation
         private var observationContinuation:
@@ -285,6 +338,10 @@ struct HostPlayerPlaybackTests {
         func skipToNextEntry() async throws {
             skipCount += 1
             try await performControl()
+        }
+
+        func endSession() {
+            endSessionCount += 1
         }
 
         func send(_ observation: HostPlaybackObservation) {

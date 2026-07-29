@@ -8,4 +8,5 @@ protocol HostQueueExecuting: AnyObject {
     func play() async throws
     func pause()
     func skipToNextEntry() async throws
+    func endSession()
 }

@@ -5,7 +5,9 @@ struct HostFlowQueueView: View {
     let catalogSearchModel: HostCatalogSearchModel
     let hostPlayer: HostPlayer
     let returnToLobby: () -> Void
+    let endSession: () -> Void
     @State private var isShowingCatalog = false
+    @State private var isConfirmingEnd = false
     @State private var reconciliationAttemptID = UUID()
     @State private var controlRequest: ControlRequest?
 
@@ -54,6 +56,14 @@ struct HostFlowQueueView: View {
                 )
                 .accessibilityIdentifier("host.flow.queue.lobby")
             }
+
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("host.end.button", systemImage: "xmark.circle") {
+                    isConfirmingEnd = true
+                }
+                .tint(.red)
+                .accessibilityIdentifier("host.end.button")
+            }
         }
         .sheet(isPresented: $isShowingCatalog) {
             NavigationStack {
@@ -89,6 +99,22 @@ struct HostFlowQueueView: View {
             if controlRequest == request {
                 controlRequest = nil
             }
+        }
+        .confirmationDialog(
+            "host.end.confirm.title",
+            isPresented: $isConfirmingEnd,
+            titleVisibility: .visible
+        ) {
+            Button("host.end.confirm.action", role: .destructive) {
+                endSession()
+            }
+            .accessibilityIdentifier("host.end.confirm")
+
+            Button("host.end.cancel", role: .cancel) {
+            }
+            .accessibilityIdentifier("host.end.cancel")
+        } message: {
+            Text("host.end.confirm.message")
         }
     }
 

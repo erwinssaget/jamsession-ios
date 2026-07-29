@@ -57,7 +57,8 @@ executor, and typed reconciliation recovery. Slice 2B-D connects one cancelable
 player observer plus current-track play/pause/skip controls to that same Host
 surface while canonical fairness remains authoritative. Slice 2B-E makes
 production role selection the Release root and adds the capability-gated Apple
-Music subscription-offer handoff.
+Music subscription-offer handoff. Slice 2B-F adds confirmed solo-Host teardown
+through the same player/coordinator boundaries.
 
 - **P0 complete:** the canonical plan authorizes the mock-only track and the
   feasibility harness exposes an explicit mock queue route.
@@ -133,6 +134,13 @@ Music subscription-offer handoff.
   through a thin MusicKit modifier, with typed load-failure and eligibility
   recheck paths. The feasibility harness requires an explicit Debug launch
   argument.
+- **Slice 2B-F complete; Slice 2B remains open only for its physical-device exit
+  check:** destructive confirmation calls `HostPlayer` once to stop and clear the
+  player executor, invalidates catalog work, destroys session/profile state
+  through `HostFlowCoordinator`, and returns `AppFlowView` to role selection.
+  Removing the flow cancels lifecycle-owned observation, reconciliation, and
+  control tasks; generation/ending guards suppress late callbacks and suspended
+  failures. Guest notification remains deferred until Slice 3 transport exists.
 - **PR #4 review follow-up complete:** the Debug functional catalog presents
   canonical queue-command feedback above the sheet, including a reachable dismiss
   action, and the production solo-lobby participant rows announce the correct Host
@@ -161,7 +169,7 @@ under its pure/domain implementation exit gate and does not alter 0M, 0G, or 0N.
 | Host Music eligibility boundary | `Jamsession/Music/HostMusicEligibilityChecking.swift` and `AppleMusicHostEligibilityChecker.swift` | Isolates just-in-time Music authorization and subscription capability from the coordinator and SwiftUI |
 | Host subscription-offer adapter | `Jamsession/Music/AppleMusicSubscriptionOfferModifier.swift` | Contains the MusicKit SwiftUI offer API and reports load failure without assuming purchase or eligibility success |
 | Host catalog boundary | `Jamsession/Music/HostCatalogServicing.swift`, `AppleMusicHostCatalogService.swift`, and `AppleMusicCatalogTrackMapper.swift` | Isolates Host storefront resolution, MusicKit search/resource requests, playability checks, and `Song` mapping from state and views |
-| Host playback and reconciliation | `Jamsession/Music/HostPlayer.swift`, `HostQueueExecuting.swift`, `QueueReconciliationPlanner.swift`, `PlaybackTransitionDeduplicator.swift`, and `AppleMusicHostQueueExecutor.swift` | Keeps canonical queue identities and pure diff/transition planning outside MusicKit, applies queue/control work through one Main Actor executor, owns one cancelable observation loop, protects the active entry, deduplicates player transitions into stable canonical commands, and maps failures into typed paused state |
+| Host playback, reconciliation, and teardown | `Jamsession/Music/HostPlayer.swift`, `HostQueueExecuting.swift`, `QueueReconciliationPlanner.swift`, `PlaybackTransitionDeduplicator.swift`, and `AppleMusicHostQueueExecutor.swift` | Keeps canonical queue identities and pure diff/transition planning outside MusicKit, applies queue/control work through one Main Actor executor, owns one cancelable observation loop, protects the active entry, deduplicates player transitions into stable canonical commands, maps failures into typed paused state, and stops/clears the executor exactly once while suppressing late work during confirmed teardown |
 | Lobby prototype | `Jamsession/Features/Lobby/` | Host participant order, admission state gallery, discovery fixtures, and decorative invite |
 | Connected walkthrough | `Jamsession/Features/Prototype/` | Fixture-only navigation state joining first run, lobby/discovery, approval, and joined queue |
 | Search presentation | `Jamsession/Features/Search/` | Production Host search model/state/views plus isolated mock catalog-state fixtures and feedback galleries |
@@ -199,9 +207,11 @@ ContentView
 │       └── canonical queue
 │           ├── Add Music → real Host catalog boundary
 │           │   → fresh Host-storefront resolution → typed submit command
-│           └── current track → play / pause / current-track skip
+│           ├── current track → play / pause / current-track skip
 │               → Host player boundary → deduplicated canonical transition
 │               (Debug Music services injected for UI tests)
+│           └── confirmed End Session
+│               → stop/clear player → destroy ephemeral state → role selection
 │   └── Join a Session → explicit unavailable state (no discovery)
 ├── Debug argument → FeasibilityView
 ├── Open Functional Queue
@@ -265,7 +275,7 @@ preserve useful views and replace fixture ownership at explicit seams:
 | Prototype area | Fixture/state used now | Production source later | Integration action |
 |----------------|------------------------|-------------------------|--------------------|
 | Connected walkthrough | `MockPrototypeStep` and local sheet state | App-level host/join coordinators and typed navigation destinations | Replace the mock step switch with production coordinator state. Keep reusable screens driven by values and intent closures; do not preserve simulated approval as production behavior. |
-| First-run role choice | Production-neutral `SessionRole` with mock-only choice navigation | App navigation plus host/join coordinators | Keep the visual choice surface; production Host routing exists only as an explicit Debug entry while complete role-choice navigation remains open. |
+| First-run role choice | Production `RoleSelectionView` plus isolated mock choice navigation | `AppFlowView` plus host/join coordinators | Production Host routing is the Release root and confirmed teardown returns here. Keep the mock route only in the explicit Debug feasibility harness; Join remains unavailable until Slice 3. |
 | Profile setup | Shared `ProfileSetupView` emits a validated `ProfileDraft`; mock wrapper retains fixture-only explainer ownership | `HostFlowCoordinator` now creates a session-scoped Host identity; later app coordination may remember only allowed local preferences | Preserve the shared form and validated value. Never persist session identity, room state, credentials, or listening data. |
 | Permission explainers | Production `HostMusicAccessView` maps typed Host eligibility state; Join mock explainer remains inert | `AppleMusicHostEligibilityChecker` requests Music access and verifies host playback capability only after explicit action | Preserve protocol injection, lifecycle-owned async work, typed recovery, and Settings/check-again actions. Guest permission behavior remains blocked on its owning slice. |
 | Host lobby | `HostLobbyPresentation` mapped from the canonical solo `HostSessionModel`; mock lobby remains for admission/invite states | Host coordinator now starts alone; Slice 3 later extends canonical participants/admission through transport | Preserve immutable order and Main Actor ownership. Do not promote mock invites or admission scenarios. |
@@ -273,7 +283,7 @@ preserve useful views and replace fixture ownership at explicit seams:
 | Invite | Decorative SF Symbol QR and `"BEAT"` | Session ID plus high-entropy join secret encoded by the production invite service; short room code remains only a local discovery filter | Replace the placeholder image with a generated invite artifact. Never log, persist, or expose the reusable secret through accessibility text or screenshots. |
 | Joined queue | `MockJoinedQueueView` owns scenario/sheet state; `MockJoinedQueuePresentationView` and the functional harness both receive `QueueSessionPresentation` | `HostSessionModel` maps authoritative local state and supplies playback queue identities to `HostPlayer`; a future guest mirror maps revisioned canonical snapshots into the same presentation model | Preserve the shared immutable presentation and visual components. The Host view may own lifecycle-bound reconciliation, observation, and control task identities, but never queue order, transition deduplication, or diff logic. Replace only gallery/harness ownership with canonical coordination or a later guest mirror. |
 | Add Music and search | Production `HostCatalogSearchModel`, state, result rows, and typed outcomes alongside isolated `MockSearchScenario`, fixtures, and galleries | Host uses `AppleMusicHostCatalogService`; a later guest coordinator uses its separately gated catalog/transport boundary | Preserve production-neutral views and typed states. Host search already injects search, retry, submit, dismiss, and close behavior without MusicKit in SwiftUI; guest acknowledgement and cross-storefront peer validation remain open. |
-| Lifecycle banners | Mock scenarios such as reconnecting | Revisioned session lifecycle presentation | Map transport/playback outcomes into explicit display states. Views do not own timers, reconnection, or teardown; Host playback transitions are already owned by the separate player boundary. |
+| Lifecycle banners | Mock multi-device scenarios plus production solo-Host end | Revisioned session lifecycle presentation | Solo-Host teardown is now owned by `HostPlayer`, `HostFlowCoordinator`, and `AppFlowView`, not the view. Map later transport outcomes into explicit display states; views do not own timers, reconnection, guest notification, or host-loss teardown. |
 | Lifecycle gallery | `MockLifecycleScenario` plus static countdown/progress fixtures | Host/guest lifecycle state mapped from transport, playback, grace-period clock, and teardown coordinators | Preserve the status views and replace scenario selection with canonical state. Production owns timers and cancellation; disappearance of the screen must not cancel or duplicate authoritative teardown. |
 
 ### Intended production data flow
@@ -631,8 +641,19 @@ Through 2026-07-24:
   feasibility-harness queue/mock regressions passed. Debug, Release, and Xcode
   MCP builds succeeded; Issue Navigator reported no warnings. Standard light and
   AX5 dark role-selection previews were inspected, and the AX5 Host action was
-  exercised successfully. Live offer/purchase behavior, physical-device
-  playback, and end-session teardown remain open.
+  exercised successfully. Live offer/purchase behavior and physical-device
+  playback remain open.
+- Slice 2B-F added destructive confirmation and idempotent player/session
+  teardown. The complete unit target passed 127 tests and 136 simulator
+  executions with zero failures or skips, including late observation,
+  reconciliation, and control completion after teardown. All four production
+  Host/role UI flows passed on the iPhone 17 Pro iOS 26.5 simulator, including
+  play/pause/skip, empty queue, confirmed end, and return to role selection.
+  Generic iOS Debug and Release builds plus the Xcode MCP build succeeded; Issue
+  Navigator reported zero warnings; localization/manual-key, whitespace,
+  dependency-boundary, prohibited-pattern, dependency-file, and privacy/log
+  checks passed. Live `ApplicationMusicPlayer` playback, current-entry
+  preservation, queue clearing, and end behavior remain open in V2B-1.
 
 Record each later provisional slice in `VERIFICATION_LOG.md`, including exact
 preview variants and any fixture-only behavior.
@@ -641,26 +662,26 @@ preview variants and any fixture-only behavior.
 
 Use this prompt in a new context:
 
-> Continue with bounded Slice 2B-F end-session teardown. The P0–P6
+> Complete the Slice 2B physical-device exit check V2B-1. The P0–P6
 > presentation track, R1–R6 hardening backlog, connected mock-flow smoke
 > coverage, Slice 2A domain-backed functional queue, Slice 2B-A Host
 > profile/Music-eligibility/solo-lobby, and Slice 2B-B Host catalog/search
-> through Slice 2B-E production Host entry/subscription-offer increment are complete
-> in automated scope.
+> through Slice 2B-F confirmed solo-Host teardown are complete in automated
+> scope.
 > Read `AGENTS.md`,
 > `docs/PRODUCT_DECISIONS.md`, `docs/BUILD_PLAN.md`,
 > `docs/VERIFICATION_LOG.md`, `docs/UI_PRODUCTION_READINESS.md`, and this handoff
 > before acting. Preserve `HostSessionModel` as the Main Actor authority,
 > `FairnessScheduler` as a pure value type, `QueueSessionPresentation` as the
 > SwiftUI boundary, and `HostPlayer`/`HostQueueExecuting` as the only player
-> seam. Add confirmed, idempotent end-session behavior that stops and clears the
-> player before destroying canonical in-memory state, cancels lifecycle-owned
-> work by removing the Host flow, and returns to production role selection.
-> Do not absorb networking/guest notification; Slice 2B is solo Host only. After
-> automated teardown coverage passes, run the complete physical-device profile →
+> seam. On a subscribed physical iPhone, run the complete production profile →
 > authorization → lobby → search → queue → playback → end exit flow with live
-> `ApplicationMusicPlayer`, including current-entry preservation and repeated
-> callback behavior. Gate 0G is open, but 0N remains closed pending active-link
+> `ApplicationMusicPlayer`, including pause/resume, skip/completion, future-queue
+> edits that preserve the current track, confirmed stop/clear, ephemeral state
+> destruction, and return to role selection. Record repeated-callback guarantees
+> from the existing deterministic tests rather than claiming callback counts from
+> visible device behavior. Do not absorb networking/guest notification; Slice 2B
+> is solo Host only. Gate 0G is open, but 0N remains closed pending active-link
 > lifecycle verification. Begin Slice 3 and Slice 4 only in their canonical
 > prerequisite order.
 > Record only checks actually run and keep the

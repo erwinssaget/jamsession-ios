@@ -110,6 +110,13 @@ final class AppleMusicHostQueueExecutor: HostQueueExecuting {
         }
     }
 
+    func endSession() {
+        player.stop()
+        player.queue.currentEntry = nil
+        player.queue.entries = .init()
+        itemsByEntryID.removeAll()
+    }
+
     private var playbackObservation: HostPlaybackObservation {
         let currentItem: HostPlaybackCurrentItem
         if let currentEntry = player.queue.currentEntry {
@@ -149,6 +156,7 @@ final class AppleMusicHostQueueExecutor: HostQueueExecuting {
         _ operation: () async throws -> Void
     ) async throws {
         try await verifyHostEligibility()
+        try Task.checkCancellation()
         do {
             try await operation()
             try Task.checkCancellation()

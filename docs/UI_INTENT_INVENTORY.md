@@ -11,8 +11,10 @@ intents gained a production owner in Slice 2B-B. Slice 2B-C gives Host queue
 reconciliation and retry a production owner. Slice 2B-D gives Host playback
 observation, current-track presentation, play/pause, and current-track skip a
 production owner. Slice 2B-E gives production role selection, Host routing, and
-the Apple Music subscription-offer handoff a production owner. Transport
-messages, guest catalog requests, and session lifecycle remain unimplemented.
+the Apple Music subscription-offer handoff a production owner. Slice 2B-F gives
+confirmed solo-Host end and ephemeral teardown a production owner. Transport
+messages, guest catalog requests, and multi-device lifecycle remain
+unimplemented.
 
 Names remain conceptual until a canonical production caller exists. Slice 2A's
 implemented names are called out below. Later production types must preserve the
@@ -40,8 +42,7 @@ starting discovery before Slice 3. Slice 2B-A implements Host `submitProfile` an
 `HostMusicEligibilityChecking` boundary requests access only after explicit user
 action, suppresses cancelled/stale outcomes, and maps eligible, denied,
 restricted, subscription-required, and unavailable results into typed
-presentation state. Production role-choice navigation and the Join permission
-path remain open.
+presentation state. The Join permission path remains open.
 
 | Conceptual intent | Payload | Production owner | Validation and result | Repeat/cancel behavior |
 |-------------------|---------|------------------|-----------------------|------------------------|
@@ -91,14 +92,16 @@ and converts each start or departure into one idempotent canonical
 | `playHostPlayback` | Current managed player item and lifecycle-owned control request | Main Actor Host player / Music executor | The real executor rechecks authorization and subscription before calling the app-owned player. Typed failure pauses and returns actionable recovery state. | The view disables/coalesces overlapping controls; cancellation reaches the executor and does not publish a false failure. |
 | `pauseHostPlayback` | Current managed player item | Main Actor Host player / Music executor | Host-only and synchronous at the player boundary. Pausing does not mutate canonical fairness state. | Repeated pause is stable; the control is ignored while another control request is in flight. |
 | `skipCurrentHostTrack` | Current canonical submission identity plus lifecycle-owned control request | Main Actor Host player / Music executor | The control is enabled only for the canonical current track. Fairness advances from the resulting managed player departure, never directly from the button tap. | Overlapping taps are disabled/coalesced; repeated or duplicated departure callbacks reuse one stable canonical command identity. |
+| `endHostSession` | Confirmed current solo-Host session | Main Actor Host player, Host flow coordinator, and app flow | Stops and clears the player executor before invalidating search and destroying canonical session/profile state. Removing the Host flow cancels lifecycle-owned observation, reconciliation, and control tasks, then returns to role selection. | Destructive confirmation is required. Repeated end is a stable no-op, and late observations or suspended work cannot restore ended state. Guest notification is deferred until Slice 3 transport exists. |
 | `openLifecycleDetails` | Current lifecycle presentation | App/queue coordinator | Presentation-only navigation; does not start timers or reconnection. | Repeated presentation is coalesced. |
 
 Host-only moderation and playback controls remain absent from the joined-guest
 mock queue. The Debug functional harness exposes authorized host controls solely
 to exercise the Slice 2A command boundary. Slice 2B-C connects queue
 reconciliation and retry. Slice 2B-D adds Host-only playback controls to the
-production Host queue surface through `HostPlayer`; guest controls and
-end-session behavior remain absent.
+production Host queue surface through `HostPlayer`. Slice 2B-F adds confirmed
+solo-Host end-session teardown. Guest controls and multi-device end notification
+remain absent.
 
 ## Search and submission
 

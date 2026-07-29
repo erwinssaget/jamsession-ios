@@ -101,6 +101,16 @@ final class HostFlowUITests: XCTestCase {
         tapButton("host.playback.skip", in: app, scrollingIfNeeded: true)
         XCTAssertTrue(app.staticTexts["The queue is wide open"].waitForExistence(timeout: 2))
         XCTAssertFalse(app.otherElements["host.playback.controls"].exists)
+
+        tapButton("host.end.button", in: app, scrollingIfNeeded: true)
+        let confirmEndButton = app.buttons
+            .matching(identifier: "host.end.confirm")
+            .element(boundBy: 1)
+        XCTAssertTrue(confirmEndButton.waitForExistence(timeout: 2))
+        XCTAssertTrue(confirmEndButton.isHittable)
+        confirmEndButton.tap()
+        XCTAssertTrue(app.buttons["app.role.host"].waitForExistence(timeout: 2))
+        XCTAssertFalse(app.staticTexts["The queue is wide open"].exists)
     }
 
     @MainActor

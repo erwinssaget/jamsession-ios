@@ -76,6 +76,20 @@ final class HostFlowCoordinator {
         step = .lobby
     }
 
+    @discardableResult
+    func endSession() -> Bool {
+        guard session != nil else {
+            return false
+        }
+
+        eligibilityRequestID = nil
+        musicAccessState = .explanation
+        session = nil
+        profile = nil
+        step = .profile
+        return true
+    }
+
     private func apply(_ outcome: HostMusicEligibilityOutcome) {
         switch outcome {
         case .eligible:

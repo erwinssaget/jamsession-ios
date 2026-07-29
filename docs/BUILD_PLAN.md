@@ -1,6 +1,6 @@
 # Build Plan — Ephemeral Shared-Queue Music Sessions
 
-Revision: 8
+Revision: 9
 Last updated: 2026-07-28
 
 ## Authority and usage
@@ -347,9 +347,16 @@ subscription offers, presents the system offer through a thin MusicKit UI
 adapter, and retains typed retry/load-failure recovery. The feasibility harness
 remains available only through an explicit Debug launch argument.
 
-Still open: confirmed end-session behavior, live `ApplicationMusicPlayer`
-queue/observation/control verification, and the physical-device Slice 2B exit
-gate.
+The 2026-07-28 Slice 2B-F increment adds confirmed, idempotent solo-Host
+end-session behavior. The Host player stops and clears its executor before the
+coordinator destroys canonical in-memory session/profile state; search work is
+invalidated; removal of the Host flow cancels lifecycle-owned reconciliation,
+observation, and control tasks; late callbacks and suspended work cannot restore
+ended state; and navigation returns to production role selection. Guest
+notification remains intentionally out of scope until nearby transport exists.
+
+Still open: live `ApplicationMusicPlayer` queue/observation/control/end
+verification and the physical-device Slice 2B exit gate.
 
 ### Goal
 
